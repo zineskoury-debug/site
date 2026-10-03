@@ -60,3 +60,19 @@ body::after { opacity: .05; }
 .footer__logo img { width: min(70%, 460px); }
 .loader__logo { width: min(46vw, 300px); }
 .menu-overlay__logo { max-width: 200px; }
+
+/* Prices in dirhams, combo price on each burger */
+.card__price::after { content: "DH"; font-size: .55em; margin-left: 2px; }
+.card__menu {
+  margin: 12px 0 0;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  font: 500 12px/1.2 var(--font-ui);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--blush);
+}
+.card__menu b { font: 400 20px/1 var(--font-display); color: var(--red); letter-spacing: .02em; }
+.card__menu span { text-transform: none; letter-spacing: .02em; font-weight: 400; }
