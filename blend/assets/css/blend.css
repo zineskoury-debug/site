@@ -1,0 +1,55 @@
+/* =========================================================
+   BLEND GOURMET BURGER — black & white override of the shared system.
+   White takes the role of the accent; black canvas, graphite surfaces.
+   ========================================================= */
+:root {
+  --wine: #0b0b0b;      /* canvas */
+  --burgundy: #1c1c1c;  /* graphite surface */
+  --red: #ffffff;       /* accent: display, CTAs, active states */
+  --blush: #a6a6a6;     /* soft grey: secondary text */
+  --white: #ffffff;
+  --black: #000;
+  --ink: #0b0b0b;       /* text sitting on white */
+}
+
+::selection { background: var(--white); color: var(--ink); }
+.nav { border-bottom: 1px solid #222; }
+.nav__logo img { height: 52px; }
+.nav__cart-count { color: var(--ink); }
+
+/* text on white surfaces */
+.btn--red { color: var(--ink); }
+.btn--red::before { background: var(--blush); }
+.btn--red:hover { color: var(--ink); }
+.cursor__label { color: var(--ink); }
+.cursor.is-label { border-color: var(--white); }
+.sticker text { fill: var(--ink); }
+.sticker__star { color: var(--ink); }
+.tape--red { color: var(--ink); }
+.tape__track i { color: var(--ink); -webkit-text-stroke: 0; }
+.tape--blush { color: var(--ink); }
+.tab.is-active, .tab.is-active:hover { color: var(--ink); }
+.tab.is-active .tab__badge { background: var(--ink); color: var(--white); }
+.card__price { color: var(--ink); }
+.card__price::after { content: "€"; font-size: .7em; margin-left: 1px; }
+.card__tag { color: var(--ink); background: var(--blush); }
+.card { border-color: #2a2a2a; }
+.card:hover { border-color: var(--white); }
+.card__media { background-image: radial-gradient(rgba(255, 255, 255, .1) 1.5px, transparent 1.6px); }
+.card__desc { color: var(--blush); }
+.step:hover { background: #262626; }
+.spot:hover .spot__city, .spot:hover .spot__idx, .spot:hover .spot__hours, .spot:hover .spot__addr, .spot:hover .spot__go { color: var(--ink); }
+.menu-overlay nav a:hover { color: #6b6b6b; }
+.intro-done .hero__title .char:hover { color: var(--blush); }
+.cursor.is-hover { background: rgba(255, 255, 255, .12); }
+.hero__scroll-line { background: rgba(255, 255, 255, .2); }
+.newsletter__field input::placeholder { color: rgba(255, 255, 255, .4); }
+.newsletter__field input:focus { border-color: var(--white); }
+
+/* emphasis words: outlined instead of a second colour */
+.manifesto__text .w.hl.on { color: transparent; -webkit-text-stroke: 2px var(--white); }
+
+/* round logo */
+.footer__logo img { width: min(70%, 460px); }
+.loader__logo { width: min(46vw, 300px); }
+.menu-overlay__logo { max-width: 200px; filter: invert(1); }
