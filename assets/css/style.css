@@ -572,6 +572,7 @@ a:hover .roll > span, button:hover .roll > span { transform: translateY(-1.2em);
 .tabs {
   position: relative;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 6px;
   width: max-content;
@@ -612,11 +613,11 @@ a:hover .roll > span, button:hover .roll > span { transform: translateY(-1.2em);
 .tab.is-active .tab__badge { background: var(--wine); transform: rotate(360deg); }
 .tabs__ink {
   position: absolute;
-  top: 6px; bottom: 6px; left: 0;
-  width: 0;
+  top: 0; left: 0;
+  width: 0; height: 0;
   border-radius: var(--r-btn);
   background: var(--red);
-  transition: transform .6s var(--ease-spring), width .6s var(--ease-spring);
+  transition: transform .6s var(--ease-spring), width .6s var(--ease-spring), height .6s var(--ease-spring);
 }
 
 .grid {
@@ -682,7 +683,7 @@ a:hover .roll > span, button:hover .roll > span { transform: translateY(-1.2em);
   transform: rotate(12deg);
   transition: transform .9s var(--ease-spring);
 }
-.card__price::after { content: "€"; font-size: .7em; margin-left: 1px; }
+.card__price::after { content: "DH"; font-size: .55em; margin-left: 2px; }
 .card:hover .card__price { transform: rotate(372deg) scale(1.12); }
 .card__tag {
   position: absolute;
@@ -712,6 +713,77 @@ a:hover .roll > span, button:hover .roll > span { transform: translateY(-1.2em);
 
 .fly-layer { position: fixed; inset: 0; z-index: 960; pointer-events: none; }
 .fly-layer img { position: fixed; top: 0; left: 0; will-change: transform; }
+
+/* Combos, extras, drinks */
+.combos { display: flex; justify-content: center; flex-wrap: wrap; gap: 14px; margin: -8px 0 40px; }
+.combo {
+  padding: 10px 16px;
+  border: 2px solid var(--white);
+  background: var(--black);
+  box-shadow: 5px 5px 0 var(--white);
+  font: 700 13px/1.3 var(--font-ui);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  transform: rotate(-4deg);
+  transition: transform .5s var(--ease-spring);
+}
+.combo--alt { transform: rotate(3deg); }
+.combo b { color: var(--red); white-space: nowrap; }
+.combo:hover { transform: rotate(0) scale(1.06); }
+
+.extras { margin-top: 16px; display: grid; grid-template-columns: 1fr 1.3fr; gap: 16px; }
+.extras__block {
+  position: relative;
+  padding: 24px;
+  background: var(--burgundy);
+  border: 1px solid var(--black);
+  border-radius: var(--r-card);
+  overflow: hidden;
+  min-width: 0;
+}
+.extras__title {
+  margin: 0 0 16px;
+  font: 400 clamp(36px, 4vw, 56px)/.9 var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: var(--red);
+}
+.extras__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; }
+.extras__list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 0;
+  border-bottom: 1px dashed rgba(255, 199, 198, .25);
+  font: 500 14px/1.2 var(--font-ui);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  transition: color .3s, padding .4s var(--ease-out);
+}
+.extras__list li:hover { color: var(--blush); padding-left: 6px; }
+.extras__list b { font: 400 20px/1 var(--font-display); color: var(--blush); font-variant-numeric: tabular-nums; }
+.extras__list b::after { content: " DH"; font-size: .6em; }
+.drinks { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; max-width: 70%; }
+.drinks li {
+  padding: 8px 12px;
+  border: 1px solid var(--blush);
+  border-radius: var(--r-btn);
+  font: 500 12px/1 var(--font-ui);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--blush);
+  transition: background-color .3s, color .3s, transform .4s var(--ease-spring);
+}
+.drinks li:hover { background: var(--red); border-color: var(--red); color: var(--white); transform: rotate(-4deg) scale(1.08); }
+.extras__can {
+  position: absolute;
+  right: -10px; bottom: -20px;
+  width: min(34%, 200px);
+  transform: rotate(14deg);
+  transition: transform .7s var(--ease-spring);
+}
+.extras__block--drinks:hover .extras__can { transform: rotate(-6deg) translateY(-14px); }
+.menu__note { margin: 24px 0 0; text-align: center; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--blush); }
 
 /* =========================================================
    Process (horizontal scroll)
@@ -835,14 +907,15 @@ a:hover .roll > span, button:hover .roll > span { transform: translateY(-1.2em);
 .spot {
   position: relative;
   isolation: isolate;
+  border-bottom: 1px solid var(--burgundy);
+  overflow: hidden;
+}
+.spot__link {
   display: grid;
-  grid-template-columns: 56px 1.1fr 1.2fr 1fr 40px;
+  grid-template-columns: 56px 1.4fr 1fr 1fr 40px;
   align-items: center;
   gap: 16px;
   padding: 26px 16px;
-  border-bottom: 1px solid var(--burgundy);
-  overflow: hidden;
-  cursor: pointer;
 }
 .spot::before {
   content: "";
@@ -864,7 +937,7 @@ a:hover .roll > span, button:hover .roll > span { transform: translateY(-1.2em);
   transition: color .3s, transform .6s var(--ease-out);
 }
 .spot__addr { font-size: 16px; }
-.spot__hours { font-size: 14px; color: var(--blush); transition: color .3s; }
+.spot__hours { font-size: 13px; font-weight: 500; text-transform: uppercase; letter-spacing: .1em; color: var(--blush); transition: color .3s; }
 .spot__go { font-size: 28px; justify-self: end; transition: transform .5s var(--ease-spring); }
 .spot:hover .spot__city { color: var(--white); transform: translateX(16px); }
 .spot:hover .spot__idx, .spot:hover .spot__hours { color: var(--white); }
@@ -952,7 +1025,7 @@ a:hover .roll > span, button:hover .roll > span { transform: translateY(-1.2em);
   .anatomy__svg { max-height: 58vh; }
   .anatomy__svg text { font-size: 38px; }
   .stats { grid-template-columns: repeat(2, 1fr); row-gap: 40px; }
-  .spot { grid-template-columns: 36px 1fr 30px; row-gap: 6px; }
+  .spot__link { grid-template-columns: 36px 1fr 30px; row-gap: 6px; }
   .spot__addr, .spot__hours { grid-column: 2; }
   .spot__go { grid-row: 1; grid-column: 3; }
   .footer__grid { grid-template-columns: 1fr 1fr; }
@@ -969,7 +1042,11 @@ a:hover .roll > span, button:hover .roll > span { transform: translateY(-1.2em);
   .float--sticker { display: none; }
   .hero__content { margin-top: 10vh; }
   .hero__scroll { display: none; }
-  .tab { padding: 10px 12px; }
+  .tab { padding: 9px 10px; font-size: 12px; gap: 6px; }
+  .tab__badge { width: 18px; height: 18px; font-size: 10px; }
+  .extras { grid-template-columns: 1fr; }
+  .extras__list { grid-template-columns: 1fr; }
+  .drinks { max-width: 100%; padding-bottom: 110px; }
   .process__head .eyebrow { font-size: 12px; }
   .step { padding: 20px; }
   .footer__bottom { flex-direction: column; }

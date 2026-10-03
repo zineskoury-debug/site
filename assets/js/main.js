@@ -195,7 +195,8 @@
   const cards = $$(".card");
   const moveInk = (t) => {
     ink.style.width = `${t.offsetWidth}px`;
-    ink.style.transform = `translateX(${t.offsetLeft}px)`;
+    ink.style.height = `${t.offsetHeight}px`;
+    ink.style.transform = `translate(${t.offsetLeft}px, ${t.offsetTop}px)`;
   };
   let filtering = false;
   const filterCards = (cat) => {
