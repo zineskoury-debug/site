@@ -36,6 +36,8 @@
   --ease-out: cubic-bezier(.16, 1, .3, 1);
   --ease-spring: cubic-bezier(.34, 1.56, .64, 1);
   --ease-in-out: cubic-bezier(.76, 0, .24, 1);
+
+  color-scheme: dark;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -285,8 +287,8 @@ a:hover .roll > span, button:hover .roll > span { transform: translateY(-1.2em);
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 900;
-  height: var(--nav-h);
-  padding: 0 var(--gutter);
+  height: calc(var(--nav-h) + env(safe-area-inset-top, 0px));
+  padding: env(safe-area-inset-top, 0px) var(--gutter) 0;
   display: flex;
   align-items: center;
   justify-content: space-between;

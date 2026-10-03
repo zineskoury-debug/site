@@ -310,7 +310,8 @@
 
   /* Newsletter */
   const form = $(".newsletter");
-  form.addEventListener("submit", () => {
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
     const input = $("input", form);
     if (!input.checkValidity()) return;
     form.classList.remove("is-sent");
