@@ -266,8 +266,8 @@
   let count = 0;
   $$(".add").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const card = btn.closest(".card");
-      const img = $(".card__media img", card);
+      const card = btn.closest(".card, .motm");
+      const img = $(".card__media img, .motm__art img", card);
       const label = $(".roll > span", btn);
       nav.classList.remove("is-hidden");
       btn.classList.add("is-added");
