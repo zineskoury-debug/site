@@ -196,3 +196,74 @@
 .dish__new--ghost { background: transparent; color: var(--white); border: 1px solid var(--white); }
 .extras--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (max-width: 760px) { .formulas, .extras--2 { grid-template-columns: 1fr; } }
+
+/* =========================================================
+   Warm-up: ember accent + warm blacks (identity stays B&W)
+   ========================================================= */
+:root {
+  --wine: #110d0b;        /* warm black canvas */
+  --burgundy: #1f1915;    /* warm graphite surface */
+  --blush: #cbb8a2;       /* sand: secondary text */
+  --ember: #ff6b1a;       /* BBQ ember: highlights, prices, actions */
+  --ember-soft: #ffb37a;
+}
+.eyebrow, .kicker { color: var(--ember); }
+.display__aside, .hero__line--aside { color: var(--ember); }
+.nav__progress, .anatomy__meter span, .process__bar span { background: var(--ember); }
+.nav__cart-count { background: var(--ember); color: var(--ink); }
+
+.btn--red { background: var(--ember); color: var(--ink); }
+.btn--red::before { background: var(--white); }
+.btn--ghost:hover { color: var(--ink); }
+.btn--ghost::before { background: var(--ember); }
+
+.cursor { border-color: var(--ember); }
+.cursor.is-label { background: var(--ember); border-color: var(--ember); }
+.cursor-dot { background: var(--ember); }
+
+.tape--red { background: var(--ember); color: var(--ink); }
+.tape--blush { background: var(--white); color: var(--ink); }
+.tape__track i { color: var(--white); -webkit-text-stroke: 2px var(--ink); }
+.tape--blush .tape__track i { color: var(--ember); -webkit-text-stroke: 0; }
+
+.blob--red { background: var(--ember); }
+.blob { background: #2a201a; }
+.sticker__star { color: var(--white); }
+
+.manifesto__text .w.hl.on { color: var(--ember); -webkit-text-stroke: 0; }
+
+.tab.is-active, .tab.is-active:hover { color: var(--ink); }
+.tabs__ink { background: var(--ember); }
+.tab.is-active .tab__badge { background: var(--ink); color: var(--ember); }
+
+.formula--main { background: var(--ember); border-color: var(--ember); }
+.formula--main .formula__desc { color: #3a1a08; }
+.formula:not(.formula--main) .formula__price { color: var(--ember); }
+.formula:hover { border-color: var(--ember); }
+
+.dish:hover { background: #241c17; }
+.dish__price { color: var(--ember); }
+.dish:hover .dish__dots { border-color: var(--ember); }
+.dish:hover .dish__name { color: var(--ember-soft); }
+.dish__name { transition: color .3s; }
+.dish__new { background: var(--ember); color: var(--ink); }
+.dish__new--ghost { background: transparent; color: var(--ember); border-color: var(--ember); }
+.card.card--panel { border-color: #2c241e; }
+
+.extras__block { border-color: #2c241e; }
+.extras__block:hover { border-color: var(--ember); }
+.extras__title { color: var(--white); }
+
+.step__num { -webkit-text-stroke-color: var(--ember); }
+.step:hover { background: #2a201a; }
+.stat__num { color: var(--ember); }
+.stat:hover { border-color: var(--ember); }
+.statement__row--outline { -webkit-text-stroke-color: var(--ember); }
+.anatomy__svg .ly__label circle { fill: var(--ember); }
+
+.spot::before { background: var(--ember); }
+.loader__panel--red { background: var(--ember); }
+.loader__count { color: var(--ember); }
+.newsletter__field input:focus { border-color: var(--ember); }
+.link:hover { color: var(--ember); }
+::selection { background: var(--ember); color: var(--ink); }
