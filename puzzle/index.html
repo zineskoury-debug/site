@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <script>document.documentElement.className="js"</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Puzzle Pizza</title>
+  <meta name="description" content="Puzzle Pizza, pizza au feu de bois : pâte maison, mozzarella qui file, 16 pizzas en solo ou en large.">
+  <meta name="theme-color" content="#ff4b0f">
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <link rel="preload" href="assets/fonts/bowlby-one-sc-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/puzzle.css">
+</head>
+<body class="is-loading">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <polygon id="burst" points="100,0 112,30 138,8 140,40 172,30 160,60 196,62 172,86 200,100 172,114 196,138 160,140 172,170 140,160 138,192 112,170 100,200 88,170 62,192 60,160 28,170 40,140 4,138 28,114 0,100 28,86 4,62 40,60 28,30 60,40 62,8 88,30"/>
+      <path id="pieceShape" d="M30,30H80C78,14 92,6 100,6C108,6 122,14 120,30H170V80C186,78 194,92 194,100C194,108 186,122 170,120V170H120C122,186 108,194 100,194C92,194 78,186 80,170H30V120C14,122 6,108 6,100C6,92 14,78 30,80Z"/>
+      <path id="hand" d="M8,52h44c6,0 6,-9 0,-9h-6h22c6,0 6,-9 0,-9h-22h26c6,0 6,-9 0,-9h-26h20c6,0 6,-9 0,-9h-40l6,-9c3,-5 -4,-9 -8,-5l-20,18c-4,4 -6,9 -6,14z"/>
+    </defs>
+  </svg>
+
+  <!-- LOADER -->
+  <div class="loader" aria-hidden="true">
+    <div class="loader__board">
+      <svg class="lp lp--1" viewBox="0 0 200 200"><use href="#pieceShape"/></svg>
+      <svg class="lp lp--2" viewBox="0 0 200 200"><use href="#pieceShape"/></svg>
+      <svg class="lp lp--3" viewBox="0 0 200 200"><use href="#pieceShape"/></svg>
+      <svg class="lp lp--4" viewBox="0 0 200 200"><use href="#pieceShape"/></svg>
+    </div>
+    <p class="loader__txt">On assemble les pièces… <span class="loader__n">0</span>%</p>
+  </div>
+
+  <!-- CURSOR -->
+  <div class="cursor" aria-hidden="true"><svg viewBox="0 0 200 200"><use href="#pieceShape"/></svg><span class="cursor__label"></span></div>
+
+  <!-- NAV -->
+  <header class="nav" id="top">
+    <nav class="nav__left" aria-label="Navigation principale">
+      <a href="#carte" class="nav__link">La carte</a>
+      <a href="#feu" class="nav__link">Le feu</a>
+      <a href="#trouver" class="nav__link">Nous trouver</a>
+    </nav>
+    <a href="#top" class="nav__logo" aria-label="Puzzle Pizza, accueil"><img src="assets/img/logo.png" alt="Puzzle Pizza"></a>
+    <div class="nav__right">
+      <a href="tel:+212707717717" class="btn btn--outline magnetic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z" fill="currentColor"/></svg><span>Commander</span></a>
+      <button class="nav__toggle" aria-label="Ouvrir le menu" aria-expanded="false"><span></span><span></span></button>
+    </div>
+    <div class="nav__progress"></div>
+  </header>
+  <div class="overlay" aria-hidden="true">
+    <a href="#carte" style="--i:0">La carte</a>
+    <a href="#feu" style="--i:1">Le feu</a>
+    <a href="#trouver" style="--i:2">Nous trouver</a>
+    <a href="tel:+212707717717" style="--i:3">Commander</a>
+  </div>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero band band--orange">
+      <svg class="zig zig--tl" viewBox="0 0 300 60" aria-hidden="true"><polyline points="0,50 25,10 50,50 75,10 100,50 125,10 150,50 175,10 200,50 225,10 250,50 275,10 300,50"/></svg>
+      <svg class="zig zig--tr" viewBox="0 0 300 60" aria-hidden="true"><polyline points="0,50 25,10 50,50 75,10 100,50 125,10 150,50 175,10 200,50 225,10 250,50 275,10 300,50"/></svg>
+      <p class="kicker hero__kicker reveal">Pizza au feu de bois</p>
+      <h1 class="hero__title" aria-label="Puzzle Pizza">
+        <span class="hero__line" data-split>Puzzle</span>
+        <span class="hero__line" data-split>Pizza</span>
+      </h1>
+      <div class="hero__stage">
+        <div class="hero__pizza" data-cursor="Croque"><svg class="pz-hero" viewBox="-30 -30 460 460" role="img" aria-label="Pizza découpée en pièces de puzzle"><defs><g id="pzHero"><path d="M376.3,175.1Q383.2,200 378.6,225.6Q374,251.1 365.3,275.9Q356.7,300.7 338.6,319.9Q320.5,339.1 297.3,350.5Q274,362 250,371.2Q225.9,380.5 200.2,379Q174.5,377.5 149.1,372.2Q123.8,366.9 100.9,353.9Q77.9,340.9 62.6,319.5Q47.2,298.2 37.7,274.3Q28.3,250.4 20.8,225.2Q13.4,200 18,173.9Q22.5,147.9 35.7,125.4Q48.8,102.9 66,84Q83.2,65.2 103.8,49.8Q124.4,34.4 149.1,26Q173.8,17.6 199.9,18.1Q226.1,18.5 249.6,29.2Q273.1,39.9 296,51.3Q319,62.7 337.7,81.1Q356.5,99.4 363,124.8Q369.5,150.2 376.3,175.1Z" fill="#f2b36b" stroke="#292a2c" stroke-width="7"/><circle cx="61.7" cy="109.4" r="4.1" fill="#292a2c" opacity=".55"/><circle cx="354.4" cy="263.2" r="6.1" fill="#292a2c" opacity=".55"/><circle cx="37.7" cy="168.7" r="3.7" fill="#292a2c" opacity=".55"/><circle cx="293.4" cy="58.1" r="6.2" fill="#292a2c" opacity=".55"/><circle cx="128.3" cy="353.6" r="3.1" fill="#292a2c" opacity=".55"/><circle cx="361.8" cy="254.1" r="5.4" fill="#292a2c" opacity=".55"/><circle cx="205.2" cy="371.4" r="3.8" fill="#292a2c" opacity=".55"/><circle cx="143" cy="362.7" r="6.4" fill="#292a2c" opacity=".55"/><circle cx="33.2" cy="191.6" r="4.1" fill="#292a2c" opacity=".55"/><circle cx="155.8" cy="359.7" r="5.6" fill="#292a2c" opacity=".55"/><circle cx="127.5" cy="44.1" r="6.7" fill="#292a2c" opacity=".55"/><circle cx="348.5" cy="291.6" r="4.7" fill="#292a2c" opacity=".55"/><circle cx="355.6" cy="141" r="3.4" fill="#292a2c" opacity=".55"/><circle cx="367.8" cy="216.8" r="4.9" fill="#292a2c" opacity=".55"/><circle cx="67.3" cy="87.5" r="3.3" fill="#292a2c" opacity=".55"/><circle cx="166.9" cy="28.8" r="4.1" fill="#292a2c" opacity=".55"/><circle cx="155.1" cy="39.4" r="5.1" fill="#292a2c" opacity=".55"/><circle cx="272.5" cy="50.5" r="7" fill="#292a2c" opacity=".55"/><path d="M345.2,175Q352.9,200 350.6,227Q348.3,254 332,275.5Q315.7,297.1 296.1,314.8Q276.5,332.6 251.3,340Q226,347.4 199.7,349.2Q173.4,351 149.3,340.3Q125.2,329.5 103.2,314.6Q81.1,299.8 70.5,275.4Q59.9,251 54.3,225.5Q48.7,200 50.7,173.2Q52.7,146.4 67.1,123.5Q81.5,100.5 101,81.5Q120.5,62.4 146.6,53.7Q172.7,44.9 199.4,48.1Q226.2,51.2 251.3,59.5Q276.3,67.8 295.3,86Q314.3,104.1 325.9,127Q337.6,149.9 345.2,175Z" fill="#ff4b0f" stroke="#292a2c" stroke-width="5"/><path d="M248.1,155.1Q257.9,174.8 242,189.5Q226.2,204.1 213.5,216.8Q200.9,229.5 179.9,230.1Q159,230.7 153.3,210.7Q147.5,190.8 137.2,171.1Q126.9,151.4 147.1,142.5Q167.4,133.5 184.7,123.8Q201.9,114.2 220.1,124.8Q238.2,135.4 248.1,155.1Z" fill="#f6e653"/><path d="M243.9,223.2Q254.8,234.6 245.9,247.7Q237,260.7 224.7,266Q212.4,271.4 197.1,273.9Q181.7,276.4 168,264.9Q154.2,253.4 161,237.1Q167.9,220.8 173.8,204.9Q179.6,189.1 196.4,191.1Q213.2,193.1 223.1,202.5Q233,211.9 243.9,223.2Z" fill="#ffc700"/><path d="M256.4,166.5Q268.9,176.3 262.3,190.9Q255.6,205.6 242.6,216.5Q229.6,227.4 211.9,224.7Q194.2,222 191.1,205Q188.1,188.1 183.2,174.5Q178.4,160.9 189,150.4Q199.6,140 213.1,141.4Q226.5,142.8 235.2,149.8Q243.9,156.7 256.4,166.5Z" fill="#ffc700"/><path d="M218.9,129.7Q224.8,142.1 220.6,155.9Q216.3,169.8 202.9,173.2Q189.5,176.6 176.4,176.7Q163.4,176.8 145.2,169.7Q126.9,162.7 132.1,144Q137.2,125.3 145.3,107.8Q153.4,90.2 171.8,97.2Q190.1,104.2 201.6,110.7Q213,117.3 218.9,129.7Z" fill="#f6e653"/><path d="M220.6,174Q224.3,190.7 218.6,205.8Q212.9,220.9 199.6,232.4Q186.3,243.8 170,237.4Q153.7,230.9 144.3,218.5Q134.8,206 128,188.2Q121.1,170.4 137.9,161.2Q154.6,152.1 170,147.3Q185.4,142.5 201.1,149.9Q216.8,157.3 220.6,174Z" fill="#ffc700"/><path d="M186.8,173.9Q193.7,185.6 188.6,198.8Q183.4,212 171.3,219.3Q159.2,226.6 143,228Q126.7,229.5 121,214.2Q115.4,198.9 116,185.8Q116.7,172.7 121.5,157Q126.4,141.2 142.8,143Q159.2,144.8 169.6,153.5Q180,162.2 186.8,173.9Z" fill="#ffc700"/><path d="M244.7,183.4Q243.4,203.3 240.9,220Q238.4,236.7 222.8,244.3Q207.1,251.8 188.4,252.7Q169.6,253.5 154.5,239.2Q139.3,224.9 140.5,203.8Q141.7,182.6 157.5,171Q173.2,159.3 189.7,159.9Q206.1,160.6 226.1,162Q246.1,163.5 244.7,183.4Z" fill="#f6e653"/><circle cx="93.2" cy="182.6" r="20" fill="#d6310a" stroke="#292a2c" stroke-width="4"/><circle cx="87.2" cy="178.6" r="3" fill="#292a2c" opacity=".5"/><circle cx="100.2" cy="187.6" r="2.5" fill="#292a2c" opacity=".5"/><circle cx="262.4" cy="151.3" r="20" fill="#d6310a" stroke="#292a2c" stroke-width="4"/><circle cx="256.4" cy="147.3" r="3" fill="#292a2c" opacity=".5"/><circle cx="269.4" cy="156.3" r="2.5" fill="#292a2c" opacity=".5"/><circle cx="256.2" cy="273.9" r="20" fill="#d6310a" stroke="#292a2c" stroke-width="4"/><circle cx="250.2" cy="269.9" r="3" fill="#292a2c" opacity=".5"/><circle cx="263.2" cy="278.9" r="2.5" fill="#292a2c" opacity=".5"/><circle cx="133" cy="255.7" r="20" fill="#d6310a" stroke="#292a2c" stroke-width="4"/><circle cx="127" cy="251.7" r="3" fill="#292a2c" opacity=".5"/><circle cx="140" cy="260.7" r="2.5" fill="#292a2c" opacity=".5"/><circle cx="198.9" cy="172.7" r="20" fill="#d6310a" stroke="#292a2c" stroke-width="4"/><circle cx="192.9" cy="168.7" r="3" fill="#292a2c" opacity=".5"/><circle cx="205.9" cy="177.7" r="2.5" fill="#292a2c" opacity=".5"/><circle cx="244" cy="220.5" r="20" fill="#d6310a" stroke="#292a2c" stroke-width="4"/><circle cx="238" cy="216.5" r="3" fill="#292a2c" opacity=".5"/><circle cx="251" cy="225.5" r="2.5" fill="#292a2c" opacity=".5"/><circle cx="208" cy="82.8" r="20" fill="#d6310a" stroke="#292a2c" stroke-width="4"/><circle cx="202" cy="78.8" r="3" fill="#292a2c" opacity=".5"/><circle cx="215" cy="87.8" r="2.5" fill="#292a2c" opacity=".5"/><circle cx="143.3" cy="159.1" r="20" fill="#d6310a" stroke="#292a2c" stroke-width="4"/><circle cx="137.3" cy="155.1" r="3" fill="#292a2c" opacity=".5"/><circle cx="150.3" cy="164.1" r="2.5" fill="#292a2c" opacity=".5"/><circle cx="306.4" cy="169.8" r="20" fill="#d6310a" stroke="#292a2c" stroke-width="4"/><circle cx="300.4" cy="165.8" r="3" fill="#292a2c" opacity=".5"/><circle cx="313.4" cy="174.8" r="2.5" fill="#292a2c" opacity=".5"/><circle cx="97.2" cy="222.1" r="9" fill="none" stroke="#292a2c" stroke-width="7"/><circle cx="240" cy="251.7" r="9" fill="none" stroke="#292a2c" stroke-width="7"/><circle cx="217.5" cy="220.9" r="9" fill="none" stroke="#292a2c" stroke-width="7"/><circle cx="178.9" cy="280.3" r="9" fill="none" stroke="#292a2c" stroke-width="7"/><circle cx="103.9" cy="155.7" r="9" fill="none" stroke="#292a2c" stroke-width="7"/><circle cx="229.9" cy="93.4" r="9" fill="none" stroke="#292a2c" stroke-width="7"/><circle cx="234" cy="296.2" r="9" fill="none" stroke="#292a2c" stroke-width="7"/><circle cx="117.3" cy="190.7" r="9" fill="none" stroke="#292a2c" stroke-width="7"/><g transform="rotate(203.1 123.6 215.1)"><path d="M107.6,215.1a16,13 0 0 1 32,0z" fill="#fee3c1" stroke="#292a2c" stroke-width="4"/><rect x="117.6" y="215.1" width="12" height="13" fill="#fee3c1" stroke="#292a2c" stroke-width="4"/></g><g transform="rotate(34.1 184.4 241.3)"><path d="M168.4,241.3a16,13 0 0 1 32,0z" fill="#fee3c1" stroke="#292a2c" stroke-width="4"/><rect x="178.4" y="241.3" width="12" height="13" fill="#fee3c1" stroke="#292a2c" stroke-width="4"/></g><g transform="rotate(347.9 154.3 139.2)"><path d="M138.3,139.2a16,13 0 0 1 32,0z" fill="#fee3c1" stroke="#292a2c" stroke-width="4"/><rect x="148.3" y="139.2" width="12" height="13" fill="#fee3c1" stroke="#292a2c" stroke-width="4"/></g><g transform="rotate(270 204.7 205.3)"><path d="M188.7,205.3a16,13 0 0 1 32,0z" fill="#fee3c1" stroke="#292a2c" stroke-width="4"/><rect x="198.7" y="205.3" width="12" height="13" fill="#fee3c1" stroke="#292a2c" stroke-width="4"/></g><g transform="rotate(238 266.7 289.6)"><path d="M250.7,289.6a16,13 0 0 1 32,0z" fill="#fee3c1" stroke="#292a2c" stroke-width="4"/><rect x="260.7" y="289.6" width="12" height="13" fill="#fee3c1" stroke="#292a2c" stroke-width="4"/></g><g transform="rotate(286.7 297.3 245.3)"><path d="M281.3,245.3a16,13 0 0 1 32,0z" fill="#fee3c1" stroke="#292a2c" stroke-width="4"/><rect x="291.3" y="245.3" width="12" height="13" fill="#fee3c1" stroke="#292a2c" stroke-width="4"/></g><g transform="rotate(197.6 212.3 295.6)"><path d="M196.3,295.6a16,13 0 0 1 32,0z" fill="#fee3c1" stroke="#292a2c" stroke-width="4"/><rect x="206.3" y="295.6" width="12" height="13" fill="#fee3c1" stroke="#292a2c" stroke-width="4"/></g><path d="M95,120 Q120,80 165,62" stroke="#fff" stroke-width="8" stroke-linecap="round" fill="none" opacity=".55"/></g><clipPath id="pzc0"><path d="M-20,-20L200,-20L200,68C184.6,76.8 147.2,54.8 147.2,90C147.2,125.2 184.6,103.2 200,112L200,200L112,200C103.2,184.6 125.2,147.2 90,147.2C54.8,147.2 76.8,184.6 68,200L-20,200Z"/></clipPath><clipPath id="pzc1"><path d="M200,-20L420,-20L420,200L332,200C323.2,215.4 345.2,252.8 310,252.8C274.8,252.8 296.8,215.4 288,200L200,200L200,112C184.6,103.2 147.2,125.2 147.2,90C147.2,54.8 184.6,76.8 200,68L200,-20Z"/></clipPath><clipPath id="pzc2"><path d="M200,200L288,200C296.8,215.4 274.8,252.8 310,252.8C345.2,252.8 323.2,215.4 332,200L420,200L420,420L200,420L200,332C215.4,323.2 252.8,345.2 252.8,310C252.8,274.8 215.4,296.8 200,288L200,200Z"/></clipPath><clipPath id="pzc3"><path d="M-20,200L68,200C76.8,184.6 54.8,147.2 90,147.2C125.2,147.2 103.2,184.6 112,200L200,200L200,288C215.4,296.8 252.8,274.8 252.8,310C252.8,345.2 215.4,323.2 200,332L200,420L-20,420Z"/></clipPath><clipPath id="pzDisc"><circle cx="200" cy="200" r="184"/></clipPath></defs><g class="pz-piece" data-i="0"><g clip-path="url(#pzc0)"><use href="#pzHero"/></g><g clip-path="url(#pzDisc)"><path d="M-20,-20L200,-20L200,68C184.6,76.8 147.2,54.8 147.2,90C147.2,125.2 184.6,103.2 200,112L200,200L112,200C103.2,184.6 125.2,147.2 90,147.2C54.8,147.2 76.8,184.6 68,200L-20,200Z" fill="none" stroke="#fee3c1" stroke-width="6" clip-path="url(#pzc0)"/></g></g><g class="pz-piece" data-i="1"><g clip-path="url(#pzc1)"><use href="#pzHero"/></g><g clip-path="url(#pzDisc)"><path d="M200,-20L420,-20L420,200L332,200C323.2,215.4 345.2,252.8 310,252.8C274.8,252.8 296.8,215.4 288,200L200,200L200,112C184.6,103.2 147.2,125.2 147.2,90C147.2,54.8 184.6,76.8 200,68L200,-20Z" fill="none" stroke="#fee3c1" stroke-width="6" clip-path="url(#pzc1)"/></g></g><g class="pz-piece" data-i="2"><g clip-path="url(#pzc2)"><use href="#pzHero"/></g><g clip-path="url(#pzDisc)"><path d="M200,200L288,200C296.8,215.4 274.8,252.8 310,252.8C345.2,252.8 323.2,215.4 332,200L420,200L420,420L200,420L200,332C215.4,323.2 252.8,345.2 252.8,310C252.8,274.8 215.4,296.8 200,288L200,200Z" fill="none" stroke="#fee3c1" stroke-width="6" clip-path="url(#pzc2)"/></g></g><g class="pz-piece" data-i="3"><g clip-path="url(#pzc3)"><use href="#pzHero"/></g><g clip-path="url(#pzDisc)"><path d="M-20,200L68,200C76.8,184.6 54.8,147.2 90,147.2C125.2,147.2 103.2,184.6 112,200L200,200L200,288C215.4,296.8 252.8,274.8 252.8,310C252.8,345.2 215.4,323.2 200,332L200,420L-20,420Z" fill="none" stroke="#fee3c1" stroke-width="6" clip-path="url(#pzc3)"/></g></g></svg></div>
+        <div class="badge badge--hero"><svg class="burst" viewBox="0 0 200 200"><use href="#burst"/></svg><span>Dès<br><b>25</b><br>DH</span></div>
+        <svg class="hand hand--hero" viewBox="0 0 90 60" aria-hidden="true"><use href="#hand"/></svg>
+        <svg class="floatpiece fp--1" data-speed="-.25" viewBox="0 0 200 200" aria-hidden="true"><use href="#pieceShape"/></svg>
+        <svg class="floatpiece fp--2" data-speed=".2" viewBox="0 0 200 200" aria-hidden="true"><use href="#pieceShape"/></svg>
+      </div>
+      <div class="hero__ctas reveal">
+        <a href="#carte" class="btn btn--outline btn--lg magnetic"><span>Voir la carte</span><svg class="ic ic--arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.5"/></svg></a>
+        <a href="https://www.google.com/maps/search/?api=1&amp;query=Puzzle+Pizza+pizza+au+feu+de+bois" target="_blank" rel="noopener" class="btn btn--outline btn--lg magnetic"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.3 7-12a7 7 0 0 0-14 0c0 5.7 7 12 7 12z" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="10" r="2.6" fill="currentColor"/></svg><span>Nous trouver</span></a>
+      </div>
+    </section>
+
+    <!-- TAPE -->
+    <section class="tape band band--yellow" aria-hidden="true">
+      <div class="tape__track"><span>Feu de bois</span><i>✺</i><span>Pâte maison</span><i>✺</i><span>Mozzarella qui file</span><i>✺</i><span>Solo ou large</span><i>✺</i><span>16 pizzas</span><i>✺</i></div>
+    </section>
+
+    <!-- MANIFESTO -->
+    <section class="manifesto band band--cream">
+      <svg class="floatpiece fp--3" data-speed="-.15" viewBox="0 0 200 200" aria-hidden="true"><use href="#pieceShape"/></svg>
+      <svg class="floatpiece fp--4" data-speed=".18" viewBox="0 0 200 200" aria-hidden="true"><use href="#pieceShape"/></svg>
+      <p class="kicker reveal">La recette du puzzle</p>
+      <p class="manifesto__text" data-words>Chaque pizza est un puzzle&nbsp;: une <em>pâte maison</em>, une sauce tomate généreuse, de la <em>mozzarella</em> qui file, ta garniture préférée, et un <em>four à bois</em> qui assemble le tout.</p>
+    </section>
+
+    <!-- MENU -->
+    <section class="menu band band--blush" id="carte">
+      <svg class="zig zig--menu" viewBox="0 0 300 60" aria-hidden="true"><polyline points="0,50 25,10 50,50 75,10 100,50 125,10 150,50 175,10 200,50 225,10 250,50 275,10 300,50"/></svg>
+      <p class="kicker reveal">Sauce tomate</p>
+      <h2 class="shout reveal">La carte</h2>
+      <div class="controls reveal">
+        <div class="chips" role="group" aria-label="Filtrer les pizzas">
+          <button class="chip is-on" data-f="all">Toutes <b>16</b></button>
+          <button class="chip" data-f="classiques">Classiques</button>
+          <button class="chip" data-f="viandes">Poulet &amp; viande</button>
+          <button class="chip" data-f="mer">De la mer</button>
+          <button class="chip" data-f="veggie">Veggie</button>
+        </div>
+        <div class="size" role="group" aria-label="Taille">
+          <button class="size__btn is-on" data-size="solo" aria-pressed="true">Solo</button>
+          <button class="size__btn" data-size="large" aria-pressed="false">Large</button>
+          <span class="size__ink" aria-hidden="true"></span>
+        </div>
+      </div>
+      <ul class="pzgrid">
+        <li class="pz" data-tags="classiques" style="--i:0">
+          <div class="pz__burst" data-cursor="Miam"><svg class="burst" viewBox="0 0 200 200" aria-hidden="true"><use href="#burst"/></svg><img src="assets/img/pz-margherita.svg" alt="Pizza Margherita" loading="lazy"></div>
+          <h3 class="pz__name">Margherita</h3>
+          <p class="pz__desc">Sauce tomate, mozzarella.</p>
+          <p class="pz__price"><span class="price" data-solo="25" data-large="39">25</span> DH</p>
+        </li>
+        <li class="pz" data-tags="classiques mer" style="--i:1">
+          <div class="pz__burst" data-cursor="Miam"><svg class="burst" viewBox="0 0 200 200" aria-hidden="true"><use href="#burst"/></svg><img src="assets/img/pz-anchois.svg" alt="Pizza Anchois" loading="lazy"></div>
+          <h3 class="pz__name">Anchois</h3>
+          <p class="pz__desc">Sauce tomate, mozzarella, anchois, olives.</p>
+          <p class="pz__price"><span class="price" data-solo="35" data-large="57">35</span> DH</p>
+        </li>
+        <li class="pz" data-tags="classiques veggie" style="--i:2">
+          <div class="pz__burst" data-cursor="Miam"><svg class="burst" viewBox="0 0 200 200" aria-hidden="true"><use href="#burst"/></svg><img src="assets/img/pz-aubergine.svg" alt="Pizza Aubergine" loading="lazy"></div>
+          <h3 class="pz__name">Aubergine</h3>
+          <p class="pz__desc">Sauce tomate, mozzarella, aubergines, olives.</p>
+          <p class="pz__price"><span class="price" data-solo="35" data-large="57">35</span> DH</p>
+        </li>
+        <li class="pz" data-tags="viandes" style="--i:3">
+          <div class="pz__burst" data-cursor="Miam"><svg class="burst" viewBox="0 0 200 200" aria-hidden="true"><use href="#burst"/></svg><img src="assets/img/pz-gourmande.svg" alt="Pizza Gourmande" loading="lazy"></div>
+          <h3 class="pz__name">Gourmande</h3>
+          <p class="pz__desc">Sauce tomate, mozzarella, viande hachée, champignons, olives.</p>
+          <p class="pz__price"><span class="price" data-solo="37" data-large="59">37</span> DH</p>
+        </li>
+        <li class="pz" data-tags="classiques veggie" style="--i:4">
+          <div class="pz__burst" data-cursor="Miam"><svg class="burst" viewBox="0 0 200 200" aria-hidden="true"><use href="#burst"/></svg><img src="assets/img/pz-vegetarienne.svg" alt="Pizza Végétarienne" loading="lazy"></div>
+          <h3 class="pz__name">Végétarienne</h3>
+          <p class="pz__desc">Sauce tomate, mozzarella, poivrons, champignons, olives.</p>
+          <p class="pz__price"><span class="price" data-solo="37" data-large="59">37</span> DH</p>
+        </li>
+        <li class="pz" data-tags="classiques mer" style="--i:5">
+          <div class="pz__burst" data-cursor="Miam"><svg class="burst" viewBox="0 0 200 200" aria-hidden="true"><use href="#burst"/></svg><img src="assets/img/pz-thon.svg" alt="Pizza Thon" loading="lazy"></div>
+          <h3 class="pz__name">Thon</h3>
+          <p class="pz__desc">Sauce tomate, mozzarella, thon, oignons, olives.</p>
+          <p class="pz__price"><span class="price" data-solo="37" data-large="59">37</span> DH</p>
+        </li>
+        <li class="pz" data-tags="viandes" style="--i:6">
+          <div class="pz__burst" data-cursor="Miam"><svg class="burst" viewBox="0 0 200 200" aria-hidden="true"><use href="#burst"/></svg><img src="assets/img/pz-chicken.svg" alt="Pizza La Chicken" loading="lazy"></div>
+          <h3 class="pz__name">La Chicken</h3>
+          <p class="pz__desc">Sauce tomate, mozzarella, poulet mariné, poivrons, champignons.</p>
+          <p class="pz__price"><span class="price" data-solo="39" data-large="62">39</span> DH</p>
+        </li>
+        <li class="pz" data-tags="viandes" style="--i:7">
+          <div class="pz__burst" data-cursor="Miam"><svg class="burst" viewBox="0 0 200 200" aria-hidden="true"><use href="#burst"/></svg><img src="assets/img/pz-pepperoni.svg" alt="Pizza Pepperoni" loading="lazy"></div>
+          <h3 class="pz__name">Pepperoni</h3>
+          <p class="pz__desc">Sauce tomate, mozzarella, pepperoni.</p>
+          <p class="pz__price"><span class="price" data-solo="39" data-large="62">39</span> DH</p>
+        </li>
+        <li class="pz" data-tags="classiques veggie" style="--i:8">
+          <div class="pz__burst" data-cursor="Miam"><svg class="burst" viewBox="0 0 200 200" aria-hidden="true"><use href="#burst"/></svg><img src="assets/img/pz-4fromages.svg" alt="Pizza 04 Fromages" loading="lazy"></div>
+          <h3 class="pz__name">04 Fromages</h3>
+          <p class="pz__desc">Sauce tomate, mozzarella et trois fromages.</p>
+          <p class="pz__price"><span class="price" data-solo="39" data-large="62">39</span> DH</p>
+        </li>
+        <li class="pz" data-tags="viandes" style="--i:9">
+          <div class="pz__burst" data-cursor="Miam"><svg class="burst" viewBox="0 0 200 200" aria-hidden="true"><use href="#burst"/></svg><img src="assets/img/pz-chicken-bbq.svg" alt="Pizza Chicken BBQ" loading="lazy"></div>
+          <h3 class="pz__name">Chicken BBQ</h3>
+          <p class="pz__desc">Sauce tomate, mozzarella, poulet mariné, oignons, sauce barbecue.</p>
+          <p class="pz__price"><span class="price" data-solo="39" data-large="62">39</span> DH</p>
+        </li>
+        <li class="pz" data-tags="viandes" style="--i:10">
+          <div class="pz__burst" data-cursor="Miam"><svg class="burst" viewBox="0 0 200 200" aria-hidden="true"><use href="#burst"/></svg><img src="assets/img/pz-rustique.svg" alt="Pizza La Rustique" loading="lazy"></div>
+          <h3 class="pz__name">La Rustique</h3>
+          <p class="pz__desc">Sauce tomate, mozzarella, jambon, poulet mariné.</p>
+          <p class="pz__price"><span class="price" data-solo="42" data-large="65">42</span> DH</p>
+        </li>
+        <li class="pz" data-tags="viandes" style="--i:11">
+          <div class="pz__burst" data-cursor="Miam"><svg class="burst" viewBox="0 0 200 200" aria-hidden="true"><use href="#burst"/></svg><img src="assets/img/pz-corleone.svg" alt="Pizza Corleone" loading="lazy"></div>
+          <h3 class="pz__name">Corleone</h3>
+          <p class="pz__desc">Sauce tomate, mozzarella, viande hachée, poulet, jambon.</p>
+          <p class="pz__price"><span class="price" data-solo="42" data-large="65">42</span> DH</p>
+        </li>
+        <li class="pz" data-tags="viandes" style="--i:12">
+          <div class="pz__burst" data-cursor="Miam"><svg class="burst" viewBox="0 0 200 200" aria-hidden="true"><use href="#burst"/></svg><img src="assets/img/pz-smokey.svg" alt="Pizza La Smokey" loading="lazy"></div>
+          <h3 class="pz__name">La Smokey</h3>
+          <p class="pz__desc">Sauce tomate, mozzarella, viande hachée, oignons, sauce barbecue.</p>
+          <p class="pz__price"><span class="price" data-solo="45" data-large="69">45</span> DH</p>
+        </li>
+        <li class="pz" data-tags="viandes" style="--i:13">
+          <div class="pz__burst" data-cursor="Miam"><svg class="burst" viewBox="0 0 200 200" aria-hidden="true"><use href="#burst"/></svg><img src="assets/img/pz-spicy.svg" alt="Pizza La Spicy" loading="lazy"></div>
+          <h3 class="pz__name">La Spicy</h3>
+          <p class="pz__desc">Sauce tomate, mozzarella, jalapeños, viande hachée, poulet.</p>
+          <p class="pz__price"><span class="price" data-solo="45" data-large="69">45</span> DH</p>
+        </li>
+        <li class="pz" data-tags="viandes" style="--i:14">
+          <div class="pz__burst" data-cursor="Miam"><svg class="burst" viewBox="0 0 200 200" aria-hidden="true"><use href="#burst"/></svg><img src="assets/img/pz-carnivora.svg" alt="Pizza Carnivora" loading="lazy"></div>
+          <h3 class="pz__name">Carnivora</h3>
+          <p class="pz__desc">Sauce tomate, mozzarella, viande hachée, jambon, poulet.</p>
+          <p class="pz__price"><span class="price" data-solo="49" data-large="75">49</span> DH</p>
+        </li>
+        <li class="pz" data-tags="mer" style="--i:15">
+          <div class="pz__burst" data-cursor="Miam"><svg class="burst" viewBox="0 0 200 200" aria-hidden="true"><use href="#burst"/></svg><img src="assets/img/pz-fruits-de-mer.svg" alt="Pizza Fruits de mer" loading="lazy"></div>
+          <h3 class="pz__name">Fruits de mer</h3>
+          <p class="pz__desc">Sauce tomate, mozzarella, crevettes, calamars.</p>
+          <p class="pz__price"><span class="price" data-solo="53" data-large="79">53</span> DH</p>
+        </li>
+      </ul>
+      <p class="menu__note reveal">Prix en dirhams. Chaque pizza existe en solo ou en large : choisis ta taille juste au-dessus.</p>
+    </section>
+
+    <!-- FIRE -->
+    <section class="fire band band--orange" id="feu">
+      <p class="kicker reveal">Pièce par pièce</p>
+      <h2 class="shout shout--yellow reveal">Le feu de bois</h2>
+      <div class="fire__stage">
+        <svg class="flame" viewBox="0 0 200 260" aria-hidden="true">
+          <path class="flame__o" d="M100,10C120,60 170,80 170,150A70,70 0 0 1 30,150C30,110 60,95 62,60C80,80 85,95 92,96C96,70 90,40 100,10Z"/>
+          <path class="flame__i" d="M100,90C110,120 140,135 140,170A40,40 0 0 1 60,170C60,145 78,138 80,118C90,130 94,138 98,138C100,124 96,108 100,90Z"/>
+        </svg>
+        <ol class="steps">
+          <li class="step reveal"><span class="step__n">01</span><h3>La pâte</h3><p>Pétrie maison et étalée à la main, fine au centre, gonflée sur les bords.</p></li>
+          <li class="step reveal" style="--d:.1s"><span class="step__n">02</span><h3>La garniture</h3><p>Sauce tomate, mozzarella, puis la pièce qui change tout : poulet, pepperoni, fruits de mer…</p></li>
+          <li class="step reveal" style="--d:.2s"><span class="step__n">03</span><h3>Le four à bois</h3><p>Une cuisson vive au feu de bois pour une croûte dorée et légèrement fumée.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- STATEMENT -->
+    <section class="statement band band--orange" aria-label="Pièce par pièce, part par part">
+      <div class="statement__row" data-dir="1"><span>Pièce par pièce</span><svg viewBox="0 0 200 200" aria-hidden="true"><use href="#burst"/></svg><span>Pièce par pièce</span></div>
+      <div class="statement__row statement__row--outline" data-dir="-1"><span>Part par part</span><svg viewBox="0 0 200 200" aria-hidden="true"><use href="#pieceShape"/></svg><span>Part par part</span></div>
+    </section>
+
+    <!-- FIND US -->
+    <section class="find band band--blue" id="trouver">
+      <div class="find__copy">
+        <p class="kicker kicker--yellow reveal">On t'attend</p>
+        <h2 class="shout shout--yellow reveal">Nous trouver</h2>
+        <div class="phones reveal">
+          <a href="tel:+212707717717" class="phone"><span class="phone__lbl">Livraison &amp; commande</span><span class="phone__num">07.07.717.717</span></a>
+          <a href="tel:+212529717717" class="phone"><span class="phone__lbl">Fixe</span><span class="phone__num">05.29.717.717</span></a>
+        </div>
+        <div class="socials reveal">
+          <a href="https://www.instagram.com/puzzlepizza.ma/" target="_blank" rel="noopener" class="btn btn--outline btn--light magnetic"><span>Instagram</span></a>
+          <a href="https://www.facebook.com/puzzlepizza.ma/" target="_blank" rel="noopener" class="btn btn--outline btn--light magnetic"><span>Facebook</span></a>
+        </div>
+      </div>
+      <a class="map reveal" href="https://www.google.com/maps/search/?api=1&amp;query=Puzzle+Pizza+pizza+au+feu+de+bois" target="_blank" rel="noopener" data-cursor="Go">
+        <svg class="map__svg" viewBox="0 0 400 300" aria-hidden="true">
+          <rect width="400" height="300" fill="#fee3c1"/>
+          <path d="M-10,80 L410,40 M-10,200 L410,240 M90,-10 L130,310 M260,-10 L300,310 M-10,140 L410,130" stroke="#fff" stroke-width="18"/>
+          <path d="M-10,80 L410,40 M-10,200 L410,240 M90,-10 L130,310 M260,-10 L300,310 M-10,140 L410,130" stroke="#fdbeba" stroke-width="3" stroke-dasharray="10 10"/>
+          <rect x="150" y="160" width="90" height="56" fill="#f6e653" stroke="#292a2c" stroke-width="3"/>
+          <rect x="20" y="230" width="60" height="50" fill="#fdbeba" stroke="#292a2c" stroke-width="3"/>
+          <rect x="320" y="60" width="64" height="56" fill="#fdbeba" stroke="#292a2c" stroke-width="3"/>
+          <circle cx="330" cy="250" r="30" fill="#f6e653" stroke="#292a2c" stroke-width="3"/>
+        </svg>
+        <span class="map__pin"><svg viewBox="0 0 48 64" aria-hidden="true"><path d="M24 62S4 38 4 22a20 20 0 0 1 40 0c0 16-20 40-20 40z" fill="#ff4b0f" stroke="#292a2c" stroke-width="3.5"/><circle cx="24" cy="22" r="8" fill="#ffc700" stroke="#292a2c" stroke-width="3"/></svg></span>
+        <span class="map__cta">Ouvrir dans Google Maps →</span>
+      </a>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer band band--yellow">
+    <div class="footer__top">
+      <img class="footer__logo" src="assets/img/logo.png" alt="Puzzle Pizza">
+      <p class="footer__tag">Pizza au feu de bois.<br>Une part, puis une autre, puis une autre.</p>
+      <a href="#top" class="btn btn--outline magnetic"><span>Retour en haut ↑</span></a>
+    </div>
+    <p class="footer__giant" data-split aria-label="Puzzle Pizza">Puzzle Pizza</p>
+    <div class="footer__bottom"><span>© 2026 Puzzle Pizza</span><span>@puzzlepizza.ma</span></div>
+  </footer>
+
+  <script src="assets/js/puzzle.js"></script>
+</body>
+</html>

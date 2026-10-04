@@ -1,0 +1,78 @@
+/* =========================================================
+   BLOOM BURGER — palette override on top of the shared system.
+   Layout: same poster system as Ladoze, inverted to green ink on paper,
+   because the logo green (#0f3925) is too dark to read on a dark canvas.
+   ========================================================= */
+:root {
+  --wine: #f3f1e8;      /* paper canvas */
+  --burgundy: #e1e8dc;  /* sage surface */
+  --red: #0f3925;       /* Bloom green, logo ink: display, CTAs, active states */
+  --blush: #4b6b59;     /* soft green: secondary text */
+  --white: #0c2318;     /* ink: body text on paper */
+  --black: #000;
+  --cream: #f3f1e8;     /* text on green / black */
+  --soft-line: rgba(15, 57, 37, .18);
+  color-scheme: light;
+}
+
+body::after { opacity: .05; }
+::selection { color: var(--cream); }
+
+/* nav stays a black bar with paper text */
+.nav { color: var(--cream); }
+.nav__link:hover { color: #a9c7b3; }
+.nav__cart { color: var(--cream); }
+.nav__cart:hover { background: var(--red); color: var(--cream); }
+.nav__cart-count { color: var(--cream); }
+.nav__toggle span { background: var(--cream); }
+.nav__logo img { height: 50px; }
+.menu-overlay nav a:hover { color: #a9c7b3; }
+
+/* text sitting on green */
+.btn--red, .btn--red:hover { color: var(--cream); }
+.btn--red::before { background: var(--black); }
+.cursor__label { color: var(--cream); }
+.cursor { border-color: var(--red); }
+.cursor.is-hover { background: rgba(15, 57, 37, .1); }
+.sticker text { fill: var(--cream); }
+.tape--red { color: var(--cream); }
+.tape__track i { color: var(--cream); -webkit-text-stroke: 0; }
+.tape--blush { color: var(--cream); }
+.tab.is-active, .tab.is-active:hover { color: var(--cream); }
+.tabs { background: var(--burgundy); border-color: var(--soft-line); }
+.tab__badge { background: var(--wine); color: var(--white); }
+.tab.is-active .tab__badge { background: var(--cream); color: var(--red); }
+.card__price { color: var(--cream); }
+.card__price::after { content: "€"; font-size: .7em; margin-left: 1px; }
+.card__tag { color: var(--cream); background: var(--blush); }
+.card { border-color: var(--soft-line); }
+.card__media { background-image: radial-gradient(rgba(15, 57, 37, .14) 1.5px, transparent 1.6px); }
+.card__desc { color: var(--blush); }
+.add.is-added { color: var(--cream); }
+.step { border-color: var(--soft-line); }
+.step:hover { background: #d5dfcf; }
+.spot:hover .spot__city, .spot:hover .spot__idx, .spot:hover .spot__hours, .spot:hover .spot__addr, .spot:hover .spot__go { color: var(--cream); }
+.hero__scroll-line { background: var(--soft-line); }
+.newsletter__field input::placeholder { color: rgba(15, 57, 37, .45); }
+.loader__panel--red { background: var(--red); }
+
+/* circular logo: smaller finale, reveal works the same */
+.footer__logo img { width: min(70%, 460px); }
+.loader__logo { width: min(46vw, 300px); }
+.menu-overlay__logo { max-width: 200px; }
+
+/* Prices in dirhams, combo price on each burger */
+.card__price::after { content: "DH"; font-size: .55em; margin-left: 2px; }
+.card__menu {
+  margin: 12px 0 0;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  font: 500 12px/1.2 var(--font-ui);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--blush);
+}
+.card__menu b { font: 400 20px/1 var(--font-display); color: var(--red); letter-spacing: .02em; }
+.card__menu span { text-transform: none; letter-spacing: .02em; font-weight: 400; }
