@@ -404,6 +404,118 @@ figure, fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
   .fab { right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); }
 }
 
+
+/* =========================================================
+   INTERACTIONS — hover & click (sober, site-office precise)
+   ========================================================= */
+/* scroll progress: the logo's green → red */
+.progress { position: fixed; top: 0; left: 0; right: 0; z-index: 960; height: 3px; pointer-events: none; }
+.progress span { display: block; height: 100%; background: linear-gradient(90deg, var(--green), var(--green-2) 70%, var(--red)); transform: scaleX(0); transform-origin: left; }
+
+/* cursor: precise dot + lagging ring, labels on photos */
+.cursor, .cursor-ring { display: none; }
+.has-cursor .cursor { display: grid; place-items: center; position: fixed; top: 0; left: 0; z-index: 990; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; background: var(--green); pointer-events: none; transition: width .45s var(--ease), height .45s var(--ease), margin .45s var(--ease), background-color .3s, opacity .3s, scale .2s var(--ease); }
+.has-cursor .cursor-ring { display: block; position: fixed; top: 0; left: 0; z-index: 989; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; border: 1px solid rgba(4, 152, 53, .5); pointer-events: none; transition: width .45s var(--ease), height .45s var(--ease), margin .45s var(--ease), opacity .3s, border-color .3s, scale .3s var(--ease); }
+.cursor__label { font: 500 11px/1 var(--display); letter-spacing: .14em; text-transform: uppercase; color: #fff; opacity: 0; white-space: nowrap; transition: opacity .25s; }
+.cursor.is-label { width: 86px; height: 86px; margin: -43px 0 0 -43px; }
+.cursor.is-label .cursor__label { opacity: 1; }
+.cursor.is-label + .cursor-ring { opacity: 0; }
+.cursor.is-hover + .cursor-ring { width: 62px; height: 62px; margin: -31px 0 0 -31px; border-color: var(--green); }
+.cursor.is-down { scale: .5; }
+.cursor.is-down + .cursor-ring { scale: .8; }
+.cursor.is-hidden, .cursor.is-hidden + .cursor-ring { opacity: 0; }
+
+/* click canvas */
+.fx { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 985; pointer-events: none; }
+
+/* buttons: light sweep */
+.btn--green::after, .btn--dark::after { content: ""; position: absolute; top: -10%; bottom: -10%; left: -60%; width: 35%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .45), transparent); transform: skewX(-20deg); pointer-events: none; transition: transform .9s var(--ease); }
+.btn--green:hover::after, .btn--dark:hover::after { transform: skewX(-20deg) translateX(480%); }
+.hero__ctas .btn--green::after { animation: sweep 5s var(--ease) 3s infinite; }
+@keyframes sweep { 0%, 75% { transform: skewX(-20deg); } 100% { transform: skewX(-20deg) translateX(480%); } }
+
+/* logo: the swoosh redraws on hover */
+.logo .sw-g, .logo .sw-r { transition: clip-path .01s; }
+.logo:hover .sw-g { animation: wipe .9s var(--ease); }
+.logo:hover .sw-r { animation: wipe .9s var(--ease) .12s backwards; }
+.logo__word b { display: inline-block; transition: transform .5s var(--ease); }
+.logo:hover .logo__word b { transform: translateY(-3px) rotate(-6deg); }
+
+/* hero title letters */
+.hero.is-done .hero__title .line { overflow: visible; }
+.hero__title .word { display: inline-block; white-space: nowrap; }
+.hero__title .ch { display: inline-block; transition: transform .55s var(--ease), color .3s; }
+@media (hover: hover) {
+  .hero.is-done .hero__title .ch:hover { transform: translateY(-10%); color: var(--green-2); }
+  .hero.is-done .hero__title em .ch:hover { color: #fff; }
+  .hero.is-done .hero__title .ch:hover + .ch, .hero.is-done .hero__title .ch:has(+ .ch:hover) { transform: translateY(-4%); }
+}
+.hero__title.wave .ch { animation: cwave .8s var(--ease) calc(var(--i) * 20ms); }
+@keyframes cwave { 40% { transform: translateY(-14%); color: var(--green-2); } }
+.hero__tag { transition: transform .6s var(--ease), box-shadow .4s; animation: float 5s ease-in-out 2.5s infinite; }
+.hero__tag:hover { transform: translateY(-6px) scale(1.03); }
+@keyframes float { 50% { translate: 0 -8px; } }
+
+/* hero facts */
+.hero__facts li { position: relative; cursor: default; transition: background-color .4s; }
+.hero__facts li::after { content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 2px; background: var(--green-2); transform: scaleX(0); transform-origin: left; transition: transform .6s var(--ease); }
+.hero__facts b { transition: transform .5s var(--ease), color .3s; transform-origin: left; }
+.hero__facts li:hover { background: rgba(255, 255, 255, .03); }
+.hero__facts li:hover::after { transform: scaleX(1); }
+.hero__facts li:hover b { transform: scale(1.12); color: var(--green-2); }
+
+/* counters recount on hover */
+.counters li { cursor: default; }
+.counters b { transition: color .3s, transform .5s var(--ease); transform-origin: left bottom; }
+.counters li:hover b { color: var(--green); transform: scale(1.05); }
+
+/* expertise cards: icon lifts, card pops on click */
+.x { transition: color .5s, scale .25s var(--ease); }
+.x:active { scale: .98; }
+.x__ic { transition: stroke .4s, transform .6s var(--ease); }
+.x:hover .x__ic { transform: translateY(-6px) scale(1.08); }
+.x h3 { transition: transform .6s var(--ease); }
+.x:hover h3 { transform: translateX(6px); }
+
+/* tilt + glare on photos and cards */
+[data-tilt] { transition: transform .6s var(--ease); will-change: transform; }
+.glare { position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: inherit; background: radial-gradient(420px circle at var(--gx, 50%) var(--gy, 0%), rgba(255, 255, 255, .22), transparent 60%); opacity: 0; transition: opacity .4s; }
+.is-tilt > .glare { opacity: 1; }
+.safety__list li { position: relative; overflow: hidden; }
+
+/* sectors: a photo follows the pointer */
+.preview { position: fixed; top: 0; left: 0; z-index: 880; width: 280px; aspect-ratio: 4 / 3; border-radius: 10px; overflow: hidden; pointer-events: none; opacity: 0; box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .6); transition: opacity .35s; }
+.preview.is-on { opacity: 1; }
+.preview img { width: 100%; height: 100%; object-fit: cover; }
+.slist li { cursor: none; }
+
+/* method steps */
+.step__n { display: inline-block; transition: color .4s, transform .6s var(--ease); }
+.step:hover .step__n { transform: rotateX(360deg); color: var(--green); }
+.step:hover h3 { color: var(--green-d); }
+.step h3 { transition: color .3s; }
+
+/* footer word fills on hover */
+.foot__word { transition: --f .1s; cursor: default; }
+.foot__word:hover { --f: 100% !important; }
+
+/* call button rings on hover */
+.fab:hover svg { animation: ring .8s var(--ease); }
+@keyframes ring { 15%, 45%, 75% { transform: rotate(-14deg); } 30%, 60% { transform: rotate(14deg); } 90% { transform: none; } }
+.fab:active { scale: .9; }
+
+/* quote: sent state */
+.quote__send .check { position: absolute; left: 50%; top: 50%; width: 26px; height: 26px; margin: -13px 0 0 -13px; stroke-dasharray: 30; stroke-dashoffset: 30; opacity: 0; }
+.quote__send.is-sent > span, .quote__send.is-sent > .ic { opacity: 0; }
+.quote__send.is-sent .check { opacity: 1; animation: tick .6s var(--ease) .1s forwards; }
+.quote__send.is-sent { background: var(--green-d); }
+@keyframes tick { to { stroke-dashoffset: 0; } }
+
+/* lightbox opens from the clicked photo */
+.lightbox__img { transform-origin: 0 0; }
+
+@media (hover: none) { .slist li { cursor: default; } .preview { display: none; } }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }

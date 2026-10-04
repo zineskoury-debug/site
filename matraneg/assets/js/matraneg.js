@@ -33,6 +33,31 @@
     pText.textContent = ""; pText.append(frag);
   }
 
+  /* ---------- hero title: letters ---------- */
+  const heroTitle = $(".hero__title"), heroChars = [];
+  heroTitle.setAttribute("aria-label", heroTitle.textContent.replace(/\s+/g, " ").trim());
+  function splitChars(el) {
+    const frag = document.createDocumentFragment();
+    [...el.childNodes].forEach((n) => {
+      if (n.nodeType === 1) { splitChars(n); frag.append(n); return; }
+      n.textContent.split(/(\s+)/).forEach((part) => {
+        if (!part) return;
+        if (/^\s+$/.test(part)) return frag.append(" ");
+        const w = document.createElement("span");
+        w.className = "word";
+        [...part].forEach((c) => {
+          const ch = document.createElement("span");
+          ch.className = "ch"; ch.textContent = c;
+          ch.style.setProperty("--i", heroChars.length);
+          heroChars.push(ch); w.append(ch);
+        });
+        frag.append(w);
+      });
+    });
+    el.textContent = ""; el.append(frag);
+  }
+  $$(".line", heroTitle).forEach((l) => { l.setAttribute("aria-hidden", "true"); splitChars(l.firstElementChild); });
+
   /* ---------- loader ---------- */
   const beam = $(".loader__beam"), num = $(".loader__num");
   let fontsDone = false;
@@ -50,6 +75,7 @@
       body.classList.add("is-loaded");
       measure();
       $(".hero").classList.add("is-in");
+      setTimeout(() => $(".hero").classList.add("is-done"), reduce ? 0 : 1700);
       $$(".hero .reveal").forEach((el) => el.classList.add("is-in"));
       observe();
       setTimeout(() => $(".loader") && $(".loader").remove(), 1400);
@@ -85,16 +111,21 @@
     x.style.setProperty("--cy", `${e.clientY - r.top}px`);
   }));
 
-  /* ---------- tilt ---------- */
+  /* ---------- 3D tilt + glare: photos, cards ---------- */
+  $$(".p__img, .safety__list li").forEach((el) => (el.dataset.tilt = ""));
+  $$(".p__img, .safety__list li").forEach((el) => { const g = document.createElement("span"); g.className = "glare"; el.append(g); });
   if (fine && !reduce) $$("[data-tilt]").forEach((c) => {
+    const wrap = c.closest(".reveal");
     c.addEventListener("pointermove", (e) => {
+      if (wrap && !wrap.classList.contains("is-in")) return;
       const r = c.getBoundingClientRect();
       const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-      c.style.transform = `perspective(1000px) rotateX(${(0.5 - y) * 6}deg) rotateY(${(x - 0.5) * 8}deg)`;
+      c.style.transform = `perspective(1000px) rotateX(${(0.5 - y) * 7}deg) rotateY(${(x - 0.5) * 9}deg)`;
       c.style.setProperty("--gx", `${x * 100}%`);
       c.style.setProperty("--gy", `${y * 100}%`);
+      c.classList.add("is-tilt");
     });
-    c.addEventListener("pointerleave", () => (c.style.transform = ""));
+    c.addEventListener("pointerleave", () => { c.style.transform = ""; c.classList.remove("is-tilt"); });
   });
 
   /* ---------- mobile drawer ---------- */
@@ -105,11 +136,13 @@
 
   /* ---------- counters ---------- */
   function countUp(el) {
+    if (el.counting) return;
+    el.counting = true;
     const to = +el.dataset.count, from = +(el.dataset.from || 0), t1 = performance.now(), D = reduce ? 0 : 1600;
     (function tick(t) {
       const p = D ? clamp((t - t1) / D) : 1;
       el.textContent = Math.round(from + ease(p) * (to - from));
-      if (p < 1) requestAnimationFrame(tick);
+      if (p < 1) requestAnimationFrame(tick); else el.counting = false;
     })(t1);
   }
 
@@ -152,6 +185,10 @@
       `${v("name")} · ${v("phone")}`,
     ].join("\n");
     location.href = `mailto:matraneg@gmail.com?subject=${encodeURIComponent(`Demande de devis · ${type}`)}&body=${encodeURIComponent(bodyTxt)}`;
+    const send = $(".quote__send", form);
+    send.classList.add("is-sent");
+    burstAt(send, true);
+    setTimeout(() => send.classList.remove("is-sent"), 2600);
     note.textContent = "Votre messagerie s'ouvre avec la demande prête à envoyer. Vous pouvez aussi appeler le 05 22 67 42 47.";
     note.classList.add("ok");
   });
@@ -167,7 +204,13 @@
     lCap.textContent = $("figcaption b", shots[cur]).textContent;
     if (!reduce) lImg.animate([{ opacity: 0, transform: "scale(.96)" }, { opacity: 1, transform: "none" }], { duration: 500, easing: "cubic-bezier(.22,1,.36,1)" });
   }
-  function openL(i) { lastFocus = document.activeElement; show(i); lbx.classList.add("is-on"); lbx.setAttribute("aria-hidden", "false"); body.classList.add("lbx-open"); $(".lightbox__close").focus({ preventScroll: true }); }
+  function openL(i) {
+    lastFocus = document.activeElement; show(i); lbx.classList.add("is-on");
+    if (!reduce) requestAnimationFrame(() => {
+      const a = $("img", shots[cur]).getBoundingClientRect(), b = lImg.getBoundingClientRect();
+      lImg.animate([{ transform: `translate(${a.left - b.left}px, ${a.top - b.top}px) scale(${a.width / b.width}, ${a.height / b.height})`, opacity: 1 }, { transform: "none", opacity: 1 }], { duration: 700, easing: "cubic-bezier(.22,1,.36,1)" });
+    }); lbx.setAttribute("aria-hidden", "false"); body.classList.add("lbx-open"); $(".lightbox__close").focus({ preventScroll: true });
+  }
   function closeL() { if (cur < 0) return; lbx.classList.remove("is-on"); lbx.setAttribute("aria-hidden", "true"); body.classList.remove("lbx-open"); cur = -1; if (lastFocus) lastFocus.focus({ preventScroll: true }); }
   $$(".p__img").forEach((b) => b.addEventListener("click", () => openL(+b.dataset.i)));
   $(".lightbox__bg").addEventListener("click", closeL);
@@ -181,6 +224,103 @@
     if (e.key === "ArrowLeft") show(cur - 1);
   });
 
+  /* =========================================================
+     INTERACTIONS — hover & click
+     ========================================================= */
+
+  /* ---------- cursor ---------- */
+  const cursor = $(".cursor"), cLabel = $(".cursor__label"), ring = $(".cursor-ring");
+  let cx = mx, cy = my, rx = mx, ry = my, seen = false;
+  $$(".p__img").forEach((el) => (el.dataset.cursor = "Agrandir"));
+  addEventListener("pointermove", () => (seen = true), { passive: true, once: true });
+  if (fine && !reduce) {
+    body.classList.add("has-cursor");
+    document.addEventListener("pointerover", (e) => {
+      const lab = e.target.closest("[data-cursor]");
+      const hov = e.target.closest("a, button, label, input, select, textarea, .x, .counters li, .hero__facts li");
+      cursor.classList.toggle("is-label", !!lab);
+      cursor.classList.toggle("is-hover", !!hov && !lab);
+      if (lab) cLabel.textContent = lab.dataset.cursor;
+    });
+    document.documentElement.addEventListener("pointerleave", () => cursor.classList.add("is-hidden"));
+    document.documentElement.addEventListener("pointerenter", () => cursor.classList.remove("is-hidden"));
+  }
+  addEventListener("pointerdown", () => cursor.classList.add("is-down"));
+  addEventListener("pointerup", () => cursor.classList.remove("is-down"));
+
+  /* ---------- click: survey ring + ticks, green/red chips on CTAs ---------- */
+  const fx = $(".fx"), fctx = fx.getContext("2d");
+  let parts = [], fdpr = 1, fxLive = false;
+  function sizeFx() { fdpr = Math.min(2, devicePixelRatio || 1); fx.width = innerWidth * fdpr; fx.height = innerHeight * fdpr; }
+  function burst(x, y, big) {
+    if (reduce) return;
+    parts.push({ t: "ring", x, y, life: 0, max: big ? 40 : 30, R: big ? 80 : 44 });
+    parts.push({ t: "cross", x, y, life: 0, max: 26 });
+    const n = big ? 22 : 8;
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2 + Math.random() * 0.3, chip = big && i % 2 === 0;
+      const sp = chip ? 2.5 + Math.random() * 5 : 3 + Math.random() * 3;
+      parts.push({ t: chip ? "chip" : "tick", x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - (chip ? 2.5 : 0), life: 0, max: chip ? 55 + Math.random() * 25 : 22,
+        c: chip ? (i % 6 === 0 ? "#e82c32" : i % 3 === 0 ? "#16181a" : "#049835") : "#049835", w: chip ? 4 + Math.random() * 4 : 1.6, rot: Math.random() * 6, vr: (Math.random() - 0.5) * 0.4 });
+    }
+  }
+  function burstAt(el, big) { const r = el.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, big); }
+  function drawFx() {
+    fctx.setTransform(fdpr, 0, 0, fdpr, 0, 0);
+    fctx.clearRect(0, 0, innerWidth, innerHeight);
+    parts = parts.filter((q) => ++q.life < q.max);
+    for (const q of parts) {
+      const k = q.life / q.max;
+      fctx.globalAlpha = 1 - k;
+      if (q.t === "ring") {
+        fctx.strokeStyle = "#049835"; fctx.lineWidth = 1.6 * (1 - k) + 0.4;
+        fctx.beginPath(); fctx.arc(q.x, q.y, 3 + q.R * ease(k), 0, Math.PI * 2); fctx.stroke();
+        continue;
+      }
+      if (q.t === "cross") {
+        const L = 10 + 18 * ease(k);
+        fctx.strokeStyle = "#049835"; fctx.lineWidth = 1;
+        fctx.beginPath(); fctx.moveTo(q.x - L, q.y); fctx.lineTo(q.x - 4, q.y); fctx.moveTo(q.x + 4, q.y); fctx.lineTo(q.x + L, q.y);
+        fctx.moveTo(q.x, q.y - L); fctx.lineTo(q.x, q.y - 4); fctx.moveTo(q.x, q.y + 4); fctx.lineTo(q.x, q.y + L); fctx.stroke();
+        continue;
+      }
+      q.x += q.vx; q.y += q.vy;
+      if (q.t === "chip") {
+        q.vy += 0.18; q.vx *= 0.97; q.rot += q.vr;
+        fctx.save(); fctx.translate(q.x, q.y); fctx.rotate(q.rot); fctx.fillStyle = q.c; fctx.fillRect(-q.w / 2, -q.w / 2, q.w, q.w); fctx.restore();
+      } else {
+        q.vx *= 0.88; q.vy *= 0.88;
+        fctx.strokeStyle = q.c; fctx.lineWidth = q.w; fctx.lineCap = "round";
+        fctx.beginPath(); fctx.moveTo(q.x, q.y); fctx.lineTo(q.x - q.vx * 3, q.y - q.vy * 3); fctx.stroke();
+      }
+    }
+    fctx.globalAlpha = 1;
+  }
+  document.addEventListener("click", (e) => {
+    if (reduce || e.target.matches("input") || e.target.closest(".quote__send")) return;
+    let x = e.clientX, y = e.clientY;
+    if (!e.detail) { const r = e.target.getBoundingClientRect(); x = r.left + r.width / 2; y = r.top + r.height / 2; }
+    burst(x, y, !!e.target.closest(".btn--green, .fab, .chip"));
+  });
+
+  /* ---------- hero title: wave on click ---------- */
+  heroTitle.addEventListener("click", () => {
+    if (reduce) return;
+    heroTitle.classList.remove("wave"); void heroTitle.offsetWidth; heroTitle.classList.add("wave");
+    setTimeout(() => heroTitle.classList.remove("wave"), 800 + heroChars.length * 20);
+  });
+
+  /* ---------- counters and facts recount on hover ---------- */
+  $$(".counters li").forEach((li) => li.addEventListener(fine ? "pointerenter" : "click", () => li.classList.contains("is-in") && countUp($("b", li))));
+
+  /* ---------- sectors: photo preview follows the pointer ---------- */
+  const preview = $(".preview"), pImg = $("img", preview);
+  let px = mx, py = my;
+  if (fine) $$(".slist li").forEach((li) => {
+    li.addEventListener("pointerenter", () => { if (!pImg.src.endsWith(li.dataset.img)) pImg.src = li.dataset.img; preview.classList.add("is-on"); });
+    li.addEventListener("pointerleave", () => preview.classList.remove("is-on"));
+  });
+
   /* ---------- measure ---------- */
   const nav = $(".nav"), hero = $(".hero"), heroImg = $(".hero__img img"), heroCopy = $(".hero__copy");
   const band = $(".band__track"), bandP = $("p", band);
@@ -189,7 +329,8 @@
   const footWord = $(".foot__word"), fab = $(".fab");
   const links = $$(".nav__links a"), sections = links.map((a) => $(a.getAttribute("href")));
   let bandW = 1;
-  function measure() { vw = innerWidth; vh = innerHeight; bandW = bandP.offsetWidth || 1; }
+  const progress = $(".progress span");
+  function measure() { vw = innerWidth; vh = innerHeight; bandW = bandP.offsetWidth || 1; sizeFx(); }
   addEventListener("resize", measure);
   addEventListener("load", measure);
   measure();
@@ -253,6 +394,28 @@
     if (footWord.getBoundingClientRect().top < vh) footWord.style.setProperty("--f", `${clamp(1 - left / (vh * 0.7)) * 100}%`);
 
     fab.classList.toggle("is-on", y > vh * 0.8 && !menu);
+
+    // scroll progress
+    progress.style.transform = `scaleX(${clamp(y / Math.max(1, document.documentElement.scrollHeight - vh))})`;
+
+    // cursor
+    if (body.classList.contains("has-cursor")) {
+      cx = lerp(cx, mx, 0.25); cy = lerp(cy, my, 0.25);
+      rx = lerp(rx, mx, 0.12); ry = lerp(ry, my, 0.12);
+      cursor.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
+      ring.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
+      if (!seen) cursor.classList.add("is-hidden");
+    }
+
+    // sector preview
+    if (fine && !reduce) {
+      px = lerp(px, mx, 0.14); py = lerp(py, my, 0.14);
+      preview.style.transform = `translate3d(${px + 30}px, ${py - 110}px, 0) rotate(${clamp((mx - px) * 0.08, -10, 10)}deg) scale(${preview.classList.contains("is-on") ? 1 : 0.7})`;
+    }
+
+    // click particles
+    if (parts.length) { drawFx(); fxLive = true; }
+    else if (fxLive) { fctx.clearRect(0, 0, fx.width, fx.height); fxLive = false; }
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
