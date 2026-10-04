@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <script>document.documentElement.className="js"</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Matraneg · Travaux tous corps d'état</title>
+  <meta name="description" content="MATRANEG, entreprise générale de travaux à Casablanca depuis 2005 : bâtiment, travaux publics, terrassements, panneaux en béton architectonique, études, suivi de chantier, maintenance et négoce de matériaux.">
+  <meta name="theme-color" content="#16181a">
+  <meta property="og:title" content="Matraneg · Nous construisons vos rêves">
+  <meta property="og:description" content="Entreprise générale de travaux tous corps d'état à Casablanca depuis 2005.">
+  <meta property="og:image" content="assets/img/chantier-immeuble.jpg">
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+  <link rel="preload" href="assets/fonts/outfit-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/matraneg.css">
+</head>
+<body class="is-loading">
+
+  <!-- LOADER: the swoosh draws, the wordmark rises, a beam fills -->
+  <div class="loader" aria-hidden="true">
+    <div class="loader__inner">
+      <span class="logo logo--xl">
+        <svg class="logo__swoosh" viewBox="0 0 300 64"><path class="sw-g" d="M8 62C78 18 186 2 298 24L298 38C190 16 92 26 8 62Z"/><path class="sw-r" d="M88 30C160 2 240 -2 299 12L299 19C238 7 166 10 88 30Z"/></svg>
+        <span class="logo__word"><b>M</b>atraneg</span>
+      </span>
+      <div class="loader__beam"><span></span></div>
+      <p class="loader__count"><span class="loader__num">0</span>%</p>
+    </div>
+    <div class="loader__panel"></div>
+  </div>
+
+  <!-- NAV -->
+  <header class="nav" id="top">
+    <a href="#top" class="logo" aria-label="Matraneg, accueil">
+      <svg class="logo__swoosh" viewBox="0 0 300 64" aria-hidden="true"><path class="sw-g" d="M8 62C78 18 186 2 298 24L298 38C190 16 92 26 8 62Z"/><path class="sw-r" d="M88 30C160 2 240 -2 299 12L299 19C238 7 166 10 88 30Z"/></svg>
+      <span class="logo__word"><b>M</b>atraneg</span>
+      <small class="logo__tag">Travaux tous corps d'état</small>
+    </a>
+    <nav class="nav__links" aria-label="Navigation principale">
+      <a href="#expertises">Expertises</a>
+      <a href="#realisations">Réalisations</a>
+      <a href="#methode">Méthode</a>
+      <a href="#negoce">Négoce</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a href="tel:+212522674247" class="nav__tel"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5h2.6l1.4 4-2 1.5a12 12 0 0 0 6.4 6.4l1.5-2 4 1.4v2.6a2 2 0 0 1-2.2 2A17 17 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>05 22 67 42 47</a>
+    <a href="#contact" class="btn btn--green nav__cta magnetic"><span>Demander un devis</span></a>
+    <button class="nav__toggle" aria-label="Ouvrir le menu" aria-expanded="false"><span></span><span></span></button>
+  </header>
+  <div class="drawer" aria-hidden="true">
+    <a href="#expertises" style="--i:0">Expertises</a>
+    <a href="#realisations" style="--i:1">Réalisations</a>
+    <a href="#methode" style="--i:2">Méthode</a>
+    <a href="#negoce" style="--i:3">Négoce</a>
+    <a href="#contact" style="--i:4">Contact</a>
+    <p class="drawer__meta" style="--i:5"><a href="tel:+212522674247">05 22 67 42 47</a><br><a href="mailto:matraneg@gmail.com">matraneg@gmail.com</a></p>
+  </div>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero__grid" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="hero__copy">
+        <p class="eyebrow reveal" style="--d:.1s">Entreprise générale de travaux · Casablanca · Depuis 2005</p>
+        <h1 class="hero__title">
+          <span class="line"><span>Nous construisons</span></span>
+          <span class="line"><span><em>vos rêves.</em></span></span>
+        </h1>
+        <p class="hero__lead reveal" style="--d:.7s">Bâtiment, travaux publics, terrassements et béton architectonique : MATRANEG conçoit, chiffre, réalise et entretient vos ouvrages, de l'avant-projet à la remise des clés.</p>
+        <div class="hero__ctas reveal" style="--d:.85s">
+          <a href="#contact" class="btn btn--green btn--lg magnetic"><span>Demander un devis</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></a>
+          <a href="#realisations" class="btn btn--ghost btn--lg magnetic"><span>Nos chantiers</span></a>
+        </div>
+      </div>
+      <figure class="hero__media">
+        <div class="hero__img"><img src="assets/img/chantier-immeuble.jpg" alt="Immeuble en construction par Matraneg, grue à tour et façades en cours" width="1200" height="1332"></div>
+        <figcaption class="hero__tag reveal" style="--d:1.2s"><span class="dot"></span>Chantier en cours<b>Gros œuvre & façades</b></figcaption>
+      </figure>
+      <ul class="hero__facts reveal" style="--d:1s">
+        <li><b>2005</b><span>Année de création</span></li>
+        <li><b>TCE</b><span>Tous corps d'état</span></li>
+        <li><b>BTP</b><span>Bâtiment & travaux publics</span></li>
+        <li><b>360°</b><span>Étude, réalisation, maintenance</span></li>
+      </ul>
+    </section>
+
+    <!-- MARQUEE -->
+    <div class="band" aria-hidden="true">
+      <div class="band__track">
+        <p>Gros œuvre <i></i> Terrassements <i></i> Béton architectonique <i></i> Génie civil <i></i> Aménagement <i></i> Éclairage public <i></i> Réseaux <i></i> Maintenance <i></i> </p>
+        <p>Gros œuvre <i></i> Terrassements <i></i> Béton architectonique <i></i> Génie civil <i></i> Aménagement <i></i> Éclairage public <i></i> Réseaux <i></i> Maintenance <i></i> </p>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <section class="about" id="apropos">
+      <div class="wrap about__grid">
+        <div>
+          <p class="eyebrow reveal">L'entreprise</p>
+          <h2 class="title reveal" style="--d:.08s">Bâtir solide, <em>livrer juste.</em></h2>
+        </div>
+        <div class="about__txt">
+          <p class="about__big" data-words>Depuis 2005, MATRANEG accompagne maîtres d'ouvrage, promoteurs et collectivités sur des ouvrages qui améliorent le cadre de vie de chacun : logements, écoles, hôpitaux, stades et infrastructures.</p>
+          <p class="reveal">Société à responsabilité limitée immatriculée au registre du commerce de Casablanca, MATRANEG réunit sous un même toit les métiers du bâtiment, des travaux publics, de l'énergie et des services, ainsi qu'une activité de négoce de matériaux et d'équipements.</p>
+        </div>
+      </div>
+      <ul class="wrap counters">
+        <li class="reveal"><b data-count="2005" data-from="1990">2005</b><span>Création à Casablanca</span></li>
+        <li class="reveal" style="--d:.1s"><b data-years>20</b><span>Années d'expérience</span></li>
+        <li class="reveal" style="--d:.2s"><b data-count="6">6</b><span>Métiers intégrés</span></li>
+        <li class="reveal" style="--d:.3s"><b data-count="3">3</b><span>Pôles : bâtiment, TP, négoce</span></li>
+      </ul>
+    </section>
+
+    <!-- EXPERTISES -->
+    <section class="expertises" id="expertises">
+      <div class="wrap">
+        <div class="head">
+          <p class="eyebrow reveal">Expertises</p>
+          <h2 class="title reveal" style="--d:.08s">Un seul interlocuteur, <em>tous les corps d'état.</em></h2>
+        </div>
+        <div class="xgrid">
+          <article class="x reveal" style="--d:0s">
+            <svg class="x__ic" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 42h36M10 42V18l14-10 14 10v24M18 42V28h12v14M16 22h4M28 22h4"/></svg>
+            <h3>Bâtiment</h3>
+            <p>Gros œuvre et second œuvre pour logements, bureaux, équipements publics et bâtiments industriels.</p>
+            <span class="x__n">01</span>
+          </article>
+          <article class="x reveal" style="--d:.08s">
+            <svg class="x__ic" viewBox="0 0 48 48" aria-hidden="true"><path d="M4 38h40M8 38l6-14h10l4 6h8l4 8M14 24l-2-8h10l2 8M30 30l8-14 4 2"/></svg>
+            <h3>Travaux publics & terrassements</h3>
+            <p>Terrassements généraux, fondations, voiries et réseaux divers, ouvrages de génie civil.</p>
+            <span class="x__n">02</span>
+          </article>
+          <article class="x reveal" style="--d:.16s">
+            <svg class="x__ic" viewBox="0 0 48 48" aria-hidden="true"><path d="M8 6h32v36H8zM8 18h32M8 30h32M20 6v12M28 18v12M18 30v12"/></svg>
+            <h3>Béton architectonique</h3>
+            <p>Fabrication et pose de panneaux en béton architectonique pour des façades durables et soignées.</p>
+            <span class="x__n">03</span>
+          </article>
+          <article class="x reveal" style="--d:0s">
+            <svg class="x__ic" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 44V20M24 20c-6 0-10-4-10-10h20c0 6-4 10-10 10zM18 44h12M10 16l-4-2M38 16l4-2M24 6V2"/></svg>
+            <h3>Énergie & éclairage public</h3>
+            <p>Réseaux électriques, éclairage public et équipements d'énergie pour la ville et les sites.</p>
+            <span class="x__n">04</span>
+          </article>
+          <article class="x reveal" style="--d:.08s">
+            <svg class="x__ic" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 24h8l4-10 6 20 6-16 4 6h8M24 6a18 18 0 1 1 0 36 18 18 0 0 1 0-36"/></svg>
+            <h3>Réseaux haut débit</h3>
+            <p>Génie civil télécom : tranchées, fourreaux, chambres de tirage et raccordements.</p>
+            <span class="x__n">05</span>
+          </article>
+          <article class="x reveal" style="--d:.16s">
+            <svg class="x__ic" viewBox="0 0 48 48" aria-hidden="true"><path d="M30 6a10 10 0 0 0-9 14L6 35l7 7 15-15a10 10 0 0 0 14-9l-6 6-6-2-2-6z"/></svg>
+            <h3>Exploitation & maintenance</h3>
+            <p>Plans de maintenance, entretien et interventions pour faire durer vos ouvrages.</p>
+            <span class="x__n">06</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTORS -->
+    <section class="sectors">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--light reveal">Secteurs d'intervention</p>
+        <ul class="slist">
+          <li><span>Logements</span><em>Résidentiel</em></li>
+          <li><span>Écoles</span><em>Éducation</em></li>
+          <li><span>Hôpitaux</span><em>Santé</em></li>
+          <li><span>Stades</span><em>Sport</em></li>
+          <li><span>Infrastructures de transport</span><em>Mobilité</em></li>
+          <li><span>Éclairage public</span><em>Ville</em></li>
+          <li><span>Réseaux haut débit</span><em>Télécom</em></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="projects" id="realisations">
+      <div class="wrap">
+        <div class="head head--row">
+          <div>
+            <p class="eyebrow reveal">Sur nos chantiers</p>
+            <h2 class="title reveal" style="--d:.08s">Le travail <em>parle pour nous.</em></h2>
+          </div>
+          <p class="head__lead reveal" style="--d:.16s">Fondations, voiles, dalles, structures et façades : quelques images de nos équipes à l'œuvre. Cliquez pour agrandir.</p>
+        </div>
+        <div class="pgrid">
+          <figure class="p p--tall reveal">
+            <button class="p__img" data-i="0" aria-label="Agrandir : immeuble en construction"><img src="assets/img/chantier-immeuble.jpg" alt="Immeuble en construction, grue à tour et façades en cours" loading="lazy" width="1200" height="1332"></button>
+            <figcaption><span>01</span><b>Immeuble · gros œuvre & façades</b><small>Structure béton armé, maçonnerie et menuiseries</small></figcaption>
+          </figure>
+          <figure class="p reveal" style="--d:.1s">
+            <button class="p__img" data-i="1" aria-label="Agrandir : coulage de dalle"><img src="assets/img/chantier-coulage.jpg" alt="Coulage d'une dalle béton à la pompe, ouvriers en tenue de sécurité" loading="lazy" width="1600" height="905"></button>
+            <figcaption><span>02</span><b>Coulage de dalle à la pompe</b><small>Fondations et radier, voiles périphériques</small></figcaption>
+          </figure>
+          <figure class="p reveal" style="--d:.2s">
+            <button class="p__img" data-i="2" aria-label="Agrandir : ferraillage"><img src="assets/img/chantier-fondations.jpg" alt="Ferraillage des poteaux et compagnons en gilets orange sur le radier" loading="lazy" width="1600" height="1013"></button>
+            <figcaption><span>03</span><b>Ferraillage & voiles</b><small>Armatures des poteaux, étanchéité des voiles enterrés</small></figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- METHOD -->
+    <section class="method" id="methode">
+      <div class="wrap method__grid">
+        <div class="method__head">
+          <p class="eyebrow reveal">Notre méthode</p>
+          <h2 class="title reveal" style="--d:.08s">De l'idée <em>à l'ouvrage.</em></h2>
+          <p class="head__lead reveal" style="--d:.16s">Six étapes maîtrisées en interne, pour tenir les coûts, les délais et la qualité.</p>
+          <a href="#contact" class="btn btn--dark magnetic reveal" style="--d:.24s"><span>Parler de votre projet</span></a>
+        </div>
+        <ol class="steps">
+          <li class="step"><span class="step__n">01</span><div><h3>Avant-projet</h3><p>Analyse du besoin, du site et des contraintes ; esquisse et faisabilité.</p></div></li>
+          <li class="step"><span class="step__n">02</span><div><h3>Étude technique</h3><p>Conception technique du projet de BTP, plans et choix des procédés.</p></div></li>
+          <li class="step"><span class="step__n">03</span><div><h3>Estimation & chiffrage</h3><p>Calcul précis des prix et des coûts, pour un budget clair dès le départ.</p></div></li>
+          <li class="step"><span class="step__n">04</span><div><h3>Réalisation & suivi</h3><p>Exécution et suivi de chantier des travaux de génie civil, tous corps d'état.</p></div></li>
+          <li class="step"><span class="step__n">05</span><div><h3>Maîtrise d'ouvrage</h3><p>Pilotage, coordination des intervenants et réception des travaux.</p></div></li>
+          <li class="step"><span class="step__n">06</span><div><h3>Plan de maintenance</h3><p>Élaboration du plan d'entretien, exploitation et maintenance des ouvrages.</p></div></li>
+          <li class="steps__line" aria-hidden="true"><span></span></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- SAFETY -->
+    <section class="safety">
+      <div class="safety__bg" aria-hidden="true"><img src="assets/img/chantier-coulage.jpg" alt="" loading="lazy"></div>
+      <div class="wrap safety__inner">
+        <p class="eyebrow eyebrow--light reveal">Sécurité</p>
+        <p class="safety__title reveal" style="--d:.08s">Votre sécurité,<br><em>notre métier.</em></p>
+        <ul class="safety__list">
+          <li class="reveal" style="--d:.1s"><b>Équipements</b>Casques, gilets et protections pour chaque compagnon.</li>
+          <li class="reveal" style="--d:.2s"><b>Chantiers balisés</b>Accès, circulations et zones de travail sécurisés.</li>
+          <li class="reveal" style="--d:.3s"><b>Encadrement</b>Ingénieurs et chefs de chantier présents sur site.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- TRADING -->
+    <section class="negoce" id="negoce">
+      <div class="wrap negoce__grid">
+        <div class="negoce__card reveal" data-tilt>
+          <span class="negoce__glare" aria-hidden="true"></span>
+          <p class="eyebrow">Négoce</p>
+          <h2 class="title">Matériaux <em>& équipements.</em></h2>
+          <p>En plus des travaux, MATRANEG assure le négoce de matériaux, d'équipements et de matériel divers, ainsi qu'une activité de droguerie : un approvisionnement fiable pour vos chantiers.</p>
+          <a href="#contact" class="btn btn--green magnetic" data-type="Négoce de matériaux"><span>Demander une cotation</span></a>
+        </div>
+        <ul class="negoce__list">
+          <li class="reveal"><span>A</span>Matériaux de construction</li>
+          <li class="reveal" style="--d:.08s"><span>B</span>Équipements de chantier</li>
+          <li class="reveal" style="--d:.16s"><span>C</span>Matériel divers</li>
+          <li class="reveal" style="--d:.24s"><span>D</span>Droguerie</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="contact" id="contact">
+      <div class="wrap contact__grid">
+        <div class="contact__info">
+          <p class="eyebrow eyebrow--light reveal">Contact & devis</p>
+          <h2 class="title reveal" style="--d:.08s">Parlons de <em>votre projet.</em></h2>
+          <p class="head__lead reveal" style="--d:.16s">Décrivez votre besoin en quelques clics : notre équipe vous recontacte avec une première estimation.</p>
+          <ul class="cinfo reveal" style="--d:.24s">
+            <li><span>Téléphone</span><a href="tel:+212522674247">+212 5 22 67 42 47</a></li>
+            <li><span>Email</span><a href="mailto:matraneg@gmail.com">matraneg@gmail.com</a></li>
+            <li><span>Siège</span>Casablanca, Maroc</li>
+          </ul>
+          <dl class="legal reveal" style="--d:.32s">
+            <div><dt>Forme</dt><dd>SARL</dd></div>
+            <div><dt>RC Casablanca</dt><dd>137817</dd></div>
+            <div><dt>ICE</dt><dd>000035827000052</dd></div>
+            <div><dt>IF</dt><dd>1661370</dd></div>
+          </dl>
+        </div>
+
+        <form class="quote reveal" style="--d:.1s" novalidate>
+          <fieldset>
+            <legend>Type de projet</legend>
+            <div class="chips">
+              <label class="chip"><input type="radio" name="type" value="Construction neuve" checked><span>Construction neuve</span></label>
+              <label class="chip"><input type="radio" name="type" value="Travaux publics / terrassement"><span>Travaux publics</span></label>
+              <label class="chip"><input type="radio" name="type" value="Aménagement / rénovation"><span>Aménagement</span></label>
+              <label class="chip"><input type="radio" name="type" value="Béton architectonique"><span>Béton architectonique</span></label>
+              <label class="chip"><input type="radio" name="type" value="Maintenance"><span>Maintenance</span></label>
+              <label class="chip"><input type="radio" name="type" value="Négoce de matériaux"><span>Négoce</span></label>
+            </div>
+          </fieldset>
+          <div class="frow">
+            <label class="field"><span>Nom / société</span><input name="name" autocomplete="organization" required></label>
+            <label class="field"><span>Téléphone</span><input name="phone" type="tel" autocomplete="tel" required></label>
+          </div>
+          <div class="frow">
+            <label class="field"><span>Ville du projet</span><input name="city" placeholder="Casablanca"></label>
+            <label class="field"><span>Délai souhaité</span>
+              <select name="delay"><option>Dès que possible</option><option>Sous 3 mois</option><option>Sous 6 mois</option><option>Plus tard / à l'étude</option></select>
+            </label>
+          </div>
+          <label class="field"><span>Votre projet</span><textarea name="msg" rows="4" placeholder="Surface, nature des travaux, contraintes…"></textarea></label>
+          <button class="btn btn--green btn--lg btn--block" type="submit"><span>Envoyer ma demande</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+          <p class="quote__note" aria-live="polite">Votre demande s'ouvre dans votre messagerie, prête à être envoyée.</p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot__top">
+      <a href="#top" class="logo logo--light" aria-label="Retour en haut">
+        <svg class="logo__swoosh" viewBox="0 0 300 64" aria-hidden="true"><path class="sw-g" d="M8 62C78 18 186 2 298 24L298 38C190 16 92 26 8 62Z"/><path class="sw-r" d="M88 30C160 2 240 -2 299 12L299 19C238 7 166 10 88 30Z"/></svg>
+        <span class="logo__word"><b>M</b>atraneg</span>
+        <small class="logo__tag">Société de travaux divers et de négoce</small>
+      </a>
+      <nav class="foot__nav" aria-label="Pied de page">
+        <a href="#expertises">Expertises</a><a href="#realisations">Réalisations</a><a href="#methode">Méthode</a><a href="#negoce">Négoce</a><a href="#contact">Contact</a>
+      </nav>
+    </div>
+    <p class="foot__word" aria-hidden="true">MATRANEG</p>
+    <div class="wrap foot__bottom">
+      <p>© <span data-year>2026</span> MATRANEG SARL · RC Casablanca 137817 · ICE 000035827000052 · IF 1661370</p>
+      <a href="#top">Haut de page ↑</a>
+    </div>
+  </footer>
+
+  <a href="tel:+212522674247" class="fab" aria-label="Appeler Matraneg"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5h2.6l1.4 4-2 1.5a12 12 0 0 0 6.4 6.4l1.5-2 4 1.4v2.6a2 2 0 0 1-2.2 2A17 17 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></a>
+
+  <div class="lightbox" role="dialog" aria-modal="true" aria-label="Photo de chantier" aria-hidden="true">
+    <div class="lightbox__bg"></div>
+    <img class="lightbox__img" src="assets/img/chantier-immeuble.jpg" alt="">
+    <p class="lightbox__cap"></p>
+    <button class="lightbox__btn lightbox__prev" aria-label="Photo précédente">←</button>
+    <button class="lightbox__btn lightbox__next" aria-label="Photo suivante">→</button>
+    <button class="lightbox__btn lightbox__close" aria-label="Fermer">✕</button>
+  </div>
+
+  <script src="assets/js/matraneg.js" defer></script>
+</body>
+</html>
