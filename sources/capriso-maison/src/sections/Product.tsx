@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { Drip } from '../components/Drip'
 import { gsap, revealLines, useGsap } from '../animations/motion'
 import { stage } from '../3d/stage'
 import { SplitText } from '../components/SplitText'
@@ -60,6 +61,7 @@ export function Product({ onGlow, webgl }: { onGlow: (v: number) => void; webgl:
       className="relative h-[420vh] text-ivory"
       aria-labelledby="product-title"
     >
+      <Drip color="var(--flavor-bg, var(--color-ivory))" seed={7} count={11} />
       <div className="sticky top-0 grid h-[100svh] grid-rows-[auto_1fr_auto] px-[var(--gutter)] pt-[calc(var(--nav-h)+4vh)] pb-10">
         <div data-title className="flex items-start justify-between gap-6">
           <div>

@@ -1,4 +1,5 @@
 import { revealLines, scrollToTarget, useGsap } from '../animations/motion'
+import { Drip } from './Drip'
 import { asset, site } from '../data/site'
 import { SplitText } from './SplitText'
 
@@ -8,7 +9,8 @@ export function Footer() {
   })
 
   return (
-    <footer ref={ref} id="contact" data-theme="dark" className="relative z-10 overflow-hidden bg-cocoa px-[var(--gutter)] pt-[18vh] pb-8 text-ivory">
+    <footer ref={ref} id="contact" data-theme="dark" className="relative z-10 overflow-hidden bg-cocoa px-[var(--gutter)] pt-[26vh] pb-8 text-ivory">
+      <Drip color="var(--color-sun)" seed={5} count={15} />
       <SplitText as="p" text={'À bientôt\npour une *glace.*'} className="display text-[clamp(3.6rem,11vw,12rem)] text-ivory" />
 
       <div className="mt-[14vh] grid gap-12 border-t border-ivory/15 pt-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">

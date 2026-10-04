@@ -52,6 +52,23 @@ Un seul canvas fixe est placé derrière la page. Chaque section écrit sa progr
 
 Le rendu WebGL s'arrête complètement quand aucune zone 3D n'est à l'écran.
 
+### Effets au scroll et au clic
+
+| Où | Effet |
+| --- | --- |
+| Partout | Clic : éclat de vermicelles (`components/Sprinkles.tsx`), teinté par `data-sprinkle` |
+| Partout | La vitesse du scroll (`stage.velocity`) incline et étire les éléments `data-skew`, la glace 3D et les ingrédients |
+| Titres | Révélation lettre par lettre en 3D ; chaque lettre réagit au survol |
+| Hero | Clic sur la glace : nouveau parfum (rebond élastique, effet gélatine) ; les lettres se dispersent au scroll |
+| Entre sections | Coulures de glace qui s'allongent au scroll (`components/Drip.tsx`, filtre SVG « gooey ») |
+| Transformation | Anneau de mots qui tourne autour de la coupe |
+| Notre glace | Mots géants qui glissent derrière le pot 3D |
+| Savoir-faire | Défilement horizontal des quatre étapes (desktop), dessins tracés au scroll |
+| Bandeaux | Défilement qui accélère et change de sens avec le scroll, ralentit au survol |
+| Offres | Les cartes se retournent en 3D au clic |
+| Boutons | Remplissage liquide, onde au point de clic, effet magnétique |
+| Coin bas gauche | Cornet qui se remplit selon la progression ; clic = retour en haut |
+
 ## Performance et accessibilité
 
 - Three.js est chargé dans un chunk séparé, en parallèle du preloader. Le bundle initial pèse ~135 ko gzip.

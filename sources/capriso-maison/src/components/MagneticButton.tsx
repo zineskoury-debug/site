@@ -61,6 +61,19 @@ export function MagneticButton({ children, variant = 'ink', strength = 14, icon,
     <a
       ref={el}
       href={href}
+      onPointerDown={(e) => {
+        // ripple from the exact click point + a little elastic squish
+        const a = el.current
+        if (!a || prefersReducedMotion()) return
+        const r = a.getBoundingClientRect()
+        const dot = document.createElement('span')
+        dot.className = 'btn__ripple'
+        dot.style.left = `${e.clientX - r.left}px`
+        dot.style.top = `${e.clientY - r.top}px`
+        a.appendChild(dot)
+        gsap.fromTo(dot, { scale: 0, opacity: 0.55 }, { scale: (r.width / 10) * 1.2, opacity: 0, duration: 0.9, ease: 'power2.out', onComplete: () => dot.remove() })
+        gsap.fromTo(a, { scale: 0.93 }, { scale: 1, duration: 0.9, ease: 'elastic.out(1, 0.35)' })
+      }}
       onClick={(e) => {
         onClick?.(e)
         if (!e.defaultPrevented && href?.startsWith('#')) {

@@ -65,6 +65,7 @@ export function Story() {
         <div
           ref={img}
           data-parallax
+          data-skew
           className="group relative mt-[10vh] aspect-[3/4] w-[78%] max-w-[420px] overflow-hidden bg-[#efd9cf] md:w-[85%]"
           onPointerMove={onMove}
           data-cursor="Voir"

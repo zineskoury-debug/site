@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { gsap, revealLines, useGsap } from '../animations/motion'
+import { flavors } from '../data/flavors'
 import { SplitText } from '../components/SplitText'
 import { products } from '../data/products'
 
@@ -6,12 +8,15 @@ const LAYOUT = ['md:col-span-5 md:row-start-1', 'md:col-span-4 md:col-start-7 md
 const TINTS = ['#e3e1c7', '#f3dcd6', '#ead7c4']
 
 export function Choose() {
+  const [flipped, setFlipped] = useState<boolean[]>(() => products.map(() => false))
+  const toggle = (i: number) => setFlipped((f) => f.map((v, j) => (j === i ? !v : v)))
   const ref = useGsap<HTMLElement>(({ root, q, reduced }) => {
     revealLines(q('[data-title] .line-inner'), root, {}, 'top 70%')
     if (reduced) return
     q('[data-product]').forEach((card, i) => {
       gsap.from(card.querySelector('[data-frame]'), {
         clipPath: 'inset(100% 0% 0% 0%)',
+        clearProps: 'clipPath',
         duration: 1.6,
         ease: 'expo.inOut',
         delay: i * 0.08,
@@ -62,23 +67,56 @@ export function Choose() {
         {products.map((p, i) => (
           <li key={p.id} data-product className={LAYOUT[i]}>
             <article className="group" onPointerMove={onMove} onPointerLeave={onLeave} data-cursor="Voir">
-              <div data-frame className="grain relative aspect-[4/5] overflow-hidden [perspective:900px]" style={{ backgroundColor: TINTS[i] }}>
-                <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_40%,rgba(255,255,255,.6),transparent_70%)]" />
-                <span className="display absolute top-5 left-5 text-[clamp(3rem,6vw,6rem)] text-ink/10" aria-hidden="true">
-                  <em>{p.italian}</em>
-                </span>
-                <div data-img-wrap className="absolute inset-0 [transform-style:preserve-3d]">
-                  <img
-                    src={p.image}
-                    alt={p.alt}
-                    loading="lazy"
-                    decoding="async"
-                    className="absolute inset-x-[8%] bottom-[5%] h-[86%] w-[84%] object-contain transition-transform duration-[2.4s] ease-[var(--ease-out-expo)] group-hover:scale-[1.05]"
-                  />
+              <div data-frame data-skew className="relative aspect-[4/5] [perspective:1400px]">
+                <div className={`flipper absolute inset-0 ${flipped[i] ? 'is-flipped' : ''}`}>
+                  {/* front: the product */}
+                  <div className="face grain absolute inset-0 overflow-hidden [perspective:900px]" style={{ backgroundColor: TINTS[i] }}>
+                    <div className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_40%,rgba(255,255,255,.6),transparent_70%)]" />
+                    <span className="display absolute top-5 left-5 text-[clamp(3rem,6vw,6rem)] text-ink/10" aria-hidden="true">
+                      <em>{p.italian}</em>
+                    </span>
+                    <div data-img-wrap className="absolute inset-0 [transform-style:preserve-3d]">
+                      <img
+                        src={p.image}
+                        alt={p.alt}
+                        loading="lazy"
+                        decoding="async"
+                        className="absolute inset-x-[8%] bottom-[5%] h-[86%] w-[84%] object-contain transition-transform duration-[2.4s] ease-[var(--ease-out-expo)] group-hover:scale-[1.05]"
+                      />
+                    </div>
+                    <span className="eyebrow absolute right-5 bottom-5 translate-y-3 rounded-full bg-ivory/85 px-4 py-2 !text-[0.6rem] text-ink opacity-0 backdrop-blur transition-[opacity,transform] duration-700 ease-[var(--ease-out-expo)] group-hover:translate-y-0 group-hover:opacity-100">
+                      ↻ Retourner
+                    </span>
+                  </div>
+                  {/* back: what is inside */}
+                  <div className="face face--back grain absolute inset-0 flex flex-col justify-between overflow-hidden bg-wine p-[clamp(1.25rem,2.6vw,2.25rem)] text-ivory">
+                    <span className="display outline-num-light pointer-events-none absolute -right-[0.08em] -bottom-[0.2em] text-[clamp(12rem,24vw,22rem)]" aria-hidden="true">
+                      {p.scoops}
+                    </span>
+                    <p className="eyebrow relative text-vanilla">
+                      {p.italian} — {p.scoops} {p.scoops > 1 ? 'parfums' : 'parfum'}
+                    </p>
+                    <div className="relative">
+                      <p className="display text-[clamp(3.6rem,7vw,6.4rem)]">{p.price}</p>
+                      <ul className="mt-6 space-y-2 text-[0.95rem] text-ivory/85">
+                        <li>Au choix : cornet croustillant ou coupe.</li>
+                        <li>
+                          Parmi : {flavors.map((f) => f.name).join(', ')}.
+                        </li>
+                      </ul>
+                    </div>
+                    <p className="eyebrow relative !text-[0.6rem] text-ivory/70">↺ Cliquez pour revenir</p>
+                  </div>
                 </div>
-                <span className="eyebrow absolute right-5 bottom-5 translate-y-3 rounded-full bg-ivory/85 px-4 py-2 !text-[0.6rem] text-ink opacity-0 backdrop-blur transition-[opacity,transform] duration-700 ease-[var(--ease-out-expo)] group-hover:translate-y-0 group-hover:opacity-100">
-                  Cornet ou coupe
-                </span>
+                <button
+                  type="button"
+                  className="absolute inset-0 z-10 cursor-pointer rounded-[2px]"
+                  aria-pressed={flipped[i]}
+                  aria-label={flipped[i] ? `Revenir à l’image de ${p.name.toLowerCase()}` : `Voir le détail de ${p.name.toLowerCase()}`}
+                  data-cursor={flipped[i] ? 'Retour' : 'Retourner'}
+                  data-sprinkle={i === 0 ? '#9aa66a,#b4b97e,#d6a05c' : i === 1 ? '#eba1a6,#f3e4bd,#c94a5a' : '#5b3424,#c99d72,#f4eaa8'}
+                  onClick={() => toggle(i)}
+                />
               </div>
               <div data-info className="mt-6 flex items-start justify-between gap-6">
                 <div>

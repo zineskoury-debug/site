@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import { Drip } from '../components/Drip'
 import { gsap, revealLines, useGsap } from '../animations/motion'
 import { MagneticButton } from '../components/MagneticButton'
 import { SplitText } from '../components/SplitText'
@@ -40,6 +41,7 @@ export function FinalCta() {
       onPointerMove={onMove}
       aria-labelledby="cta-title"
     >
+      <Drip color="var(--color-cream)" seed={11} />
       <div ref={scoop} className="pointer-events-none absolute top-[8%] right-[-6%] w-[min(52vw,560px)] [perspective:900px] max-md:top-auto max-md:right-[-18%] max-md:bottom-[-4%] max-md:w-[78vw]" aria-hidden="true">
         <img src={asset('images/products/uno.webp')} alt="" loading="lazy" decoding="async" className="w-full" />
       </div>

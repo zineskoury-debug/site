@@ -2,25 +2,48 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { PerformanceMonitor } from '@react-three/drei'
 import * as THREE from 'three'
-import { flavorById } from '../data/flavors'
-import { Gelato } from './Gelato'
+import { flavorById, flavors } from '../data/flavors'
+import { Gelato, prewarmScoops } from './Gelato'
 import { Ingredients } from './Ingredients'
 import { Lighting } from './Lighting'
 import { damp, easeInOut, easeOut, range } from './math'
-import { isSceneActive, stage } from './stage'
+import { emit, isSceneActive, on, stage } from './stage'
 import { getDotTexture, getShadowTexture } from './textures'
 import { Cup, Spoon, Tub } from './Vessels'
 
 const PISTACHIO = flavorById('pistacchio')
 
-/** The hero cup: floats, follows the pointer, dissolves into ingredients and reforms. */
+/** Elastic ease used when a new scoop pops in. */
+const elasticOut = (t: number) => (t >= 1 ? 1 : Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * ((2 * Math.PI) / 3)) + 1)
+
+/**
+ * The hero cup: floats, follows the pointer, stretches with scroll speed,
+ * dissolves into ingredients and reforms. Clicking it swaps the flavour with a jelly bounce.
+ */
 function HeroProduct({ narrow, detail }: { narrow: boolean; detail: number }) {
   const root = useRef<THREE.Group>(null)
   const tilt = useRef<THREE.Group>(null)
   const spin = useRef<THREE.Group>(null)
+  const jelly = useRef<THREE.Group>(null)
   const scoop = useRef<THREE.Group>(null)
   const shadow = useRef<THREE.Mesh>(null)
-  const s = useRef({ intro: 0, hero: 0, gather: 0, converge: 0 })
+  const s = useRef({ intro: 0, hero: 0, gather: 0, converge: 0, spinOffset: 0, swapT: -1, swapped: true, pokeT: 9 })
+  const [flavorIndex, setFlavorIndex] = useState(stage.heroFlavor)
+
+  // prepare every flavour once the entrance is done, then listen for clicks
+  useEffect(() => {
+    const t = window.setTimeout(() => prewarmScoops(flavors, 2, detail), 2500)
+    const off = on('poke', () => {
+      const a = s.current
+      a.swapT = 0
+      a.swapped = false
+      a.pokeT = 0
+    })
+    return () => {
+      window.clearTimeout(t)
+      off()
+    }
+  }, [detail])
 
   useFrame((state, dt) => {
     const a = s.current
@@ -31,6 +54,7 @@ function HeroProduct({ narrow, detail }: { narrow: boolean; detail: number }) {
     const t = state.clock.elapsedTime
     const still = stage.reducedMotion ? 0 : 1
     const intro = easeOut(a.intro)
+    const v = stage.velocity
 
     // cup leaves as the ingredients burst out, comes back as they converge
     const away = easeInOut(range(a.gather, 0.02, 0.32))
@@ -47,15 +71,41 @@ function HeroProduct({ narrow, detail }: { narrow: boolean; detail: number }) {
     r.scale.setScalar(base * zoom * Math.max(0.001, presence * presence) * (0.6 + 0.4 * intro))
     r.position.set(0, baseY + (1 - intro) * -0.8 - a.hero * 0.15 * (1 - back) + (1 - presence) * -0.3, 0)
 
+    // flavour swap: old scoop shrinks away, new one pops in elastically while the cup spins
+    let swapScale = 1
+    if (a.swapT >= 0) {
+      a.swapT += dt
+      const out = 0.18
+      if (a.swapT < out) {
+        swapScale = 1 - easeInOut(a.swapT / out)
+      } else {
+        if (!a.swapped) {
+          a.swapped = true
+          const next = (stage.heroFlavor + 1) % flavors.length
+          stage.heroFlavor = next
+          setFlavorIndex(next)
+          emit('flavor')
+        }
+        swapScale = elasticOut((a.swapT - out) / 0.95)
+        if (a.swapT > out + 1) a.swapT = -1
+      }
+      a.spinOffset += dt * 7 * Math.max(0, 1 - a.swapT / 1.1)
+    }
+    // jelly wobble after a click, plus stretch with scroll speed
+    a.pokeT += dt
+    const wob = still * Math.exp(-a.pokeT * 5) * Math.sin(a.pokeT * 22) * 0.16
+    const stretch = Math.abs(v) * 0.09 * still
+    jelly.current!.scale.set(1 + wob * 0.6 - stretch * 0.5, 1 - wob + stretch, 1 + wob * 0.6 - stretch * 0.5)
+
     tilt.current!.rotation.set(
-      0.18 + stage.pointer.y * 0.16 * still + a.hero * 0.12,
+      0.18 + stage.pointer.y * 0.16 * still + a.hero * 0.12 + v * 0.35 * still,
       stage.pointer.x * 0.35 * still,
       -stage.pointer.x * 0.05 * still,
     )
-    spin.current!.rotation.y = -0.5 + t * 0.16 * still + a.hero * 1.4 + (1 - intro) * -1.2 + back * Math.PI * 2
+    spin.current!.rotation.y = -0.5 + t * 0.16 * still + a.hero * 1.4 + (1 - intro) * -1.2 + back * Math.PI * 2 + a.spinOffset
     spin.current!.position.y = Math.sin(t * 0.8) * 0.04 * still
 
-    scoop.current!.scale.setScalar(Math.max(0.001, scoopGrow))
+    scoop.current!.scale.setScalar(Math.max(0.001, scoopGrow * swapScale))
     const sh = shadow.current!.material as THREE.MeshBasicMaterial
     sh.opacity = 0.9 - Math.sin(t * 0.8) * 0.08 * still
   })
@@ -68,10 +118,14 @@ function HeroProduct({ narrow, detail }: { narrow: boolean; detail: number }) {
       </mesh>
       <group ref={tilt}>
         <group ref={spin}>
-          <Cup />
-          <group ref={scoop} position={[0, 1.02, 0]}>
-            <Gelato flavor={PISTACHIO} seed={2} detail={detail} scale={[0.95, 0.86, 0.95]} />
-            <Spoon position={[0.6, 0.34, 0.42]} rotation={[0.45, 0.5, -1.05]} scale={0.8} />
+          <group ref={jelly} position={[0, -0.6, 0]}>
+            <group position={[0, 0.6, 0]}>
+              <Cup />
+              <group ref={scoop} position={[0, 1.02, 0]}>
+                <Gelato flavor={flavors[flavorIndex]} seed={2} detail={detail} scale={[0.95, 0.86, 0.95]} />
+                <Spoon position={[0.6, 0.34, 0.42]} rotation={[0.45, 0.5, -1.05]} scale={0.8} />
+              </group>
+            </group>
           </group>
         </group>
       </group>
@@ -118,7 +172,7 @@ function ProductTub({ narrow, keyLight }: { narrow: boolean; keyLight: React.Ref
     r.scale.setScalar((narrow ? 0.6 : 0.82) * zoom)
     turn.current!.rotation.set(
       0.12 + open * 0.42 + stage.pointer.y * 0.08 * still,
-      -1.1 * (1 - enter) + rotate * Math.PI * 2 + stage.pointer.x * 0.25 * still + Math.sin(t * 0.4) * 0.04 * still,
+      -1.1 * (1 - enter) + rotate * Math.PI * 2 + stage.pointer.x * 0.25 * still + Math.sin(t * 0.4) * 0.04 * still + stage.velocity * 0.5 * still,
       0,
     )
     lid.current!.rotation.x = -open * 0.95

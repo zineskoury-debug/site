@@ -20,6 +20,57 @@ const INCLUSIONS: Record<FlavorId, Inclusion> = {
 
 const geometryCache = new Map<string, ReturnType<typeof createScoopGeometry>>()
 
+function getScoop(flavor: Flavor, seed: number, detail: number) {
+  const key = `${flavor.id}-${seed}-${detail}`
+  if (!geometryCache.has(key)) {
+    geometryCache.set(key, createScoopGeometry({ seed, detail, base: flavor.gelato.base, ripple: flavor.gelato.ripple }))
+  }
+  return geometryCache.get(key)!
+}
+
+// one set per flavour, shared by every scoop of that flavour (bounded: six flavours)
+const materialCache = new Map<string, { material: THREE.Material; incGeometry: THREE.BufferGeometry; incMaterial: THREE.Material }>()
+
+function getMaterials(flavor: Flavor) {
+  let m = materialCache.get(flavor.id)
+  if (!m) {
+    const base = new THREE.Color(flavor.gelato.base)
+    m = {
+      material: new THREE.MeshPhysicalMaterial({
+        vertexColors: true,
+        roughness: flavor.gelato.roughness,
+        sheen: 1,
+        sheenRoughness: 0.42,
+        sheenColor: base.clone().lerp(new THREE.Color('#ffffff'), 0.55),
+        clearcoat: 0.12,
+        clearcoatRoughness: 0.55,
+        bumpMap: getGrainTexture(),
+        bumpScale: 0.7,
+      }),
+      incGeometry: INCLUSIONS[flavor.id].geometry(),
+      incMaterial: new THREE.MeshStandardMaterial({
+        color: flavor.gelato.speck ?? flavor.gelato.base,
+        roughness: flavor.id === 'cioccolato' ? 0.35 : 0.6,
+      }),
+    }
+    materialCache.set(flavor.id, m)
+  }
+  return m
+}
+
+/** Build scoop geometries ahead of time, one per idle slot, so swapping flavours never hitches. */
+export function prewarmScoops(list: Flavor[], seed: number, detail: number) {
+  const queue = [...list]
+  const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 120))
+  const next = () => {
+    const f = queue.shift()
+    if (!f) return
+    getScoop(f, seed, detail)
+    idle(next)
+  }
+  idle(next)
+}
+
 type Props = ThreeElements['group'] & {
   flavor: Flavor
   seed?: number
@@ -27,39 +78,10 @@ type Props = ThreeElements['group'] & {
 }
 
 export function Gelato({ flavor, seed = 1, detail = 128, ...props }: Props) {
-  const { geometry, samples } = useMemo(() => {
-    const key = `${flavor.id}-${seed}-${detail}`
-    if (!geometryCache.has(key)) {
-      geometryCache.set(key, createScoopGeometry({ seed, detail, base: flavor.gelato.base, ripple: flavor.gelato.ripple }))
-    }
-    return geometryCache.get(key)!
-  }, [flavor, seed, detail])
+  const { geometry, samples } = useMemo(() => getScoop(flavor, seed, detail), [flavor, seed, detail])
 
-  const material = useMemo(() => {
-    const base = new THREE.Color(flavor.gelato.base)
-    return new THREE.MeshPhysicalMaterial({
-      vertexColors: true,
-      roughness: flavor.gelato.roughness,
-      sheen: 1,
-      sheenRoughness: 0.42,
-      sheenColor: base.clone().lerp(new THREE.Color('#ffffff'), 0.55),
-      clearcoat: 0.12,
-      clearcoatRoughness: 0.55,
-      bumpMap: getGrainTexture(),
-      bumpScale: 0.7,
-    })
-  }, [flavor])
-
+  const { material, incGeometry, incMaterial } = useMemo(() => getMaterials(flavor), [flavor])
   const inc = INCLUSIONS[flavor.id]
-  const incGeometry = useMemo(() => inc.geometry(), [inc])
-  const incMaterial = useMemo(
-    () =>
-      new THREE.MeshStandardMaterial({
-        color: flavor.gelato.speck ?? flavor.gelato.base,
-        roughness: flavor.id === 'cioccolato' ? 0.35 : 0.6,
-      }),
-    [flavor],
-  )
   const instRef = useRef<THREE.InstancedMesh>(null)
 
   useLayoutEffect(() => {
@@ -92,7 +114,7 @@ export function Gelato({ flavor, seed = 1, detail = 128, ...props }: Props) {
   return (
     <group {...props}>
       <mesh geometry={geometry} material={material} dispose={null} />
-      <instancedMesh ref={instRef} args={[incGeometry, incMaterial, inc.count]} frustumCulled={false} />
+      <instancedMesh ref={instRef} args={[incGeometry, incMaterial, inc.count]} frustumCulled={false} dispose={null} />
     </group>
   )
 }

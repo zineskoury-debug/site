@@ -309,3 +309,115 @@ html.has-cursor button {
   transform-origin: right;
   rotate: -30deg;
 }
+
+/* Split characters: transformable, and on big titles each letter reacts to the pointer */
+.char {
+  display: inline-block;
+  will-change: auto;
+}
+@media (hover: hover) and (pointer: fine) {
+  .display .char {
+    transition:
+      transform 0.7s var(--ease-out-expo),
+      color 0.4s;
+  }
+  .display .char:hover {
+    transform: translateY(-0.07em) rotate(-6deg) scale(1.06);
+    color: var(--color-wine);
+    transition-duration: 0.25s, 0.2s;
+  }
+  [data-theme='dark'] .display .char:hover,
+  #cta .display .char:hover {
+    color: var(--color-vanilla);
+  }
+  #cta .display .char:hover {
+    color: var(--color-ivory);
+  }
+}
+
+.btn__ripple {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: var(--color-ivory);
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes rollin {
+  from {
+    transform: translateY(105%) rotate(4deg);
+  }
+}
+
+.progress-cone {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  transition:
+    opacity 0.6s,
+    transform 0.8s var(--ease-out-expo);
+}
+.progress-cone.is-on {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.on-dark .progress-cone {
+  color: var(--color-ivory);
+}
+
+.outline-num {
+  color: transparent;
+  -webkit-text-stroke: 1px color-mix(in oklab, var(--color-wine) 45%, transparent);
+  line-height: 1;
+}
+
+.stage-words {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4vh;
+  opacity: 0;
+  transition: opacity 0.8s;
+  white-space: nowrap;
+  font-size: clamp(5rem, 17vw, 18rem);
+  line-height: 0.9;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(242, 220, 155, 0.22);
+}
+.stage-words p:first-child {
+  transform: translateX(calc(5% - var(--prod, 0) * 55%));
+}
+.stage-words p:last-child {
+  transform: translateX(calc(-60% + var(--prod, 0) * 50%));
+  -webkit-text-stroke-color: rgba(229, 148, 158, 0.2);
+}
+.stage-bg.is-dark .stage-words {
+  opacity: 1;
+}
+
+/* Product cards flip over on click */
+.flipper {
+  transform-style: preserve-3d;
+  transition: transform 1.1s cubic-bezier(0.3, 1.35, 0.4, 1);
+}
+.flipper.is-flipped {
+  transform: rotateY(180deg);
+}
+.face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.face--back {
+  transform: rotateY(180deg);
+}
+.outline-num-light {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(251, 248, 242, 0.28);
+  line-height: 1;
+}

@@ -1,11 +1,15 @@
 import { Suspense, lazy, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { ScrollTrigger, initSmoothScroll } from './animations/motion'
+import { useVelocityFx } from './animations/velocity'
 import { setZone } from './3d/stage'
 import { loadTextureFonts } from './3d/fonts'
 import { Cursor } from './components/Cursor'
 import { Footer } from './components/Footer'
 import { Nav } from './components/Nav'
+import { Marquee } from './components/Marquee'
 import { Preloader } from './components/Preloader'
+import { ProgressCone } from './components/ProgressCone'
+import { Sprinkles } from './components/Sprinkles'
 import { Choose } from './sections/Choose'
 import { Craft } from './sections/Craft'
 import { FinalCta } from './sections/FinalCta'
@@ -38,6 +42,7 @@ export default function App() {
     [],
   )
   const onDone = useCallback(() => setReady(true), [])
+  useVelocityFx(ready)
 
   useLayoutEffect(() => {
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
@@ -77,16 +82,28 @@ export default function App() {
 
   const onGlow = useCallback((v: number) => {
     bg.current?.style.setProperty('--glow', String(Math.sin(Math.min(1, v) * Math.PI)))
+    bg.current?.style.setProperty('--prod', String(v))
   }, [])
 
   return (
     <>
       <Preloader ready={loading} onDone={onDone} />
       <Cursor />
+      <Sprinkles />
       <Nav />
 
       {/* fixed stage: colour field + light, then the WebGL canvas */}
-      <div ref={bg} className="stage-bg pointer-events-none fixed inset-0 z-0" aria-hidden="true" />
+      <div ref={bg} className="stage-bg pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden="true">
+        {/* giant words sliding behind the 3D tub (visible in the dark product chapter) */}
+        <div className="stage-words display">
+          <p>
+            Gelato <em>artigianale</em> · Gelato <em>artigianale</em> ·
+          </p>
+          <p>
+            <em>Pistacchio</em> · Capriso · <em>Pistacchio</em> · Capriso ·
+          </p>
+        </div>
+      </div>
       {webgl && (
         <div className="pointer-events-none fixed inset-0 z-0">
           <Suspense fallback={null}>
@@ -103,10 +120,12 @@ export default function App() {
         <Product onGlow={onGlow} webgl={webgl} />
         <Craft />
         <Story />
+        <Marquee />
         <Choose />
         <FinalCta />
       </main>
       <Footer />
+      <ProgressCone />
     </>
   )
 }

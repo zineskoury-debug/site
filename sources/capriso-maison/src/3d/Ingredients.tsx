@@ -183,7 +183,7 @@ export function Ingredients({ narrow }: { narrow: boolean }) {
   const items = useMemo(() => INGREDIENTS.filter((s) => !(narrow && s.desktopOnly)), [narrow])
   const refs = useRef<(THREE.Group | null)[]>([])
   const phases = useMemo(() => items.map((_, i) => createRandom(i + 1)() * Math.PI * 2), [items])
-  const anim = useRef({ gather: 0, converge: 0 })
+  const anim = useRef({ gather: 0, converge: 0, spin: 0 })
   const v = useMemo(() => new THREE.Vector3(), [])
 
   useLayoutEffect(() => {
@@ -197,6 +197,9 @@ export function Ingredients({ narrow }: { narrow: boolean }) {
     anim.current.converge = damp(anim.current.converge, stage.converge, 4, dt)
     const g = anim.current.gather
     const c = anim.current.converge
+    // scroll speed spins the pieces and makes them lag behind, like objects in water
+    const vel = stage.velocity * (still ? 0 : 1)
+    anim.current.spin += vel * dt * 5
     const vw = viewport.getCurrentViewport(camera, [0, 0, 0]).width / 2
     const vh = viewport.getCurrentViewport(camera, [0, 0, 0]).height / 2
     for (const l of stage.labels) l.visible = 0
@@ -222,13 +225,13 @@ export function Ingredients({ narrow }: { narrow: boolean }) {
       const z0 = THREE.MathUtils.lerp(0, home[2], out)
       obj.position.set(
         THREE.MathUtils.lerp(x0, 0, back) + Math.sin(t * 0.5 + phases[i]) * 0.05 * float - stage.pointer.x * home[2] * 0.12,
-        THREE.MathUtils.lerp(y0, 0.55, back) + Math.cos(t * 0.6 + phases[i]) * 0.07 * float + stage.pointer.y * home[2] * 0.08,
+        THREE.MathUtils.lerp(y0, 0.55, back) + Math.cos(t * 0.6 + phases[i]) * 0.07 * float + stage.pointer.y * home[2] * 0.08 + vel * (0.12 + (home[2] + 1.2) * 0.1),
         THREE.MathUtils.lerp(z0, 0, back),
       )
       const spin = (1 - out) * 3 + back * 4
       obj.rotation.set(
-        spec.rot[0] + Math.sin(t * 0.3 + phases[i]) * 0.2 * float + spin,
-        spec.rot[1] + t * 0.12 * float + spin,
+        spec.rot[0] + Math.sin(t * 0.3 + phases[i]) * 0.2 * float + spin + anim.current.spin * (0.4 + (i % 3) * 0.3),
+        spec.rot[1] + t * 0.12 * float + spin + anim.current.spin * 0.6,
         spec.rot[2],
       )
       obj.scale.setScalar(spec.scale * (narrow ? 0.8 : 1) * Math.min(1, visible * 1.4))

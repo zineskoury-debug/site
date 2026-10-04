@@ -15,6 +15,7 @@ export function Transformation() {
   const [active, setActive] = useState(0)
   const activeRef = useRef(0)
   const bar = useRef<HTMLSpanElement>(null)
+  const ring = useRef<SVGSVGElement>(null)
 
   const ref = useGsap<HTMLElement>(({ root, q }) => {
     gsap.to(stage, {
@@ -28,6 +29,12 @@ export function Transformation() {
         onUpdate: (self) => {
           const i = Math.min(STEPS.length - 1, Math.floor(self.progress * STEPS.length * 0.999))
           if (bar.current) bar.current.style.transform = `scaleX(${self.progress})`
+          // a ring of words winds around the gelato as it forms
+          if (ring.current) {
+            const o = Math.min(1, Math.max(0, (self.progress - 0.3) / 0.35))
+            ring.current.style.opacity = String(o)
+            ring.current.style.transform = `translate(-50%, -50%) rotate(${self.progress * 240 - 60}deg) scale(${0.75 + o * 0.25})`
+          }
           if (i !== activeRef.current) {
             activeRef.current = i
             setActive(i)
@@ -40,7 +47,24 @@ export function Transformation() {
 
   return (
     <section ref={ref} id="transformation" className="relative h-[320vh]" aria-labelledby="transformation-title">
-      <div className="sticky top-0 flex h-[100svh] flex-col justify-between px-[var(--gutter)] pt-[calc(var(--nav-h)+4vh)] pb-8">
+      <div className="sticky top-0 flex h-[100svh] flex-col justify-between overflow-hidden px-[var(--gutter)] pt-[calc(var(--nav-h)+4vh)] pb-8">
+        <svg
+          ref={ring}
+          viewBox="0 0 400 400"
+          className="pointer-events-none absolute top-[58%] left-1/2 h-[min(62vh,92vw)] w-[min(62vh,92vw)] text-wine opacity-0"
+          style={{ transform: 'translate(-50%, -50%)' }}
+          aria-hidden="true"
+        >
+          <defs>
+            <path id="ring-path" d="M200,200 m-176,0 a176,176 0 1,1 352,0 a176,176 0 1,1 -352,0" />
+          </defs>
+          <circle cx="200" cy="200" r="158" fill="none" stroke="currentColor" strokeOpacity=".25" strokeDasharray="2 6" />
+          <text className="eyebrow" fill="currentColor" style={{ fontSize: 13, letterSpacing: '0.42em' }}>
+            <textPath href="#ring-path">
+              MÉLANGER ✦ MATURER ✦ TURBINER ✦ SERVIR ✦ MÉLANGER ✦ MATURER ✦ TURBINER ✦ SERVIR ✦
+            </textPath>
+          </text>
+        </svg>
         <div className="text-center">
           <p className="eyebrow mb-6 text-wine">02 — La transformation</p>
           <SplitText

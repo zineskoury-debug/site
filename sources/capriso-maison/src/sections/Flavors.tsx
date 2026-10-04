@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { gsap, revealLines, useGsap } from '../animations/motion'
+import { Drip } from '../components/Drip'
 import { SplitText } from '../components/SplitText'
 import { flavors } from '../data/flavors'
 
@@ -76,15 +77,22 @@ export function Flavors() {
   }, [])
 
   const f = flavors[active]
+  const bg = `color-mix(in oklab, ${f.tint} 55%, var(--color-ivory))`
+
+  // the next section drips in this colour
+  useEffect(() => {
+    document.documentElement.style.setProperty('--flavor-bg', bg)
+  }, [bg])
 
   return (
     <section
       ref={ref}
       id="parfums"
       className="relative z-10 overflow-hidden px-[var(--gutter)] py-[16vh] transition-colors duration-1000"
-      style={{ backgroundColor: `color-mix(in oklab, ${f.tint} 55%, var(--color-ivory))` }}
+      style={{ backgroundColor: bg }}
       aria-labelledby="parfums-title"
     >
+      <Drip color="var(--color-cream)" seed={3} />
       <header className="mb-[10vh] grid items-end gap-8 md:grid-cols-[1.2fr_1fr]">
         <div data-title>
           <p className="eyebrow mb-6 text-wine">03 — La collection</p>
@@ -105,6 +113,7 @@ export function Flavors() {
                 type="button"
                 data-name
                 data-cursor="Découvrir"
+                data-sprinkle={`${fl.gelato.base},${fl.gelato.speck ?? fl.ink},${fl.tint}`}
                 className="group flex w-full items-baseline gap-6 py-[1.4vh] text-left"
                 onPointerEnter={() => setActive(i)}
                 onFocus={() => setActive(i)}
@@ -131,7 +140,7 @@ export function Flavors() {
           ))}
         </ul>
 
-        <div ref={stageRef} data-panel className="relative aspect-[4/5] max-h-[86vh] w-full overflow-hidden rounded-[2px]">
+        <div ref={stageRef} data-panel data-skew="0.6" className="relative aspect-[4/5] max-h-[86vh] w-full overflow-hidden rounded-[2px]">
           {flavors.map((fl, i) => (
             <div
               key={fl.id}

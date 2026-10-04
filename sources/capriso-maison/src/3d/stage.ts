@@ -23,8 +23,24 @@ export const stage = {
   pointer: { x: 0, y: 0 },
   /** Projected screen positions of annotated ingredients (px), written by the scene. */
   labels: [] as { x: number; y: number; visible: number }[],
+  /** Scroll velocity, smoothed and normalised to roughly [-1, 1] (positive = scrolling down). */
+  velocity: 0,
+  /** Index of the flavour currently shown in the hero cup (see data/flavors). */
+  heroFlavor: 0,
   reducedMotion: false,
   listeners: new Set<() => void>(),
+}
+
+/**
+ * Small event bus between the DOM and the scene.
+ * - "poke": the hero gelato was clicked
+ * - "flavor": the hero gelato now shows stage.heroFlavor
+ */
+export const bus = new EventTarget()
+export const emit = (type: 'poke' | 'flavor') => bus.dispatchEvent(new Event(type))
+export function on(type: 'poke' | 'flavor', fn: () => void) {
+  bus.addEventListener(type, fn)
+  return () => bus.removeEventListener(type, fn)
 }
 
 export function setZone(key: 'productOn' | 'storyOn', value: boolean) {
