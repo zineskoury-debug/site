@@ -3,261 +3,407 @@
 <head>
   <meta charset="utf-8">
   <script>document.documentElement.className="js"</script>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Capriso Glacier</title>
-  <meta name="description" content="Capriso, passione per il gelato : glaces à l'italienne en cornet ou en pot, à Bachkou, Casablanca. 1 parfum 15 DH, 2 parfums 25 DH, 3 parfums 35 DH.">
-  <meta name="theme-color" content="#fecd33">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Capriso Gelato · Bachkou, Casablanca</title>
+  <meta name="description" content="Capriso, passione per il gelato : gelato à l'italienne en cornet ou en pot, N°37 Résidence Fatine, Bachkou, Casablanca. 1 parfum 15 DH, 2 parfums 25 DH, 3 parfums 35 DH.">
+  <meta name="theme-color" content="#FFF7E8">
+  <meta property="og:title" content="Capriso · Passione per il gelato">
+  <meta property="og:description" content="Cède à ton caprice : gelato à l'italienne à Bachkou, Casablanca. Dès 15 DH.">
+  <meta property="og:image" content="assets/img/logo-wine.png">
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
   <link rel="icon" type="image/png" href="assets/img/favicon.png">
-  <link rel="preload" href="assets/fonts/luckiest-guy-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/fraunces-soft-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/bricolage-grotesque-wght.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/capriso.css">
 </head>
 <body class="is-loading">
+  <!-- symboles partagés -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-    <polygon id="star" points="100,0 115,25 143,10 145,42 177,40 165,70 196,82 172,104 192,130 160,138 166,170 134,166 124,197 100,178 76,197 66,166 34,170 40,138 8,130 28,104 4,82 35,70 23,40 55,42 57,10 85,25"/>
+    <mask id="cap-mark-m" maskUnits="userSpaceOnUse" x="-20" y="-20" width="140" height="180"><rect x="-20" y="-20" width="140" height="180" fill="#fff"/><g fill="none" stroke="#000" stroke-linecap="round"><path d="M17,57C34,66 60,60 80,47" stroke-width="3.4"/><path d="M25,40C40,46 58,40 72,28" stroke-width="3.2"/><path d="M35,24C45,27 55,22 62,12" stroke-width="2.8"/><path d="M22,69H80" stroke-width="3.8"/><path d="M30,74L58,128M42,72L64,114M54,72L69,101M66,72L74,88M70,74L46,128M58,72L40,112M46,72L34,96M34,72L28,84" stroke-width="1.6"/></g></mask>
+    <symbol id="cap-mark" viewBox="-6 -8 112 150"><g transform="rotate(-18 50 70)" mask="url(#cap-mark-m)"><path d="M24,68L76,68L53,134Q50,140 47,134Z"/><path d="M22,69C12,64 12,52 22,48C16,40 20,31 30,30C26,20 33,11 43,11C44,4 50,-1 58,-2C54,3 54,8 60,11C68,15 68,24 63,29C74,31 77,41 72,47C84,51 86,64 78,69Z"/></g></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.5s-7.4-4.5-9.4-9C1.1 8.1 3 4.5 6.6 4.5c2.1 0 3.6 1.1 5.4 3.1 1.8-2 3.3-3.1 5.4-3.1 3.6 0 5.5 3.6 4 7-2 4.5-9.4 9-9.4 9z"/></symbol>
+    <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5.5 8.5h13l-1.1 11.2a1.5 1.5 0 0 1-1.5 1.3H8.1a1.5 1.5 0 0 1-1.5-1.3z"/><path d="M9 8.5V7a3 3 0 0 1 6 0v1.5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4.5 12h15M13.5 6l6 6-6 6"/></symbol>
+    <symbol id="i-ig" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".6"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11 11 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21.5s7-6.2 7-11.8a7 7 0 0 0-14 0c0 5.6 7 11.8 7 11.8z"/><circle cx="12" cy="9.7" r="2.6"/></symbol>
+    <symbol id="i-wa" viewBox="0 0 24 24"><path d="M4.2 19.8l1.1-3.9A8.3 8.3 0 1 1 8.4 19z"/><path d="M9.2 8.3c.3-.6.9-.6 1.2 0l.6 1.3c.1.3 0 .6-.2.8l-.5.5c.6 1.2 1.6 2.2 2.8 2.8l.5-.5c.2-.2.5-.3.8-.2l1.3.6c.6.3.6.9 0 1.2-.8.5-1.8.7-2.7.3a8.2 8.2 0 0 1-4.1-4.1c-.4-.9-.2-1.9.3-2.7z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-cone" viewBox="0 0 24 24"><path d="M6.5 10.5a5.5 5.5 0 0 1 11 0"/><path d="M5.8 10.5h12.4L12 22z"/><path d="M8.6 13.5l5.6 5M15.4 13.5l-5.6 5"/></symbol>
+    <symbol id="i-cup" viewBox="0 0 24 24"><path d="M7 9a5 5 0 0 1 10 0"/><path d="M4.5 9.5h15l-1.7 11h-11.6z"/><path d="M10 9.5l-.5 11M14 9.5l.5 11"/></symbol>
+    <symbol id="i-scoops" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4.2"/><circle cx="16" cy="15" r="4.2"/><circle cx="12" cy="8" r="4.2"/></symbol>
   </defs></svg>
 
   <!-- LOADER -->
   <div class="loader" aria-hidden="true">
-    <div class="loader__stage">
-      <span class="loader__scoop s1"></span><span class="loader__scoop s2"></span><span class="loader__scoop s3"></span>
-      <span class="loader__cone"></span>
+    <div class="loader__panel">
+      <svg class="loader__drips" viewBox="0 0 1440 160" preserveAspectRatio="none"><path d="M0,0H1440V40C1410,40 1402,96 1384,96S1360,40 1330,40C1290,40 1288,132 1262,132S1232,40 1196,40C1150,40 1150,70 1132,70S1110,40 1070,40C1030,40 1026,150 996,150S962,40 924,40C880,40 884,84 862,84S840,40 800,40C762,40 760,118 734,118S704,40 664,40C624,40 626,74 606,74S584,40 546,40C506,40 502,140 474,140S440,40 404,40C362,40 364,92 342,92S318,40 280,40C244,40 240,124 214,124S184,40 146,40C110,40 108,78 88,78S64,40 30,40H0Z"/></svg>
+      <div class="loader__center">
+        <div class="loader__fill">
+          <svg class="loader__mark loader__mark--ghost"><use href="#cap-mark"/></svg>
+          <svg class="loader__mark loader__mark--full"><use href="#cap-mark"/></svg>
+        </div>
+        <p class="loader__count"><span class="loader__num">0</span>%</p>
+        <p class="loader__tag">Passione per il gelato</p>
+      </div>
     </div>
-    <img class="loader__logo" src="assets/img/logo-wine.png" alt="">
   </div>
-  <div class="cursor" aria-hidden="true"><span class="cursor__label"></span></div>
-  <div class="sprinkle-layer" aria-hidden="true"></div>
 
-  <!-- TOP BAR -->
-  <div class="topbar" aria-label="Infos">
-    <div class="topbar__track"><span>Gelato à l'italienne</span><i>✦</i><span>N°37 Résidence Fatine, Bachkou</span><i>✦</i><span>En face Carrefour Taddart</span><i>✦</i><span>+212 618 401 509</span><i>✦</i><span>Cornet ou pot, à toi de voir</span><i>✦</i></div>
-  </div>
+  <div class="cursor" aria-hidden="true"><span class="cursor__dot"></span><span class="cursor__label"></span></div>
+  <div class="progress" aria-hidden="true"><span class="progress__bar"></span></div>
+  <div class="toast" role="status" aria-live="polite"></div>
 
   <!-- NAV -->
-  <header class="nav" id="top">
-    <a href="#top" class="nav__logo" aria-label="Capriso, accueil"><img src="assets/img/logo-wine.png" alt="Capriso, passione per il gelato"></a>
-    <nav class="nav__links" aria-label="Navigation principale">
-      <a href="#parfums">Parfums</a><a href="#prix">Les prix</a><a href="#exotiques">Exotiques</a><a href="#trouver">Nous trouver</a>
+  <header class="nav">
+    <nav class="nav__bar glass" aria-label="Navigation principale">
+      <div class="nav__side">
+        <a class="nav__link" href="#parfums">Parfums</a>
+        <a class="nav__link" href="#histoire">Notre histoire</a>
+        <a class="nav__link" href="#faq">FAQ</a>
+      </div>
+      <a href="#top" class="logo" aria-label="Capriso, retour en haut">
+        <svg class="logo__mark" aria-hidden="true"><use href="#cap-mark"/></svg>
+        <span class="logo__word" aria-hidden="true"></span>
+      </a>
+      <div class="nav__side nav__side--r">
+        <a class="nav__link" href="#composer">Composer</a>
+        <a class="nav__link" href="#trouver">Nous trouver</a>
+        <a class="cart-btn" href="#commande" aria-label="Ma commande"><svg aria-hidden="true"><use href="#i-bag"/></svg><span class="cart-btn__n">0</span></a>
+        <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span></button>
+      </div>
     </nav>
-    <div class="nav__right">
-      <a class="icon-btn" href="https://www.instagram.com/capriso_passionedigelato/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" class="fill"/></svg></a>
-      <a class="icon-btn" href="tel:+212618401509" aria-label="Appeler"><svg viewBox="0 0 24 24"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11 11 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z"/></svg></a>
-      <a href="https://www.google.com/maps/search/?api=1&amp;query=Capriso+glacier+R%C3%A9sidence+Fatine+Bachkou+Casablanca" target="_blank" rel="noopener" class="pill pill--dark magnetic">Nous trouver <span class="pill__arrow">›</span></a>
-      <button class="nav__toggle" aria-label="Ouvrir le menu" aria-expanded="false"><span></span><span></span></button>
-    </div>
   </header>
-  <div class="drawer" aria-hidden="true">
-    <a href="#parfums" style="--i:0">Parfums</a><a href="#prix" style="--i:1">Les prix</a><a href="#exotiques" style="--i:2">Exotiques</a><a href="#trouver" style="--i:3">Nous trouver</a>
+  <div class="drawer" id="drawer" aria-hidden="true">
+    <nav class="drawer__links" aria-label="Menu mobile">
+      <a href="#parfums" style="--i:0">Parfums</a>
+      <a href="#histoire" style="--i:1">Notre histoire</a>
+      <a href="#composer" style="--i:2">Composer</a>
+      <a href="#faq" style="--i:3">FAQ</a>
+      <a href="#trouver" style="--i:4">Nous trouver</a>
+    </nav>
+    <p class="drawer__foot">N°37 Résidence Fatine, Bachkou · <a href="tel:+212618401509">+212 618 401 509</a></p>
   </div>
 
-  <main>
-    <!-- HERO CARD -->
-    <section class="hero">
+  <main id="top">
+    <!-- HERO : le parfum change, la carte change de couleur -->
+    <section class="hero" data-bg="#FFF7E8" aria-label="Capriso, passione per il gelato">
       <div class="hero__card">
-        <svg class="hero__wave" viewBox="0 0 1200 600" preserveAspectRatio="none" aria-hidden="true"><path class="wave-a" d="M0,0 H1200 V120 C1050,180 980,60 820,140 C660,220 720,420 640,600 H0 Z"/></svg>
-        <div class="hero__dots" aria-hidden="true"></div>
+        <div class="hero__glow" aria-hidden="true"></div>
+        <p class="hero__word" aria-hidden="true"></p>
+
         <div class="hero__copy">
-          <h1 class="hero__title" aria-label="La dolce vita, en cornet.">
-            <span class="hl" data-split>La dolce</span>
-            <span class="hl" data-split>vita, en</span>
-            <span class="hl" data-split>cornet.</span>
+          <div class="hero__count" aria-hidden="true"><span class="hero__idx">01</span><span class="hero__bar"><i></i></span><span>05</span></div>
+          <h1 class="hero__title" aria-label="Cède à ton caprice.">
+            <span class="hero__line" data-split>Cède à ton</span>
+            <span class="hero__line hero__line--em" data-split>caprice.</span>
           </h1>
-          <div class="hero__row reveal" style="--d:.9s">
-            <a href="#prix" class="pill pill--light magnetic">Choisir mes boules <span class="pill__arrow">›</span></a>
-            <p>Plonge dans un gelato crémeux à l'italienne, en cornet croustillant ou en pot, à Bachkou.</p>
+          <p class="hero__lead reveal" style="--d:.9s">Gelato à l'italienne, en cornet croustillant ou en pot rayé. Dès 15 DH, au cœur de Bachkou.</p>
+          <div class="hero__ctas reveal" style="--d:1.05s">
+            <a class="btn btn--cream magnetic" href="#composer"><span class="btn__t">Composer ma glace</span><svg class="btn__ic" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            <a class="btn btn--line magnetic" href="#parfums"><span class="btn__t">Voir les parfums</span></a>
           </div>
         </div>
-        <div class="hero__frame" data-cursor="Ciao !">
-          <div class="hero__frame-bg"></div>
-          <img class="hf hf--cone" data-depth="22" src="assets/img/cone-hero.svg" alt="Cornet trois boules fraise, pistache, stracciatella">
-          <img class="hf hf--cup" data-depth="-14" src="assets/img/cup-fragola.svg" alt="Coupe à la fraise">
-          <img class="hf hf--cup2" data-depth="10" src="assets/img/cup-pistacchio.svg" alt="Coupe à la pistache">
-          <svg class="hf hf--badge" data-depth="-24" viewBox="0 0 200 200" aria-hidden="true"><use href="#star"/><text x="100" y="92" text-anchor="middle">DÈS</text><text x="100" y="138" text-anchor="middle" class="big">15 DH</text></svg>
+
+        <div class="hero__stage" data-cursor="Miam !">
+          <div class="hero__ings" aria-hidden="true"></div>
+          <div class="hero__cup"></div>
+          <div class="hero__tag glass"><b class="hero__name">Fragola</b><span class="hero__fr">Fraise</span></div>
         </div>
-      </div>
-    </section>
 
-    <!-- POPULAR -->
-    <section class="popular" id="parfums">
-      <div class="head">
-        <h2 class="h2"><svg class="h2__ic" viewBox="0 0 32 30" aria-hidden="true"><path d="M16 28S2 19 2 9.5A7 7 0 0 1 16 6a7 7 0 0 1 14 3.5C30 19 16 28 16 28z"/></svg> Nos parfums populaires <span class="h2__dash"></span></h2>
-        <a href="#prix" class="pill pill--ghost magnetic">Voir les prix <span class="pill__arrow">›</span></a>
-      </div>
-      <div class="carousel">
-        <ul class="carousel__track">
-          <li class="fcard" style="--bg:#dcebc4" data-cursor="Miam"><div class="fcard__img"><img src="assets/img/cup-pistacchio.svg" alt="Coupe Pistacchio" loading="lazy" draggable="false"></div><h3 class="fcard__name">Pistacchio</h3></li>
-          <li class="fcard" style="--bg:#fff1d6" data-cursor="Miam"><div class="fcard__img"><img src="assets/img/cup-stracciatella.svg" alt="Coupe Stracciatella" loading="lazy" draggable="false"></div><h3 class="fcard__name">Stracciatella</h3></li>
-          <li class="fcard" style="--bg:#ffd3dc" data-cursor="Miam"><div class="fcard__img"><img src="assets/img/cup-fragola.svg" alt="Coupe Fragola" loading="lazy" draggable="false"></div><h3 class="fcard__name">Fragola</h3></li>
-          <li class="fcard" style="--bg:#e9cdbd" data-cursor="Miam"><div class="fcard__img"><img src="assets/img/cup-cioccolato.svg" alt="Coupe Cioccolato" loading="lazy" draggable="false"></div><h3 class="fcard__name">Cioccolato</h3></li>
-          <li class="fcard" style="--bg:#f1dcc2" data-cursor="Miam"><div class="fcard__img"><img src="assets/img/cup-nocciola.svg" alt="Coupe Nocciola" loading="lazy" draggable="false"></div><h3 class="fcard__name">Nocciola</h3></li>
-          <li class="fcard" style="--bg:#fff4b8" data-cursor="Miam"><div class="fcard__img"><img src="assets/img/cup-limone.svg" alt="Coupe Limone" loading="lazy" draggable="false"></div><h3 class="fcard__name">Limone</h3></li>
-          <li class="fcard" style="--bg:#ffdcae" data-cursor="Miam"><div class="fcard__img"><img src="assets/img/cup-mangue.svg" alt="Coupe Mangue" loading="lazy" draggable="false"></div><h3 class="fcard__name">Mangue</h3></li>
-          <li class="fcard" style="--bg:#efe3cf" data-cursor="Miam"><div class="fcard__img"><img src="assets/img/cup-tiramisu.svg" alt="Coupe Tiramisù" loading="lazy" draggable="false"></div><h3 class="fcard__name">Tiramisù</h3></li>
-        </ul>
-      </div>
-      <p class="hint">← Fais glisser →</p>
-    </section>
+        <div class="hero__minis" aria-label="Autres parfums"></div>
 
-    <!-- INFO STRIP -->
-    <section class="strip">
-      <div class="strip__cell strip__title"><span>Gelato<br>à l'italienne</span><img src="assets/img/cup-fragola.svg" alt=""></div>
-      <div class="strip__cell strip__text"><p>Des textures crémeuses, des parfums francs et une passion venue d'Italie, servis à deux pas de chez toi.</p></div>
-      <div class="strip__cell strip__social">
-        <div class="avatars"><img src="assets/img/cup-pistacchio.svg" alt=""><img src="assets/img/cup-fragola.svg" alt=""><img src="assets/img/cup-cioccolato.svg" alt=""></div>
-        <a class="strip__ig" href="https://www.instagram.com/capriso_passionedigelato/" target="_blank" rel="noopener"><b>@capriso</b><span>sur Instagram</span></a>
-      </div>
-    </section>
+        <a class="hero__badge" href="#composer" aria-label="Glaces dès 15 DH, composer la mienne">
+          <svg viewBox="0 0 200 200" aria-hidden="true"><defs><path id="badge-c" d="M100,100 m-74,0 a74,74 0 1,1 148,0 a74,74 0 1,1 -148,0"/></defs>
+            <circle cx="100" cy="100" r="96" class="hero__badge-bg"/>
+            <text class="hero__badge-ring"><textPath href="#badge-c">PASSIONE ✦ PER IL ✦ GELATO ✦ CAPRISO ✦</textPath></text>
+          </svg>
+          <span class="hero__badge-in"><small>dès</small>15<small>DH</small></span>
+        </a>
 
-    <!-- FEATURED (sticky, switches on scroll) -->
-    <section class="featured">
-      <div class="featured__sticky">
-        <div class="fslide is-on" data-i="0" style="--acc:#f2b632;--tint:#fff3d6">
-          <h2 class="fslide__title"><span>Amlou</span> <img class="mini-cone" src="assets/img/cone-one.svg" alt=""><br><svg class="heart" viewBox="0 0 32 30" aria-hidden="true"><path d="M16 28S2 19 2 9.5A7 7 0 0 1 16 6a7 7 0 0 1 14 3.5C30 19 16 28 16 28z"/></svg> <span>Miel</span></h2>
-          <div class="collage">
-            <div class="collage__tile"><img src="assets/img/cone-choc.svg" alt=""></div>
-            <div class="collage__main"><img src="assets/img/cup-amlou.svg" alt="Coupe Amlou Miel"></div>
-            <div class="collage__side"><img src="assets/img/cup-amlou.svg" alt=""></div>
-            <p class="collage__note"><img src="assets/img/cup-amlou.svg" alt="">au miel de montagne</p>
+        <div class="hero__bottom">
+          <svg class="hero__wave" viewBox="0 0 1440 140" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0,70 C160,20 300,110 470,72 C640,34 760,118 940,80 C1110,44 1260,110 1440,60 V140 H0 Z">
+              <animate attributeName="d" dur="9s" repeatCount="indefinite" values="M0,70 C160,20 300,110 470,72 C640,34 760,118 940,80 C1110,44 1260,110 1440,60 V140 H0 Z;M0,58 C180,104 320,30 490,64 C660,98 780,30 950,62 C1120,96 1270,36 1440,76 V140 H0 Z;M0,70 C160,20 300,110 470,72 C640,34 760,118 940,80 C1110,44 1260,110 1440,60 V140 H0 Z"/>
+            </path>
+          </svg>
+          <a class="hero__ig" href="https://www.instagram.com/capriso_passionedigelato/" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-ig"/></svg><span>@capriso_passionedigelato</span></a>
+          <div class="hero__arrows">
+            <button class="round magnetic" data-hero="-1" aria-label="Parfum précédent"><svg aria-hidden="true" style="transform:scaleX(-1)"><use href="#i-arrow"/></svg></button>
+            <button class="round magnetic" data-hero="1" aria-label="Parfum suivant"><svg aria-hidden="true"><use href="#i-arrow"/></svg></button>
           </div>
         </div>
-        <div class="fslide" data-i="1" style="--acc:#e84a5f;--tint:#ffe1e6">
-          <h2 class="fslide__title"><span>Fragola</span> <img class="mini-cone" src="assets/img/cone-one.svg" alt=""><br><svg class="heart" viewBox="0 0 32 30" aria-hidden="true"><path d="M16 28S2 19 2 9.5A7 7 0 0 1 16 6a7 7 0 0 1 14 3.5C30 19 16 28 16 28z"/></svg> <span>Fresca</span></h2>
-          <div class="collage">
-            <div class="collage__tile"><img src="assets/img/cone-hero.svg" alt=""></div>
-            <div class="collage__main"><img src="assets/img/cup-fragola.svg" alt="Coupe Fragola Fresca"></div>
-            <div class="collage__side"><img src="assets/img/cup-fragola.svg" alt=""></div>
-            <p class="collage__note"><img src="assets/img/cup-fragola.svg" alt="">aux fraises du Maroc</p>
-          </div>
-        </div>
-        <div class="fslide" data-i="2" style="--acc:#8fb062;--tint:#e9f3d8">
-          <h2 class="fslide__title"><span>Pistacchio</span> <img class="mini-cone" src="assets/img/cone-one.svg" alt=""><br><svg class="heart" viewBox="0 0 32 30" aria-hidden="true"><path d="M16 28S2 19 2 9.5A7 7 0 0 1 16 6a7 7 0 0 1 14 3.5C30 19 16 28 16 28z"/></svg> <span>Puro</span></h2>
-          <div class="collage">
-            <div class="collage__tile"><img src="assets/img/cone-big.svg" alt=""></div>
-            <div class="collage__main"><img src="assets/img/cup-pistacchio.svg" alt="Coupe Pistacchio Puro"></div>
-            <div class="collage__side"><img src="assets/img/cup-pistacchio.svg" alt=""></div>
-            <p class="collage__note"><img src="assets/img/cup-pistacchio.svg" alt="">100% pistache</p>
-          </div>
-        </div>
-        <div class="fdots" aria-hidden="true"><span></span><span></span><span></span></div>
       </div>
     </section>
 
-    <!-- PRICES / BUILDER -->
-    <section class="prices" id="prix">
-      <div class="prices__copy">
-        <h2 class="h2 h2--big">Glaces<br><span>individuelles</span></h2>
-        <ul class="ptable">
-          <li data-n="1"><span>1 parfum <small>(cornet)</small></span><i></i><b>15 DH</b></li>
-          <li data-n="2"><span>2 parfums</span><i></i><b>25 DH</b></li>
-          <li data-n="3"><span>3 parfums</span><i></i><b>35 DH</b></li>
-        </ul>
-        <p class="prices__or">En pot <span>ou</span> en cornet</p>
+    <!-- BANDEAUX -->
+    <section class="bands" aria-hidden="true">
+      <div class="band band--wine"><div class="band__track" data-speed-x="1">
+        <span>Fragola</span><i>✦</i><span>Pistacchio</span><i>✦</i><span>Cioccolato</span><i>✦</i><span>Stracciatella</span><i>✦</i><span>Nocciola</span><i>✦</i><span>Mango</span><i>✦</i><span>Limone</span><i>✦</i><span>Frutti di bosco</span><i>✦</i>
+      </div></div>
+      <div class="band band--yellow"><div class="band__track" data-speed-x="-1">
+        <span>Passione per il gelato</span><i>✦</i><span>1 parfum 15 DH</span><i>✦</i><span>Cornet ou pot</span><i>✦</i><span>Bachkou, Casablanca</span><i>✦</i><span>3 parfums 35 DH</span><i>✦</i>
+      </div></div>
+    </section>
+
+    <!-- MANIFESTE : le chocolat coule au scroll -->
+    <section class="manifesto" data-bg="#FFF7E8" data-progress>
+      <svg class="choco" viewBox="0 0 1440 300" preserveAspectRatio="none" aria-hidden="true">
+        <defs><linearGradient id="chocoG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A2A16"/><stop offset="1" stop-color="#7D4932"/></linearGradient></defs>
+        <rect width="1440" height="40" fill="url(#chocoG)"/>
+        <g class="choco__drips" fill="url(#chocoG)"></g>
+      </svg>
+      <div class="manifesto__in">
+        <p class="kicker reveal">Il nostro credo</p>
+        <p class="manifesto__text" data-words>« On croit qu'une boule de <em>gelato</em> peut sauver une journée. Crémeuse, généreuse, à l'italienne, et toujours servie avec le <em>sourire.</em> »</p>
+        <p class="manifesto__sign reveal">La famille Capriso <svg aria-hidden="true"><use href="#i-heart"/></svg></p>
       </div>
-      <div class="builder">
-        <div class="builder__stage" data-cursor="Miam"><svg class="builder__svg" viewBox="0 0 300 420" aria-label="Ta glace"></svg><div class="builder__price"><span class="bp">15</span> DH</div></div>
-        <div class="builder__ctrl">
-          <div class="seg" role="group" aria-label="Nombre de parfums"><button class="seg__b is-on" data-n="1">1</button><button class="seg__b" data-n="2">2</button><button class="seg__b" data-n="3">3</button><span class="seg__ink"></span></div>
-          <div class="seg seg--base" role="group" aria-label="Cornet ou pot"><button class="seg__b is-on" data-base="cone">Cornet</button><button class="seg__b" data-base="cup">Pot</button><span class="seg__ink"></span></div>
-          <p class="builder__lbl">Choisis tes parfums :</p>
-          <div class="swatches"><button class="sw" style="--c:#b9d48a" data-f="pistacchio" aria-label="Pistacchio"></button><button class="sw" style="--c:#fff3dc" data-f="stracciatella" aria-label="Stracciatella"></button><button class="sw" style="--c:#f8a5b8" data-f="fragola" aria-label="Fragola"></button><button class="sw" style="--c:#7a442c" data-f="cioccolato" aria-label="Cioccolato"></button><button class="sw" style="--c:#cf9f6e" data-f="nocciola" aria-label="Nocciola"></button><button class="sw" style="--c:#fbec92" data-f="limone" aria-label="Limone"></button><button class="sw" style="--c:#ffb54c" data-f="mangue" aria-label="Mangue"></button><button class="sw" style="--c:#f0e0c2" data-f="tiramisu" aria-label="Tiramisù"></button></div>
-        </div>
+      <div class="floaters" aria-hidden="true">
+        <span class="ing" data-ing="choc" data-speed=".35" style="--x:8%;--y:30%;--s:86px;--r:-14deg"></span>
+        <span class="ing" data-ing="wafer" data-speed="-.25" style="--x:84%;--y:22%;--s:120px;--r:10deg"></span>
+        <span class="ing" data-ing="hazelnut" data-speed=".5" style="--x:90%;--y:70%;--s:64px;--r:20deg"></span>
+        <span class="ing" data-ing="almond" data-speed="-.4" style="--x:4%;--y:78%;--s:58px;--r:-30deg"></span>
       </div>
     </section>
 
-    <!-- EXOTIC -->
-    <section class="exotic" id="exotiques">
-      <div class="head">
-        <h2 class="h2">Parfums exotiques <span class="h2__dash"></span></h2>
-        <div class="arrows"><button class="arrow" data-dir="-1" aria-label="Précédent">←</button><button class="arrow" data-dir="1" aria-label="Suivant">→</button></div>
+    <!-- HISTOIRE -->
+    <section class="story" id="histoire" data-bg="#FFE1E9">
+      <div class="floaters" aria-hidden="true">
+        <span class="ing" data-ing="strawberry" data-speed=".45" style="--x:3%;--y:10%;--s:92px;--r:-18deg"></span>
+        <span class="ing" data-ing="blueberry" data-speed="-.3" style="--x:42%;--y:4%;--s:46px"></span>
+        <span class="ing" data-ing="raspberry" data-speed=".6" style="--x:46%;--y:78%;--s:62px;--r:24deg"></span>
+        <span class="ing" data-ing="cherry" data-speed="-.5" style="--x:90%;--y:6%;--s:84px;--r:12deg"></span>
+        <span class="ing" data-ing="almond" data-speed=".3" style="--x:94%;--y:62%;--s:54px;--r:40deg"></span>
+        <span class="ing" data-ing="blueberry" data-speed=".7" style="--x:12%;--y:84%;--s:40px"></span>
+        <span class="ing" data-ing="strawberry" data-speed="-.35" style="--x:80%;--y:90%;--s:64px;--r:30deg"></span>
       </div>
-      <div class="exotic__row">
-        <ul class="exotic__track">
-          <li class="exo" style="--c:#b08cf0"><div class="shape shape--square" data-cursor="Miam"><img src="assets/img/cup-amlou.svg" alt="Coupe Amlou et miel" loading="lazy" draggable="false"></div><p class="exo__name">Amlou &amp; miel</p></li>
-          <li class="exo" style="--c:#ff9ad1"><div class="shape shape--star" data-cursor="Miam"><img src="assets/img/cup-oranger.svg" alt="Coupe Fleur d'oranger" loading="lazy" draggable="false"></div><p class="exo__name">Fleur d'oranger</p></li>
-          <li class="exo" style="--c:#ff8a3d"><div class="shape shape--sun" data-cursor="Miam"><img src="assets/img/cup-menthe.svg" alt="Coupe Menthe fraîche" loading="lazy" draggable="false"></div><p class="exo__name">Menthe fraîche</p></li>
-          <li class="exo" style="--c:#fecd33"><div class="shape shape--tile" data-cursor="Miam"><img src="assets/img/cup-figue.svg" alt="Coupe Figue de Barbarie" loading="lazy" draggable="false"></div><p class="exo__name">Figue de Barbarie</p></li>
-          <li class="exo" style="--c:#9fd8c4"><div class="shape shape--blob" data-cursor="Miam"><img src="assets/img/cup-datte.svg" alt="Coupe Datte et cannelle" loading="lazy" draggable="false"></div><p class="exo__name">Datte &amp; cannelle</p></li>
-          <li class="exo exo--badge"><svg class="badge" viewBox="0 0 200 200" aria-hidden="true"><use href="#star"/><defs><path id="bc" d="M100,100 m-62,0 a62,62 0 1,1 124,0 a62,62 0 1,1 -124,0"/></defs><text class="badge__ring"><textPath href="#bc">PASSIONE ✦ PER IL ✦ GELATO ✦</textPath></text><text x="100" y="96" text-anchor="middle" class="badge__no">N°37</text><text x="100" y="122" text-anchor="middle" class="badge__sm">BACHKOU</text></svg></li>
+      <div class="story__in">
+        <div class="story__copy">
+          <p class="kicker reveal">La nostra storia</p>
+          <h2 class="h2" data-split>Un petit coin d'Italie à <em>Bachkou.</em></h2>
+          <p class="story__p reveal" style="--d:.2s">Une façade jaune, un store bordeaux et des bacs de gelato aux couleurs de l'été. Chez Capriso, on vient pour une boule et on repart avec trois. C'est ça, le caprice.</p>
+          <a class="btn btn--wine magnetic reveal" style="--d:.3s" href="#trouver"><span class="btn__t">Passer nous voir</span><svg class="btn__ic" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        </div>
+        <ul class="tiles">
+          <li class="tile glass reveal" style="--c:#C9F1DF;--d:.05s" data-tilt><span class="tile__ic"><svg aria-hidden="true"><use href="#i-cone"/></svg></span><h3>Gelato à l'italienne</h3><p>Crémeux, dense, généreux. Comme là-bas.</p></li>
+          <li class="tile glass reveal" style="--c:#FFE0B8;--d:.15s" data-tilt><span class="tile__ic"><svg aria-hidden="true"><use href="#i-cup"/></svg></span><h3>Cornet ou pot</h3><p>Croustillant ou rayé jaune, à toi de voir.</p></li>
+          <li class="tile glass reveal" style="--c:#FFC9D6;--d:.25s" data-tilt><span class="tile__ic"><svg aria-hidden="true"><use href="#i-scoops"/></svg></span><h3>Jusqu'à 3 parfums</h3><p>15, 25 ou 35 DH. Aussi simple que ça.</p></li>
+          <li class="tile glass reveal" style="--c:#DCCFF8;--d:.35s" data-tilt><span class="tile__ic"><svg aria-hidden="true"><use href="#i-pin"/></svg></span><h3>Face à Carrefour Taddart</h3><p>N°37 Résidence Fatine, Bachkou.</p></li>
         </ul>
       </div>
     </section>
 
-    <!-- MEMORIES -->
-    <section class="memories">
-      <div class="memories__art" data-cursor="Miam">
-        <svg class="rays" viewBox="0 0 400 400" aria-hidden="true"><path d="M200,200 L500.0,200.0 L497.4,239.2Z"/><path d="M200,200 L489.8,277.6 L477.2,314.8Z"/><path d="M200,200 L459.8,350.0 L438.0,382.6Z"/><path d="M200,200 L412.1,412.1 L382.6,438.0Z"/><path d="M200,200 L350.0,459.8 L314.8,477.2Z"/><path d="M200,200 L277.6,489.8 L239.2,497.4Z"/><path d="M200,200 L200.0,500.0 L160.8,497.4Z"/><path d="M200,200 L122.4,489.8 L85.2,477.2Z"/><path d="M200,200 L50.0,459.8 L17.4,438.0Z"/><path d="M200,200 L-12.1,412.1 L-38.0,382.6Z"/><path d="M200,200 L-59.8,350.0 L-77.2,314.8Z"/><path d="M200,200 L-89.8,277.6 L-97.4,239.2Z"/><path d="M200,200 L-100.0,200.0 L-97.4,160.8Z"/><path d="M200,200 L-89.8,122.4 L-77.2,85.2Z"/><path d="M200,200 L-59.8,50.0 L-38.0,17.4Z"/><path d="M200,200 L-12.1,-12.1 L17.4,-38.0Z"/><path d="M200,200 L50.0,-59.8 L85.2,-77.2Z"/><path d="M200,200 L122.4,-89.8 L160.8,-97.4Z"/><path d="M200,200 L200.0,-100.0 L239.2,-97.4Z"/><path d="M200,200 L277.6,-89.8 L314.8,-77.2Z"/><path d="M200,200 L350.0,-59.8 L382.6,-38.0Z"/><path d="M200,200 L412.1,-12.1 L438.0,17.4Z"/><path d="M200,200 L459.8,50.0 L477.2,85.2Z"/><path d="M200,200 L489.8,122.4 L497.4,160.8Z"/></svg>
-        <img class="memories__cone" src="assets/img/cone-big.svg" alt="Grand cornet mangue, fraise et pistache">
-        <svg class="pop-heart" viewBox="0 0 32 30" aria-hidden="true"><path d="M16 28S2 19 2 9.5A7 7 0 0 1 16 6a7 7 0 0 1 14 3.5C30 19 16 28 16 28z"/></svg>
+    <!-- PARFUMS : scroll horizontal épinglé -->
+    <section class="flavors" id="parfums" data-bg="#FFF7E8">
+      <div class="flavors__pin">
+        <div class="flavors__head">
+          <div>
+            <p class="kicker reveal">I nostri gusti</p>
+            <h2 class="h2" data-split>Les parfums <em>signature</em></h2>
+          </div>
+          <p class="flavors__hint reveal">Un cornet 1 parfum, c'est 15 DH. Ajoute ton préféré, ou compose plus bas jusqu'à 3 boules.</p>
+        </div>
+        <div class="flavors__rail">
+          <svg class="flavors__ribbon" viewBox="0 0 2400 300" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M0,170 C180,60 320,260 520,170 S860,40 1060,150 S1420,280 1640,150 S2000,40 2200,140 S2380,200 2400,180"/></svg>
+          <ul class="flavors__track">
+            <li class="fcard" data-f="fragola"><button class="fcard__fav" aria-pressed="false" aria-label="Fragola en favori"><svg aria-hidden="true"><use href="#i-heart"/></svg></button><div class="fcard__glow"></div><div class="fcard__art" data-cursor="Miam"></div><h3 class="fcard__name">Fragola</h3><p class="fcard__fr">Fraise</p><p class="fcard__desc">Rose tendre et fruitée, le goût d'un été qui commence.</p><button class="fcard__add" data-add="fragola"><span>Cornet · 15 DH</span><svg aria-hidden="true"><use href="#i-plus"/></svg></button></li>
+            <li class="fcard" data-f="pistacchio"><button class="fcard__fav" aria-pressed="false" aria-label="Pistacchio en favori"><svg aria-hidden="true"><use href="#i-heart"/></svg></button><div class="fcard__glow"></div><div class="fcard__art" data-cursor="Miam"></div><h3 class="fcard__name">Pistacchio</h3><p class="fcard__fr">Pistache</p><p class="fcard__desc">Vert doux et toasté. La boule qu'on ne partage pas.</p><button class="fcard__add" data-add="pistacchio"><span>Cornet · 15 DH</span><svg aria-hidden="true"><use href="#i-plus"/></svg></button></li>
+            <li class="fcard" data-f="cioccolato"><button class="fcard__fav" aria-pressed="false" aria-label="Cioccolato en favori"><svg aria-hidden="true"><use href="#i-heart"/></svg></button><div class="fcard__glow"></div><div class="fcard__art" data-cursor="Miam"></div><h3 class="fcard__name">Cioccolato</h3><p class="fcard__fr">Chocolat</p><p class="fcard__desc">Intense et fondant, pour les vrais gourmands.</p><button class="fcard__add" data-add="cioccolato"><span>Cornet · 15 DH</span><svg aria-hidden="true"><use href="#i-plus"/></svg></button></li>
+            <li class="fcard" data-f="stracciatella"><button class="fcard__fav" aria-pressed="false" aria-label="Stracciatella en favori"><svg aria-hidden="true"><use href="#i-heart"/></svg></button><div class="fcard__glow"></div><div class="fcard__art" data-cursor="Miam"></div><h3 class="fcard__name">Stracciatella</h3><p class="fcard__fr">Vanille &amp; copeaux</p><p class="fcard__desc">Crème de lait et copeaux de chocolat qui croquent.</p><button class="fcard__add" data-add="stracciatella"><span>Cornet · 15 DH</span><svg aria-hidden="true"><use href="#i-plus"/></svg></button></li>
+            <li class="fcard" data-f="nocciola"><button class="fcard__fav" aria-pressed="false" aria-label="Nocciola en favori"><svg aria-hidden="true"><use href="#i-heart"/></svg></button><div class="fcard__glow"></div><div class="fcard__art" data-cursor="Miam"></div><h3 class="fcard__name">Nocciola</h3><p class="fcard__fr">Noisette</p><p class="fcard__desc">Noisette grillée, douce et réconfortante.</p><button class="fcard__add" data-add="nocciola"><span>Cornet · 15 DH</span><svg aria-hidden="true"><use href="#i-plus"/></svg></button></li>
+            <li class="fcard" data-f="mangue"><button class="fcard__fav" aria-pressed="false" aria-label="Mango en favori"><svg aria-hidden="true"><use href="#i-heart"/></svg></button><div class="fcard__glow"></div><div class="fcard__art" data-cursor="Miam"></div><h3 class="fcard__name">Mango</h3><p class="fcard__fr">Mangue</p><p class="fcard__desc">Du soleil en boule, juteux et parfumé.</p><button class="fcard__add" data-add="mangue"><span>Cornet · 15 DH</span><svg aria-hidden="true"><use href="#i-plus"/></svg></button></li>
+            <li class="fcard" data-f="limone"><button class="fcard__fav" aria-pressed="false" aria-label="Limone en favori"><svg aria-hidden="true"><use href="#i-heart"/></svg></button><div class="fcard__glow"></div><div class="fcard__art" data-cursor="Miam"></div><h3 class="fcard__name">Limone</h3><p class="fcard__fr">Citron</p><p class="fcard__desc">Acidulé et frais, le coup de fouet de l'après-midi.</p><button class="fcard__add" data-add="limone"><span>Cornet · 15 DH</span><svg aria-hidden="true"><use href="#i-plus"/></svg></button></li>
+            <li class="fcard" data-f="bosco"><button class="fcard__fav" aria-pressed="false" aria-label="Frutti di bosco en favori"><svg aria-hidden="true"><use href="#i-heart"/></svg></button><div class="fcard__glow"></div><div class="fcard__art" data-cursor="Miam"></div><h3 class="fcard__name">Frutti di bosco</h3><p class="fcard__fr">Fruits des bois</p><p class="fcard__desc">Myrtilles, framboises et un brin de caprice.</p><button class="fcard__add" data-add="bosco"><span>Cornet · 15 DH</span><svg aria-hidden="true"><use href="#i-plus"/></svg></button></li>
+          </ul>
+        </div>
+        <div class="flavors__foot" aria-hidden="true"><span class="flavors__meter"><i></i></span><span class="flavors__swipe">Fais glisser</span></div>
+        <div class="bubble bubble--a glass" aria-hidden="true"><b>15 DH</b><span>1 parfum, en cornet</span></div>
+        <div class="bubble bubble--b glass" aria-hidden="true"><b>35 DH</b><span>3 parfums</span></div>
       </div>
-      <div class="memories__copy">
-        <h2 class="h2 h2--big">Une glace qui<br>réveille les<br>souvenirs. <img class="mini-cone" src="assets/img/cone-one.svg" alt=""></h2>
-        <p>Le goût d'un été en Italie, d'une balade en famille, d'un premier cornet qui coule sur les doigts. Chez Capriso, chaque boule a son histoire.</p>
-        <div class="memories__ctas">
-          <a href="#parfums" class="pill pill--ghost magnetic">Voir les parfums <span class="pill__arrow">›</span></a>
-          <a href="https://www.google.com/maps/search/?api=1&amp;query=Capriso+glacier+R%C3%A9sidence+Fatine+Bachkou+Casablanca" target="_blank" rel="noopener" class="link-pin"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.3 7-12a7 7 0 0 0-14 0c0 5.7 7 12 7 12z"/><circle cx="12" cy="10" r="2.6"/></svg>Nous trouver</a>
+    </section>
+
+    <!-- COMPOSEUR + COMMANDE -->
+    <section class="composer" id="composer" data-bg="#FFF7E8">
+      <div class="composer__card">
+        <div class="floaters" aria-hidden="true">
+          <span class="ing" data-ing="cherry" data-speed=".3" style="--x:92%;--y:4%;--s:90px;--r:10deg"></span>
+          <span class="ing" data-ing="raspberry" data-speed="-.35" style="--x:2%;--y:46%;--s:64px;--r:-20deg"></span>
+          <span class="ing" data-ing="blueberry" data-speed=".5" style="--x:94%;--y:84%;--s:50px"></span>
+          <span class="ing" data-ing="wafer" data-speed="-.2" style="--x:44%;--y:-2%;--s:110px;--r:-10deg"></span>
+        </div>
+        <div class="composer__head">
+          <div>
+            <p class="kicker kicker--light reveal">Fai da te</p>
+            <h2 class="h2 h2--light" data-split>Compose <em>ta glace</em></h2>
+          </div>
+          <ul class="tiers reveal" aria-label="Les prix">
+            <li data-n="1"><span>1 parfum <small>(cornet)</small></span><b>15 DH</b></li>
+            <li data-n="2"><span>2 parfums</span><b>25 DH</b></li>
+            <li data-n="3"><span>3 parfums</span><b>35 DH</b></li>
+          </ul>
+        </div>
+
+        <div class="composer__grid">
+          <div class="builder glass glass--dark reveal">
+            <div class="builder__stage" data-cursor="Miam">
+              <div class="builder__plate" aria-hidden="true"></div>
+              <div class="builder__art" aria-live="polite"></div>
+              <div class="builder__price"><span class="odo" data-odo="15">15</span><small>DH</small></div>
+            </div>
+            <div class="builder__ctrl">
+              <p class="lbl"><b>1</b> Cornet ou pot ?</p>
+              <div class="seg" role="group" aria-label="Cornet ou pot">
+                <button class="seg__b is-on" data-base="cone" aria-pressed="true">Cornet</button>
+                <button class="seg__b" data-base="cup" aria-pressed="false">Pot</button>
+                <span class="seg__ink" aria-hidden="true"></span>
+              </div>
+              <p class="builder__note" aria-live="polite"></p>
+              <p class="lbl"><b>2</b> Tes parfums <span class="builder__count">1 / 3</span></p>
+              <div class="swatches" role="group" aria-label="Parfums"></div>
+              <button class="btn btn--yellow builder__add magnetic"><span class="btn__t">Ajouter à ma commande</span><svg class="btn__ic" aria-hidden="true"><use href="#i-plus"/></svg></button>
+            </div>
+          </div>
+
+          <aside class="order glass reveal" id="commande" style="--d:.15s" aria-label="Ma commande">
+            <div class="order__head"><h3>Ma commande</h3><span class="order__n">0 glace</span></div>
+            <ul class="order__list"></ul>
+            <p class="order__empty">Ta commande est vide pour l'instant. Compose une glace ou ajoute un cornet depuis les parfums.</p>
+            <div class="order__total"><span>Total</span><b><span class="odo" data-odo="0">0</span> DH</b></div>
+            <label class="order__field"><span>Ton prénom</span><input type="text" name="prenom" autocomplete="given-name" placeholder="Ex. Salma"></label>
+            <a class="btn btn--wa order__send" href="https://wa.me/212618401509" target="_blank" rel="noopener" aria-disabled="true"><svg class="btn__ic" aria-hidden="true"><use href="#i-wa"/></svg><span class="btn__t">Envoyer sur WhatsApp</span></a>
+            <a class="order__call" href="tel:+212618401509"><svg aria-hidden="true"><use href="#i-phone"/></svg>ou appelle le +212 618 401 509</a>
+            <p class="order__note">À récupérer en boutique : N°37 Résidence Fatine, Bachkou.</p>
+          </aside>
         </div>
       </div>
     </section>
 
-    <!-- FIND US -->
-    <section class="find" id="trouver">
-      <a class="shop" href="https://www.google.com/maps/search/?api=1&amp;query=Capriso+glacier+R%C3%A9sidence+Fatine+Bachkou+Casablanca" target="_blank" rel="noopener" data-cursor="Y aller" aria-label="Ouvrir Capriso dans Google Maps">
-        <svg viewBox="0 0 520 440" aria-hidden="true">
-          <rect x="20" y="40" width="480" height="380" rx="8" fill="#fecd33" stroke="#7a1428" stroke-width="6"/>
-          <rect x="60" y="64" width="400" height="58" rx="6" fill="#fff6e5" stroke="#7a1428" stroke-width="5"/>
-          <g class="awning">
-            <path d="M28,140 H492 V170 H28Z" fill="#7a1428"/>
-            <text x="260" y="162" text-anchor="middle" class="awning__txt">PASSIONE PER IL GELATO</text>
-            <g class="awning__flaps"><path d="M28.0,170 h46.4 v26 a23.2,18 0 0 1 -46.4,0z" fill="#a72438" stroke="#7a1428" stroke-width="4"/><path d="M74.4,170 h46.4 v26 a23.2,18 0 0 1 -46.4,0z" fill="#fff6e5" stroke="#7a1428" stroke-width="4"/><path d="M120.8,170 h46.4 v26 a23.2,18 0 0 1 -46.4,0z" fill="#a72438" stroke="#7a1428" stroke-width="4"/><path d="M167.2,170 h46.4 v26 a23.2,18 0 0 1 -46.4,0z" fill="#fff6e5" stroke="#7a1428" stroke-width="4"/><path d="M213.6,170 h46.4 v26 a23.2,18 0 0 1 -46.4,0z" fill="#a72438" stroke="#7a1428" stroke-width="4"/><path d="M260.0,170 h46.4 v26 a23.2,18 0 0 1 -46.4,0z" fill="#fff6e5" stroke="#7a1428" stroke-width="4"/><path d="M306.4,170 h46.4 v26 a23.2,18 0 0 1 -46.4,0z" fill="#a72438" stroke="#7a1428" stroke-width="4"/><path d="M352.8,170 h46.4 v26 a23.2,18 0 0 1 -46.4,0z" fill="#fff6e5" stroke="#7a1428" stroke-width="4"/><path d="M399.2,170 h46.4 v26 a23.2,18 0 0 1 -46.4,0z" fill="#a72438" stroke="#7a1428" stroke-width="4"/><path d="M445.59999999999997,170 h46.4 v26 a23.2,18 0 0 1 -46.4,0z" fill="#fff6e5" stroke="#7a1428" stroke-width="4"/></g>
+    <!-- FAQ -->
+    <section class="faq" id="faq" data-bg="#FFF7E8" data-progress>
+      <div class="faq__card">
+        <svg class="faq__line" viewBox="0 0 1200 400" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M-20,300 C120,160 220,380 380,260 S620,60 760,200 S1020,380 1220,150"/></svg>
+        <div class="faq__copy">
+          <p class="kicker kicker--light reveal">Domande</p>
+          <h2 class="h2 h2--light" data-split>Des questions&nbsp;? <em>On répond.</em></h2>
+          <p class="faq__p reveal">Et pour tout le reste, passe nous voir ou écris-nous sur Instagram.</p>
+          <div class="faq__soc reveal">
+            <a class="round round--light magnetic" href="https://www.instagram.com/capriso_passionedigelato/" target="_blank" rel="noopener" aria-label="Instagram"><svg aria-hidden="true"><use href="#i-ig"/></svg></a>
+            <a class="round round--light magnetic" href="tel:+212618401509" aria-label="Appeler"><svg aria-hidden="true"><use href="#i-phone"/></svg></a>
+            <a class="round round--light magnetic" href="https://www.google.com/maps/search/?api=1&amp;query=Capriso+glacier+R%C3%A9sidence+Fatine+Bachkou+Casablanca" target="_blank" rel="noopener" aria-label="Google Maps"><svg aria-hidden="true"><use href="#i-pin"/></svg></a>
+          </div>
+        </div>
+        <div class="faq__list">
+          <div class="qa reveal" style="--d:.05s"><h3><button class="qa__q" aria-expanded="false" aria-controls="qa1" id="qa1-b">Combien coûte une glace ?<span class="qa__ic"><svg aria-hidden="true"><use href="#i-arrow"/></svg></span></button></h3><div class="qa__a" id="qa1" role="region" aria-labelledby="qa1-b"><div><p>1 parfum en cornet : 15 DH. 2 parfums : 25 DH. 3 parfums : 35 DH. Pas de supplément caché, promis.</p></div></div></div>
+          <div class="qa reveal" style="--d:.12s"><h3><button class="qa__q" aria-expanded="false" aria-controls="qa2" id="qa2-b">Cornet ou pot ?<span class="qa__ic"><svg aria-hidden="true"><use href="#i-arrow"/></svg></span></button></h3><div class="qa__a" id="qa2" role="region" aria-labelledby="qa2-b"><div><p>Les deux ! Le cornet gaufré pour croquer, le pot rayé jaune pour prendre son temps.</p></div></div></div>
+          <div class="qa reveal" style="--d:.19s"><h3><button class="qa__q" aria-expanded="false" aria-controls="qa3" id="qa3-b">Je peux mélanger les parfums ?<span class="qa__ic"><svg aria-hidden="true"><use href="#i-arrow"/></svg></span></button></h3><div class="qa__a" id="qa3" role="region" aria-labelledby="qa3-b"><div><p>Oui, jusqu'à 3 parfums par glace individuelle. Pistache et fraise, chocolat et citron… tous les caprices sont permis.</p></div></div></div>
+          <div class="qa reveal" style="--d:.26s"><h3><button class="qa__q" aria-expanded="false" aria-controls="qa4" id="qa4-b">Où se trouve Capriso ?<span class="qa__ic"><svg aria-hidden="true"><use href="#i-arrow"/></svg></span></button></h3><div class="qa__a" id="qa4" role="region" aria-labelledby="qa4-b"><div><p>N°37 Résidence Fatine, Quartier Bachkou, Casablanca. Juste en face de Carrefour Taddart.</p></div></div></div>
+          <div class="qa reveal" style="--d:.33s"><h3><button class="qa__q" aria-expanded="false" aria-controls="qa5" id="qa5-b">Comment vous contacter ?<span class="qa__ic"><svg aria-hidden="true"><use href="#i-arrow"/></svg></span></button></h3><div class="qa__a" id="qa5" role="region" aria-labelledby="qa5-b"><div><p>Par téléphone au <a href="tel:+212618401509">+212 618 401 509</a> ou sur Instagram <a href="https://www.instagram.com/capriso_passionedigelato/" target="_blank" rel="noopener">@capriso_passionedigelato</a>.</p></div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LE PETIT CODE DU GELATO -->
+    <section class="rules" data-bg="#ECE4FC">
+      <div class="rules__head">
+        <p class="kicker reveal">Il codice</p>
+        <h2 class="h2" data-split>Le petit code <em>du gelato</em></h2>
+      </div>
+      <ol class="rules__grid">
+        <li class="rule" style="--r:-7deg;--c:#FFE1E9;--d:0s"><span class="rule__n">01</span><div class="rule__art" data-cone="fragola"></div><p>La première cuillère se savoure les yeux fermés.</p></li>
+        <li class="rule" style="--r:5deg;--c:#E3F1CF;--d:.1s"><span class="rule__n">02</span><div class="rule__art" data-cone="pistacchio"></div><p>Deux parfums ? Prends-en trois. C'est 35 DH, pas une affaire d'État.</p></li>
+        <li class="rule" style="--r:-4deg;--c:#FFE7C6;--d:.2s"><span class="rule__n">03</span><div class="rule__art" data-cone="mangue"></div><p>Un cornet, ça se mange vite. Il fait chaud à Casa.</p></li>
+        <li class="rule" style="--r:8deg;--c:#E4F1FC;--d:.3s"><span class="rule__n">04</span><div class="rule__art" data-cone="stracciatella"></div><p>On ne partage pas. Sauf la pistache. Et encore.</p></li>
+      </ol>
+      <a class="rules__ig reveal" href="https://www.instagram.com/capriso_passionedigelato/" target="_blank" rel="noopener" data-cursor="Ciao !"><svg aria-hidden="true"><use href="#i-ig"/></svg><span>Montre-nous ta glace : <b>@capriso_passionedigelato</b></span></a>
+    </section>
+
+    <!-- BOUTIQUE -->
+    <section class="find" id="trouver" data-bg="#FFCD2E" data-progress>
+      <a class="shop reveal" href="https://www.google.com/maps/search/?api=1&amp;query=Capriso+glacier+R%C3%A9sidence+Fatine+Bachkou+Casablanca" target="_blank" rel="noopener" data-cursor="Y aller !" aria-label="Ouvrir Capriso dans Google Maps">
+        <svg class="shop__svg" viewBox="0 0 560 520" aria-hidden="true">
+          <defs>
+            <linearGradient id="glassG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF7E2"/><stop offset=".6" stop-color="#FCE7B8"/><stop offset="1" stop-color="#F3CF7E"/></linearGradient>
+            <linearGradient id="wallG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD84A"/><stop offset="1" stop-color="#F6BD1E"/></linearGradient>
+            <clipPath id="winC"><rect x="70" y="300" width="250" height="178" rx="10"/></clipPath>
+          </defs>
+          <ellipse cx="280" cy="500" rx="250" ry="16" fill="#3A0B18" opacity=".16"/>
+          <rect x="30" y="60" width="500" height="436" rx="22" fill="url(#wallG)"/>
+          <rect x="30" y="60" width="500" height="436" rx="22" fill="none" stroke="#6E1027" stroke-width="5"/>
+          <g class="shop__bulbs">
+            <circle cx="70" cy="86" r="6"/><circle cx="124" cy="86" r="6"/><circle cx="178" cy="86" r="6"/><circle cx="232" cy="86" r="6"/><circle cx="286" cy="86" r="6"/><circle cx="340" cy="86" r="6"/><circle cx="394" cy="86" r="6"/><circle cx="448" cy="86" r="6"/><circle cx="492" cy="86" r="6"/>
           </g>
-          <rect x="60" y="230" width="230" height="170" rx="6" fill="#fff6e5" stroke="#7a1428" stroke-width="5"/>
-          <rect x="320" y="230" width="140" height="190" rx="6" fill="#a72438" stroke="#7a1428" stroke-width="5"/>
-          <circle cx="440" cy="330" r="7" fill="#fecd33"/>
-          <path d="M60,350 H290" stroke="#7a1428" stroke-width="5"/>
-          <image href="assets/img/cup-fragola.svg" x="72" y="262" width="66" height="88"/>
-          <image href="assets/img/cup-pistacchio.svg" x="142" y="262" width="66" height="88"/>
-          <image href="assets/img/cup-mangue.svg" x="212" y="262" width="66" height="88"/>
-          <path d="M0,420 H520" stroke="#7a1428" stroke-width="6"/>
+          <image href="assets/img/logo-word.png" x="110" y="104" width="340" height="121"/>
+          <g class="shop__awning">
+            <path d="M18,230 H542 L530,262 H30 Z" fill="#A3203A"/>
+            <text x="280" y="253" text-anchor="middle" class="shop__awning-t">PASSIONE PER IL GELATO</text>
+            <g class="shop__flaps">
+              <path style="--i:0" d="M30,262h50v18a25,18 0 0 1-50,0z" fill="#FFCD2E" stroke="#A3203A" stroke-width="4"/>
+              <path style="--i:1" d="M80,262h50v18a25,18 0 0 1-50,0z" fill="#A3203A"/>
+              <path style="--i:2" d="M130,262h50v18a25,18 0 0 1-50,0z" fill="#FFCD2E" stroke="#A3203A" stroke-width="4"/>
+              <path style="--i:3" d="M180,262h50v18a25,18 0 0 1-50,0z" fill="#A3203A"/>
+              <path style="--i:4" d="M230,262h50v18a25,18 0 0 1-50,0z" fill="#FFCD2E" stroke="#A3203A" stroke-width="4"/>
+              <path style="--i:5" d="M280,262h50v18a25,18 0 0 1-50,0z" fill="#A3203A"/>
+              <path style="--i:6" d="M330,262h50v18a25,18 0 0 1-50,0z" fill="#FFCD2E" stroke="#A3203A" stroke-width="4"/>
+              <path style="--i:7" d="M380,262h50v18a25,18 0 0 1-50,0z" fill="#A3203A"/>
+              <path style="--i:8" d="M430,262h50v18a25,18 0 0 1-50,0z" fill="#FFCD2E" stroke="#A3203A" stroke-width="4"/>
+              <path style="--i:9" d="M480,262h50v18a25,18 0 0 1-50,0z" fill="#A3203A"/>
+            </g>
+          </g>
+          <rect x="70" y="300" width="250" height="178" rx="10" fill="url(#glassG)" stroke="#6E1027" stroke-width="5"/>
+          <g clip-path="url(#winC)">
+            <rect x="70" y="408" width="250" height="70" fill="#E8E2D6"/>
+            <rect x="70" y="404" width="250" height="8" fill="#6E1027" opacity=".85"/>
+            <g class="shop__tubs">
+              <rect x="86" y="384" width="34" height="22" rx="6" fill="#F7A1B5"/><rect x="126" y="384" width="34" height="22" rx="6" fill="#B8D27A"/><rect x="166" y="384" width="34" height="22" rx="6" fill="#7D4932"/><rect x="206" y="384" width="34" height="22" rx="6" fill="#FFF3DC"/><rect x="246" y="384" width="34" height="22" rx="6" fill="#FFB84B"/><rect x="286" y="384" width="26" height="22" rx="6" fill="#B99BE3"/>
+            </g>
+            <path d="M70,300 L180,300 L90,478 L70,478Z" fill="#fff" opacity=".35"/>
+            <path d="M200,300 L232,300 L142,478 L110,478Z" fill="#fff" opacity=".25"/>
+          </g>
+          <rect x="350" y="300" width="140" height="196" rx="10" fill="#FFF3D4" stroke="#6E1027" stroke-width="5"/>
+          <rect x="364" y="314" width="112" height="170" rx="6" fill="url(#glassG)"/>
+          <path d="M364,314 L420,314 L370,484 L364,484Z" fill="#fff" opacity=".4"/>
+          <rect x="452" y="392" width="8" height="40" rx="4" fill="#6E1027"/>
+          <g transform="translate(374 336)"><rect width="92" height="34" rx="17" fill="#A3203A"/><text x="46" y="23" text-anchor="middle" class="shop__open">APERTO</text></g>
         </svg>
-        <img class="shop__logo" src="assets/img/logo-wine.png" alt="">
-        <span class="shop__pin"><svg viewBox="0 0 48 64"><path d="M24 62S4 38 4 22a20 20 0 0 1 40 0c0 16-20 40-20 40z" fill="#e84a5f" stroke="#7a1428" stroke-width="3.5"/><circle cx="24" cy="22" r="8" fill="#fff6e5" stroke="#7a1428" stroke-width="3"/></svg></span>
+        <span class="shop__pin" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-pin"/></svg></span>
       </a>
-      <div class="find__copy">
-        <h2 class="h2 h2--big">Viens nous<br><span>voir !</span></h2>
-        <div class="addr">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.3 7-12a7 7 0 0 0-14 0c0 5.7 7 12 7 12z"/><circle cx="12" cy="10" r="2.6"/></svg>
-          <p>N°37 Résidence Fatine,<br>Quartier Bachkou, Casablanca<br><small>En face de Carrefour Taddart</small></p>
+      <div class="find__card glass">
+        <p class="kicker reveal">Vieni a trovarci</p>
+        <h2 class="h2" data-split>Viens nous <em>voir&nbsp;!</em></h2>
+        <p class="find__addr reveal"><svg aria-hidden="true"><use href="#i-pin"/></svg><span>N°37 Résidence Fatine,<br>Quartier Bachkou, Casablanca<br><small>En face de Carrefour Taddart</small></span></p>
+        <a class="find__tel reveal" href="tel:+212618401509">+212 618 401 509</a>
+        <div class="find__ctas reveal">
+          <a class="btn btn--wine magnetic" href="https://www.google.com/maps/search/?api=1&amp;query=Capriso+glacier+R%C3%A9sidence+Fatine+Bachkou+Casablanca" target="_blank" rel="noopener"><span class="btn__t">Ouvrir dans Maps</span><svg class="btn__ic" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          <a class="btn btn--line-dark magnetic" href="https://www.instagram.com/capriso_passionedigelato/" target="_blank" rel="noopener"><span class="btn__t">Instagram</span></a>
         </div>
-        <a class="tel" href="tel:+212618401509">+212 618 401 509</a>
-        <div class="find__ctas">
-          <a href="https://www.google.com/maps/search/?api=1&amp;query=Capriso+glacier+R%C3%A9sidence+Fatine+Bachkou+Casablanca" target="_blank" rel="noopener" class="pill pill--dark magnetic">Ouvrir dans Google Maps <span class="pill__arrow">›</span></a>
-          <a href="https://www.instagram.com/capriso_passionedigelato/" target="_blank" rel="noopener" class="pill pill--ghost magnetic">Instagram</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- SWEET COLD CREAMY -->
-    <section class="finale" aria-label="Fresco, cremoso, dolce">
-      <p class="finale__word">Fresco · Cremoso · Dolce</p>
-      <div class="finale__cups" aria-hidden="true">
-        <img src="assets/img/cup-limone.svg" alt="" style="--i:0"><img src="assets/img/cup-cioccolato.svg" alt="" style="--i:1"><img src="assets/img/cup-fragola.svg" alt="" style="--i:2"><img src="assets/img/cup-pistacchio.svg" alt="" style="--i:3"><img src="assets/img/cup-mangue.svg" alt="" style="--i:4"><img src="assets/img/cup-stracciatella.svg" alt="" style="--i:5"><img src="assets/img/cup-figue.svg" alt="" style="--i:6">
       </div>
     </section>
   </main>
 
   <footer class="footer">
+    <svg class="footer__drip" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0,0 V40 C60,40 70,96 96,96 S130,40 180,40 C250,40 240,70 268,70 S300,40 360,40 C430,40 430,110 458,110 S490,40 560,40 C620,40 626,76 650,76 S680,40 740,40 C800,40 800,100 826,100 S856,40 920,40 C990,40 990,64 1012,64 S1040,40 1100,40 C1160,40 1160,104 1188,104 S1220,40 1290,40 C1350,40 1350,80 1374,80 S1400,40 1440,40 V0 Z">
+        <animate attributeName="d" dur="7s" repeatCount="indefinite" values="M0,0 V40 C60,40 70,96 96,96 S130,40 180,40 C250,40 240,70 268,70 S300,40 360,40 C430,40 430,110 458,110 S490,40 560,40 C620,40 626,76 650,76 S680,40 740,40 C800,40 800,100 826,100 S856,40 920,40 C990,40 990,64 1012,64 S1040,40 1100,40 C1160,40 1160,104 1188,104 S1220,40 1290,40 C1350,40 1350,80 1374,80 S1400,40 1440,40 V0 Z;M0,0 V40 C60,40 70,80 96,80 S130,40 180,40 C250,40 240,92 268,92 S300,40 360,40 C430,40 430,88 458,88 S490,40 560,40 C620,40 626,104 650,104 S680,40 740,40 C800,40 800,78 826,78 S856,40 920,40 C990,40 990,96 1012,96 S1040,40 1100,40 C1160,40 1160,84 1188,84 S1220,40 1290,40 C1350,40 1350,104 1374,104 S1400,40 1440,40 V0 Z;M0,0 V40 C60,40 70,96 96,96 S130,40 180,40 C250,40 240,70 268,70 S300,40 360,40 C430,40 430,110 458,110 S490,40 560,40 C620,40 626,76 650,76 S680,40 740,40 C800,40 800,100 826,100 S856,40 920,40 C990,40 990,64 1012,64 S1040,40 1100,40 C1160,40 1160,104 1188,104 S1220,40 1290,40 C1350,40 1350,80 1374,80 S1400,40 1440,40 V0 Z"/>
+      </path>
+    </svg>
+    <p class="footer__big" aria-label="A presto !" data-jelly>A presto!</p>
     <div class="footer__grid">
-      <div class="footer__brand"><img src="assets/img/logo-cream.png" alt="Capriso, passione per il gelato"><p>Capriso Gelato · Casablanca</p></div>
-      <div><h4>Adresse</h4><p>N°37 Résidence Fatine<br>Quartier Bachkou, Casablanca<br>En face Carrefour Taddart</p></div>
+      <div class="footer__brand">
+        <span class="logo logo--light" aria-label="Capriso, passione per il gelato"><svg class="logo__mark" aria-hidden="true"><use href="#cap-mark"/></svg><span class="logo__word" aria-hidden="true"></span></span>
+        <p>Gelato à l'italienne, en cornet ou en pot, au cœur de Bachkou.</p>
+      </div>
+      <div><h4>Adresse</h4><p>N°37 Résidence Fatine<br>Quartier Bachkou, Casablanca<br>En face de Carrefour Taddart</p></div>
       <div><h4>Contact</h4><p><a href="tel:+212618401509">+212 618 401 509</a><br><a href="https://www.instagram.com/capriso_passionedigelato/" target="_blank" rel="noopener">@capriso_passionedigelato</a></p></div>
       <div><h4>Les prix</h4><p>1 parfum (cornet) · 15 DH<br>2 parfums · 25 DH<br>3 parfums · 35 DH</p></div>
     </div>
     <div class="footer__bottom">
-      <form class="news"><label for="news-email">Reçois nos nouveaux parfums</label><div class="news__f"><input id="news-email" type="email" placeholder="ton@email.com" required><button class="pill pill--yellow" type="submit">S'inscrire</button></div></form>
-      <a href="https://www.google.com/maps/search/?api=1&amp;query=Capriso+glacier+R%C3%A9sidence+Fatine+Bachkou+Casablanca" target="_blank" rel="noopener" class="link-pin link-pin--light"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.3 7-12a7 7 0 0 0-14 0c0 5.7 7 12 7 12z"/><circle cx="12" cy="10" r="2.6"/></svg>Trouver la boutique</a>
+      <p>© 2026 Capriso · Passione per il gelato</p>
+      <a class="totop magnetic" href="#top" aria-label="Remonter en haut"><svg aria-hidden="true"><use href="#cap-mark"/></svg><span>Remonter</span></a>
     </div>
-    <p class="footer__legal">© 2026 Capriso · Passione per il gelato</p>
   </footer>
 
+  <script src="assets/js/art.js"></script>
   <script src="assets/js/capriso.js"></script>
 </body>
 </html>
