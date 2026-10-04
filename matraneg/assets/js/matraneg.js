@@ -76,6 +76,7 @@
       measure();
       $(".hero").classList.add("is-in");
       setTimeout(() => $(".hero").classList.add("is-done"), reduce ? 0 : 1700);
+      if (!reduce) slideT = setTimeout(() => goSlide(1), SLIDE);
       $$(".hero .reveal").forEach((el) => el.classList.add("is-in"));
       observe();
       setTimeout(() => $(".loader") && $(".loader").remove(), 1400);
@@ -195,8 +196,8 @@
   $$(".field input", form).forEach((i) => i.addEventListener("input", () => i.closest(".field").classList.remove("is-bad")));
 
   /* ---------- lightbox ---------- */
-  const shots = $$(".p"), lbx = $(".lightbox"), lImg = $(".lightbox__img"), lCap = $(".lightbox__cap");
-  let cur = -1, lastFocus = null;
+  const allShots = $$(".p"), lbx = $(".lightbox"), lImg = $(".lightbox__img"), lCap = $(".lightbox__cap");
+  let shots = allShots, cur = -1, lastFocus = null;
   function show(i) {
     cur = (i + shots.length) % shots.length;
     const img = $("img", shots[cur]);
@@ -205,6 +206,7 @@
     if (!reduce) lImg.animate([{ opacity: 0, transform: "scale(.96)" }, { opacity: 1, transform: "none" }], { duration: 500, easing: "cubic-bezier(.22,1,.36,1)" });
   }
   function openL(i) {
+    shots = allShots.filter((p) => !p.hidden);
     lastFocus = document.activeElement; show(i); lbx.classList.add("is-on");
     if (!reduce) requestAnimationFrame(() => {
       const a = $("img", shots[cur]).getBoundingClientRect(), b = lImg.getBoundingClientRect();
@@ -212,7 +214,47 @@
     }); lbx.setAttribute("aria-hidden", "false"); body.classList.add("lbx-open"); $(".lightbox__close").focus({ preventScroll: true });
   }
   function closeL() { if (cur < 0) return; lbx.classList.remove("is-on"); lbx.setAttribute("aria-hidden", "true"); body.classList.remove("lbx-open"); cur = -1; if (lastFocus) lastFocus.focus({ preventScroll: true }); }
-  $$(".p__img").forEach((b) => b.addEventListener("click", () => openL(+b.dataset.i)));
+  $$(".p__img").forEach((b) => b.addEventListener("click", () => openL(allShots.filter((p) => !p.hidden).indexOf(b.closest(".p")))));
+
+  /* ---------- gallery filters (FLIP: photos glide to their new place) ---------- */
+  const filters = $$(".filter"), fPill = $(".filters__pill");
+  function placeFPill() {
+    const f = $(".filter.is-on");
+    fPill.style.width = `${f.offsetWidth}px`;
+    fPill.style.height = `${f.offsetHeight}px`;
+    fPill.style.transform = `translate(${f.offsetLeft}px, ${f.offsetTop}px)`;
+  }
+  filters.forEach((f) => f.addEventListener("click", () => {
+    if (f.classList.contains("is-on")) return;
+    filters.forEach((b) => { const on = b === f; b.classList.toggle("is-on", on); b.setAttribute("aria-pressed", on); });
+    placeFPill();
+    const k = f.dataset.f;
+    const before = new Map(allShots.filter((p) => !p.hidden).map((p) => [p, p.getBoundingClientRect()]));
+    allShots.forEach((p) => (p.hidden = !(k === "all" || p.dataset.cat === k)));
+    if (reduce) return;
+    allShots.forEach((p, i) => {
+      if (p.hidden) return;
+      const a = before.get(p), b = p.getBoundingClientRect();
+      if (a) p.animate([{ transform: `translate(${a.left - b.left}px, ${a.top - b.top}px)` }, { transform: "none" }], { duration: 700, easing: "cubic-bezier(.22,1,.36,1)" });
+      else p.animate([{ opacity: 0, transform: "translateY(30px) scale(.94)" }, { opacity: 1, transform: "none" }], { duration: 650, delay: i * 40, easing: "cubic-bezier(.22,1,.36,1)", fill: "backwards" });
+    });
+  }));
+
+  /* ---------- hero slideshow ---------- */
+  const slides = $$(".hero__img img"), dots = $$(".hero__dots button"), tagTxt = $(".hero__tag-txt");
+  const SLIDE = 6000;
+  let slide = 0, slideT = null;
+  document.documentElement.style.setProperty("--slide", `${SLIDE}ms`);
+  function goSlide(n) {
+    slide = (n + slides.length) % slides.length;
+    slides.forEach((im, i) => im.classList.toggle("is-on", i === slide));
+    dots.forEach((d, i) => { d.classList.remove("is-on"); if (i === slide) { void d.offsetWidth; d.classList.add("is-on"); } });
+    tagTxt.classList.add("swap");
+    setTimeout(() => { tagTxt.textContent = slides[slide].dataset.tag; tagTxt.classList.remove("swap"); }, 350);
+    clearTimeout(slideT);
+    if (!reduce) slideT = setTimeout(() => goSlide(slide + 1), SLIDE);
+  }
+  dots.forEach((d, i) => d.addEventListener("click", () => goSlide(i)));
   $(".lightbox__bg").addEventListener("click", closeL);
   $(".lightbox__close").addEventListener("click", closeL);
   $(".lightbox__prev").addEventListener("click", () => show(cur - 1));
@@ -322,7 +364,7 @@
   });
 
   /* ---------- measure ---------- */
-  const nav = $(".nav"), hero = $(".hero"), heroImg = $(".hero__img img"), heroCopy = $(".hero__copy");
+  const nav = $(".nav"), hero = $(".hero"), heroImgs = $$(".hero__img img"), heroCopy = $(".hero__copy");
   const band = $(".band__track"), bandP = $("p", band);
   const steps = $$(".step"), stepsEl = $(".steps"), stepsLine = $(".steps__line");
   const safety = $(".safety"), safetyBg = $(".safety__bg");
@@ -330,7 +372,7 @@
   const links = $$(".nav__links a"), sections = links.map((a) => $(a.getAttribute("href")));
   let bandW = 1;
   const progress = $(".progress span");
-  function measure() { vw = innerWidth; vh = innerHeight; bandW = bandP.offsetWidth || 1; sizeFx(); }
+  function measure() { vw = innerWidth; vh = innerHeight; bandW = bandP.offsetWidth || 1; sizeFx(); placeFPill(); }
   addEventListener("resize", measure);
   addEventListener("load", measure);
   measure();
@@ -357,7 +399,8 @@
       gx = lerp(gx, mx, 0.08); gy = lerp(gy, my, 0.08);
       hero.style.setProperty("--mx", `${gx}px`);
       hero.style.setProperty("--my", `${gy}px`);
-      heroImg.style.translate = `${fine ? (gx / vw - 0.5) * -14 : 0}px ${y * 0.18}px`;
+      const heroTr = `${fine ? (gx / vw - 0.5) * -14 : 0}px ${y * 0.18}px`;
+      heroImgs.forEach((im) => (im.style.translate = heroTr));
       heroCopy.style.transform = `translate3d(0, ${y * 0.12}px, 0)`;
       heroCopy.style.opacity = 1 - clamp(y / vh) * 0.9;
     }
