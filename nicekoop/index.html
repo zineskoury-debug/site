@@ -30,6 +30,8 @@
   </div>
 
   <div class="cursor" aria-hidden="true"><span class="cursor__label"></span></div>
+  <div class="cursor-trail" aria-hidden="true"></div>
+  <canvas class="fx" aria-hidden="true"></canvas>
 
   <!-- NAV -->
   <header class="nav" id="top">
@@ -38,10 +40,10 @@
       <span class="stripe" aria-hidden="true"></span>
     </a>
     <nav class="nav__links" aria-label="Navigation principale">
-      <a href="#carte" class="roll"><span data-t="Prestations">Prestations</span></a>
-      <a href="#rituel" class="roll"><span data-t="Le rituel">Le rituel</span></a>
-      <a href="#vip" class="roll"><span data-t="Salon VIP">Salon VIP</span></a>
-      <a href="#salons" class="roll"><span data-t="Nos salons">Nos salons</span></a>
+      <a href="#carte"><span class="roll"><span data-t="Prestations">Prestations</span></span></a>
+      <a href="#rituel"><span class="roll"><span data-t="Le rituel">Le rituel</span></span></a>
+      <a href="#vip"><span class="roll"><span data-t="Salon VIP">Salon VIP</span></span></a>
+      <a href="#salons"><span class="roll"><span data-t="Nos salons">Nos salons</span></span></a>
     </nav>
     <p class="nav__status" data-status="all"><i></i><span>7j/7 · 9h – 21h</span></p>
     <a href="#reserver" class="btn btn--gold magnetic nav__cta"><span class="roll"><span data-t="Réserver">Réserver</span></span></a>
@@ -425,6 +427,16 @@
   <div class="dock">
     <a href="#reserver" class="btn btn--gold dock__book"><span class="roll"><span data-t="Réserver">Réserver</span></span></a>
     <a href="https://wa.me/212632402408?text=Bonjour%20Nice%20Koop%2C%20je%20souhaite%20prendre%20rendez-vous." class="dock__wa" target="_blank" rel="noopener" aria-label="Écrire sur WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5a9.5 9.5 0 0 0-8.2 14.3L2.5 21.5l4.8-1.3A9.5 9.5 0 1 0 12 2.5z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8.7 7.7c.2-.4.4-.4.7-.4h.5c.2 0 .4 0 .5.4l.7 1.7c.1.2 0 .4-.1.6l-.5.6c-.1.1-.2.3 0 .5.6 1 1.4 1.8 2.5 2.4.2.1.4.1.5 0l.7-.8c.2-.2.4-.2.6-.1l1.6.8c.2.1.4.2.4.4 0 .3 0 1-.4 1.5-.4.5-1.3.9-2 .9-.8 0-2.6-.5-4.3-2.2S8 10.7 8 9.7c0-1 .5-1.7.7-2z" fill="currentColor"/></svg></a>
+  </div>
+
+  <!-- LOOKBOOK LIGHTBOX -->
+  <div class="lightbox" role="dialog" aria-modal="true" aria-label="Lookbook" aria-hidden="true">
+    <div class="lightbox__bg"></div>
+    <figure class="lightbox__fig"><img src="assets/img/look-1.jpg" alt=""></figure>
+    <p class="lightbox__cap"></p>
+    <button class="lightbox__nav lightbox__nav--prev magnetic" aria-label="Photo précédente"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+    <button class="lightbox__nav lightbox__nav--next magnetic" aria-label="Photo suivante"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
+    <button class="lightbox__close magnetic" aria-label="Fermer"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></button>
   </div>
 
   <div class="toast" role="status" aria-live="polite"></div>

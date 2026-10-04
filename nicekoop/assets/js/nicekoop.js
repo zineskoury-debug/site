@@ -68,6 +68,32 @@
     pText.textContent = ""; pText.append(frag);
   }
   $$(".foot__word span").forEach((s, i) => s.style.setProperty("--i", i));
+
+  /* ---------- hero title: words -> letters ---------- */
+  const heroTitle = $(".hero__title");
+  heroTitle.setAttribute("aria-label", heroTitle.textContent.replace(/\s+/g, " ").trim());
+  const heroChars = [];
+  function splitChars(el) {
+    const frag = document.createDocumentFragment();
+    [...el.childNodes].forEach((n) => {
+      if (n.nodeType === 1) { splitChars(n); frag.append(n); return; }
+      n.textContent.split(/(\s+)/).forEach((part) => {
+        if (!part) return;
+        if (/^\s+$/.test(part)) return frag.append(" ");
+        const w = document.createElement("span");
+        w.className = "word";
+        [...part].forEach((c) => {
+          const ch = document.createElement("span");
+          ch.className = "ch"; ch.textContent = c;
+          ch.style.setProperty("--i", heroChars.length);
+          heroChars.push(ch); w.append(ch);
+        });
+        frag.append(w);
+      });
+    });
+    el.textContent = ""; el.append(frag);
+  }
+  $$(".line", heroTitle).forEach((l) => { l.setAttribute("aria-hidden", "true"); splitChars(l.firstElementChild); });
   $$("[data-year]").forEach((el) => (el.textContent = now().y));
 
   /* ---------- loader ---------- */
@@ -90,6 +116,7 @@
       body.classList.add("is-loaded");
       measure();
       $(".hero").classList.add("is-in");
+      setTimeout(() => $(".hero").classList.add("is-done"), reduce ? 0 : 1800);
       $$(".hero .reveal").forEach((el) => el.classList.add("is-in"));
       observe();
       setTimeout(() => loader.remove(), 1600);
@@ -97,9 +124,13 @@
   })(t0);
 
   /* ---------- cursor + magnetic ---------- */
-  const cursor = $(".cursor"), cLabel = $(".cursor__label");
-  let cx = mx, cy = my;
+  const cursor = $(".cursor"), cLabel = $(".cursor__label"), trail = $(".cursor-trail");
+  let cx = mx, cy = my, tx = mx, ty = my;
   $$(".item").forEach((el) => (el.dataset.cursor = "Ajouter"));
+  $$(".look figure").forEach((el) => (el.dataset.cursor = "Voir"));
+  $$(".salon__img").forEach((el) => (el.dataset.cursor = "Itinéraire"));
+  addEventListener("pointerdown", () => cursor.classList.add("is-down"));
+  addEventListener("pointerup", () => cursor.classList.remove("is-down"));
   if (fine && !reduce) {
     body.classList.add("has-cursor");
     document.addEventListener("pointerover", (e) => {
@@ -319,17 +350,21 @@
   }));
   toast.addEventListener("click", (e) => { if (e.target.closest("a")) toast.classList.remove("is-on"); });
 
-  /* ---------- forfaits tilt ---------- */
+  /* ---------- 3D tilt + glare: forfaits, ritual, lookbook, salons, carte photo ---------- */
+  $$(".step__img, .look figure, .salon__img, .carte__visual").forEach((el) => (el.dataset.tilt = ""));
   if (fine && !reduce) $$("[data-tilt]").forEach((c) => {
+    const wrap = c.closest(".reveal");
+    const k = c.classList.contains("card") ? 1 : 1.4;
     c.addEventListener("pointermove", (e) => {
-      if (!c.classList.contains("is-in")) return;
+      if (wrap && !wrap.classList.contains("is-in")) return;
       const r = c.getBoundingClientRect();
       const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-      c.style.transform = `rotateX(${(0.5 - y) * 9}deg) rotateY(${(x - 0.5) * 11}deg) translateZ(0)`;
+      c.style.transform = `perspective(900px) rotateX(${(0.5 - y) * 9 * k}deg) rotateY(${(x - 0.5) * 11 * k}deg)`;
       c.style.setProperty("--gx", `${x * 100}%`);
       c.style.setProperty("--gy", `${y * 100}%`);
+      c.classList.add("is-tilt");
     });
-    c.addEventListener("pointerleave", () => (c.style.transform = ""));
+    c.addEventListener("pointerleave", () => { c.style.transform = ""; c.classList.remove("is-tilt"); });
   });
 
   /* ---------- lookbook drag (mouse); touch keeps native scrolling ---------- */
@@ -351,6 +386,7 @@
       if (!down) return;
       down = false;
       lb.classList.remove("is-drag");
+      if (moved) { lb.dragged = true; setTimeout(() => (lb.dragged = false), 60); }
       if (reduce) return;
       (function go() { if (Math.abs(v) < 0.5) return; lb.scrollLeft -= v; v *= 0.93; glide = requestAnimationFrame(go); })();
     });
@@ -358,11 +394,13 @@
 
   /* ---------- counters ---------- */
   function countUp(el) {
+    if (el.counting) return;
+    el.counting = true;
     const to = +el.dataset.count, suf = el.dataset.suffix || "", t1 = performance.now(), D = reduce ? 0 : 1400;
     (function tick(t) {
       const p = D ? clamp((t - t1) / D) : 1;
       el.textContent = Math.round(ease(p) * to) + suf;
-      if (p < 1) requestAnimationFrame(tick);
+      if (p < 1) requestAnimationFrame(tick); else el.counting = false;
     })(t1);
   }
 
@@ -371,12 +409,220 @@
     const io = new IntersectionObserver((es) => es.forEach((e) => {
       if (!e.isIntersecting) return;
       e.target.classList.add("is-in");
+      if (e.target === footWord) setTimeout(() => footWord.classList.add("is-done"), reduce ? 0 : 1700);
       $$("[data-count]", e.target).forEach(countUp);
       if (e.target.matches("[data-count]")) countUp(e.target);
       io.unobserve(e.target);
     }), { threshold: 0.15, rootMargin: "0px 0px -6% 0px" });
     $$(".reveal").forEach((el) => !el.closest(".hero") && io.observe(el));
     io.observe($(".foot__word"));
+  }
+
+  /* =========================================================
+     ULTRA INTERACTIONS — hover & click
+     ========================================================= */
+
+  /* ---------- click particles: gold sparks, tricolor confetti on key CTAs ---------- */
+  const fx = $(".fx"), fctx = fx.getContext("2d");
+  const TRI = ["#1d3f8f", "#f2eadc", "#c23a44", "#d8a446"];
+  let parts = [], fdpr = 1, fxLive = false;
+  function sizeFx() { fdpr = Math.min(2, devicePixelRatio || 1); fx.width = innerWidth * fdpr; fx.height = innerHeight * fdpr; }
+  function burst(x, y, big) {
+    if (reduce) return;
+    parts.push({ t: "ring", x, y, life: 0, max: big ? 42 : 30, R: big ? 95 : 48 });
+    if (big) parts.push({ t: "ring", x, y, life: -8, max: 46, R: 140 });
+    const n = big ? 34 : 12;
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, conf = big && i % 2 === 0;
+      const sp = conf ? 3 + Math.random() * 6 : (big ? 4 : 2.6) + Math.random() * 4;
+      parts.push({
+        t: conf ? "conf" : "spark", x, y,
+        vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - (conf ? 4 : 0),
+        life: 0, max: conf ? 70 + Math.random() * 40 : 24 + Math.random() * 16,
+        c: conf ? TRI[i % 4] : Math.random() < 0.7 ? "#f1c86a" : "#f2eadc",
+        w: conf ? 6 + Math.random() * 5 : 1.6, rot: Math.random() * 6, vr: (Math.random() - 0.5) * 0.5,
+      });
+    }
+  }
+  function drawFx() {
+    fctx.setTransform(fdpr, 0, 0, fdpr, 0, 0);
+    fctx.clearRect(0, 0, innerWidth, innerHeight);
+    parts = parts.filter((q) => ++q.life < q.max);
+    for (const q of parts) {
+      if (q.life < 0) continue;
+      const k = q.life / q.max;
+      if (q.t === "ring") {
+        fctx.globalAlpha = (1 - k) * 0.9;
+        fctx.strokeStyle = "#d8a446";
+        fctx.lineWidth = 2 * (1 - k) + 0.4;
+        fctx.beginPath(); fctx.arc(q.x, q.y, 4 + q.R * ease(k), 0, Math.PI * 2); fctx.stroke();
+        continue;
+      }
+      q.x += q.vx; q.y += q.vy;
+      fctx.globalAlpha = 1 - k * k;
+      if (q.t === "conf") {
+        q.vy += 0.2; q.vx *= 0.97; q.rot += q.vr;
+        fctx.save(); fctx.translate(q.x, q.y); fctx.rotate(q.rot);
+        fctx.fillStyle = q.c; fctx.fillRect(-q.w / 2, -q.w / 4, q.w, q.w / 2);
+        fctx.restore();
+      } else {
+        q.vx *= 0.9; q.vy *= 0.9;
+        fctx.strokeStyle = q.c; fctx.lineWidth = q.w; fctx.lineCap = "round";
+        fctx.beginPath(); fctx.moveTo(q.x, q.y); fctx.lineTo(q.x - q.vx * 4, q.y - q.vy * 4); fctx.stroke();
+      }
+    }
+    fctx.globalAlpha = 1;
+  }
+  const BIG = ".btn--gold, .ticket__send, .dock__wa, [data-book], .item, .hero__badge";
+  document.addEventListener("click", (e) => {
+    if (reduce || lb.dragged || e.target.matches("input")) return;
+    let x = e.clientX, y = e.clientY;
+    if (!e.detail) { // keyboard: burst from the element's centre
+      const r = e.target.getBoundingClientRect();
+      x = r.left + r.width / 2; y = r.top + r.height / 2;
+    }
+    burst(x, y, !!e.target.closest(BIG));
+  });
+
+  /* ---------- ripples inside buttons, rows, tabs and chips ---------- */
+  document.addEventListener("pointerdown", (e) => {
+    if (reduce) return;
+    const host = e.target.closest(".btn, .item, .tab, .chip > span, .choice > span");
+    if (!host) return;
+    const r = host.getBoundingClientRect(), d = Math.max(r.width, r.height) * 2.2;
+    const rp = document.createElement("span");
+    rp.className = "ripple";
+    rp.style.cssText = `width:${d}px;height:${d}px;left:${e.clientX - r.left - d / 2}px;top:${e.clientY - r.top - d / 2}px`;
+    host.append(rp);
+    rp.addEventListener("animationend", () => rp.remove());
+  });
+
+  /* ---------- carte: the picked service flies to the Réserver button ---------- */
+  function bump(el) { el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
+  function fly(from) {
+    const target = dock.classList.contains("is-on") ? $(".dock__book") : null;
+    if (reduce || !target) return;
+    const a = from.getBoundingClientRect(), b = target.getBoundingClientRect();
+    const t = document.createElement("span");
+    t.className = "fly"; t.textContent = "✓";
+    t.style.left = `${a.left + a.width / 2 - 15}px`; t.style.top = `${a.top + a.height / 2 - 15}px`;
+    body.append(t);
+    const dx = b.left + b.width / 2 - (a.left + a.width / 2), dy = b.top + b.height / 2 - (a.top + a.height / 2);
+    t.animate([
+      { transform: "translate(0,0) scale(.5)" },
+      { transform: `translate(${dx * 0.4}px, ${dy * 0.4 - 160}px) scale(1.3)`, offset: 0.45 },
+      { transform: `translate(${dx}px, ${dy}px) scale(.4)` },
+    ], { duration: 900, easing: "cubic-bezier(.45,0,.25,1)" }).onfinish = () => {
+      t.remove();
+      bump(target);
+      burst(b.left + b.width / 2, b.top + b.height / 2, false);
+    };
+  }
+  $$(".item").forEach((it) => it.addEventListener("click", () => fly($(".item__add", it))));
+  $$(".card [data-book]").forEach((b) => b.addEventListener("click", () => {
+    const c = b.closest(".card");
+    c.classList.remove("flash"); void c.offsetWidth; c.classList.add("flash");
+  }));
+
+  /* ---------- letters: wave on click ---------- */
+  function wave(el, n) {
+    if (reduce) return;
+    el.classList.remove("wave"); void el.offsetWidth; el.classList.add("wave");
+    clearTimeout(el.waveT);
+    el.waveT = setTimeout(() => el.classList.remove("wave"), 900 + n * 60);
+  }
+  heroTitle.addEventListener("click", () => wave(heroTitle, heroChars.length / 2.5));
+  $(".foot__word").addEventListener("click", (e) => wave(e.currentTarget, 9));
+
+  /* ---------- hero badge: spins faster on hover, whirls on click ---------- */
+  const heroBadge = $(".hero__badge");
+  let spin = 0, badgeHover = false;
+  heroBadge.addEventListener("pointerenter", () => (badgeHover = true));
+  heroBadge.addEventListener("pointerleave", () => (badgeHover = false));
+  heroBadge.addEventListener("click", () => (spin += 40));
+
+  /* ---------- band: slows down under the pointer ---------- */
+  let bandSlow = 1;
+  $(".band").addEventListener("pointerenter", () => (bandSlow = 0.25));
+  $(".band").addEventListener("pointerleave", () => (bandSlow = 1));
+
+  /* ---------- stats recount on hover / tap ---------- */
+  $$(".stats li").forEach((li) => {
+    const b = $("b", li);
+    li.addEventListener(fine ? "pointerenter" : "click", () => li.classList.contains("is-in") && countUp(b));
+  });
+
+  /* ---------- salons: the photo opens the map ---------- */
+  $$(".salon").forEach((sa) => {
+    const map = $('a[href*="google.com/maps"]', sa);
+    $(".salon__img", sa).addEventListener("click", () => open(map.href, "_blank", "noopener"));
+  });
+
+  /* ---------- lookbook lightbox (FLIP from the thumbnail) ---------- */
+  const looks = $$(".look"), lbx = $(".lightbox"), lbxFig = $(".lightbox__fig"), lbxImg = $("img", lbxFig), lbxCap = $(".lightbox__cap");
+  let cur = -1, lastFocus = null;
+  const flipFrom = (el) => {
+    const a = el.getBoundingClientRect(), b = lbxFig.getBoundingClientRect();
+    return `translate(${a.left - b.left}px, ${a.top - b.top}px) scale(${a.width / b.width}, ${a.height / b.height})`;
+  };
+  function fillLook(i) {
+    const img = $("img", looks[i]);
+    lbxImg.src = img.src; lbxImg.alt = img.alt;
+    lbxCap.innerHTML = $("p", looks[i]).innerHTML;
+  }
+  function openLook(i) {
+    cur = i; lastFocus = document.activeElement;
+    fillLook(i);
+    lbx.classList.remove("is-closing");
+    lbx.classList.add("is-on");
+    lbx.setAttribute("aria-hidden", "false");
+    body.classList.add("lbx-open");
+    if (!reduce) lbxFig.animate([{ transform: flipFrom($("figure", looks[i])) }, { transform: "none" }], { duration: 750, easing: "cubic-bezier(.22,1,.36,1)" });
+    $(".lightbox__close").focus({ preventScroll: true });
+  }
+  function closeLook() {
+    if (cur < 0) return;
+    const fig = $("figure", looks[cur]);
+    const done = () => {
+      lbx.classList.remove("is-on", "is-closing");
+      lbx.setAttribute("aria-hidden", "true");
+      body.classList.remove("lbx-open");
+      cur = -1;
+      if (lastFocus) lastFocus.focus({ preventScroll: true });
+    };
+    if (reduce) return done();
+    lbx.classList.add("is-closing");
+    lbxFig.animate([{ transform: "none" }, { transform: flipFrom(fig) }], { duration: 560, easing: "cubic-bezier(.65,0,.35,1)" }).onfinish = done;
+  }
+  function stepLook(d) {
+    if (cur < 0) return;
+    cur = (cur + d + looks.length) % looks.length;
+    fillLook(cur);
+    if (!reduce) lbxImg.animate([{ transform: `translateX(${d * 60}px) scale(1.08)`, opacity: 0 }, { transform: "none", opacity: 1 }], { duration: 600, easing: "cubic-bezier(.22,1,.36,1)" });
+  }
+  looks.forEach((l, i) => {
+    const fig = $("figure", l);
+    fig.tabIndex = 0;
+    fig.setAttribute("role", "button");
+    fig.setAttribute("aria-label", `Agrandir : ${$("p", l).textContent.replace(/^\d+/, "")}`);
+    fig.addEventListener("click", () => !lb.dragged && openLook(i));
+    fig.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLook(i); } });
+  });
+  $(".lightbox__bg").addEventListener("click", closeLook);
+  $(".lightbox__close").addEventListener("click", closeLook);
+  $(".lightbox__nav--prev").addEventListener("click", () => stepLook(-1));
+  $(".lightbox__nav--next").addEventListener("click", () => stepLook(1));
+  addEventListener("keydown", (e) => {
+    if (cur < 0) return;
+    if (e.key === "Escape") closeLook();
+    if (e.key === "ArrowRight") stepLook(1);
+    if (e.key === "ArrowLeft") stepLook(-1);
+  });
+  // swipe on touch screens
+  {
+    let sx0 = null;
+    lbxFig.addEventListener("pointerdown", (e) => (sx0 = e.clientX));
+    lbxFig.addEventListener("pointerup", (e) => { if (sx0 !== null && Math.abs(e.clientX - sx0) > 40) stepLook(e.clientX < sx0 ? 1 : -1); sx0 = null; });
   }
 
   /* ---------- measure ---------- */
@@ -395,6 +641,7 @@
     rituel.style.height = `${rDist + vh}px`;
     bandW = bandP.offsetWidth || 1;
     placePill();
+    sizeFx();
     // the giant wordmark fills the footer edge to edge
     footWord.style.fontSize = "100px";
     const w = footLetters.reduce((s, l) => s + l.offsetWidth, 0);
@@ -421,6 +668,8 @@
     if (body.classList.contains("has-cursor")) {
       cx = lerp(cx, mx, 0.18); cy = lerp(cy, my, 0.18);
       cursor.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
+      tx = lerp(tx, mx, 0.09); ty = lerp(ty, my, 0.09);
+      trail.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
       if (!seen) cursor.classList.add("is-hidden");
     }
 
@@ -428,7 +677,8 @@
     if (y < vh * 1.2) {
       const p = clamp(y / vh);
       if (!reduce) {
-        heroMedia.style.transform = `translate3d(0, ${y * 0.35}px, 0)`;
+        const ox = fine ? (hlx / vw - 0.5) * -22 : 0, oy = fine ? (hly / vh - 0.5) * -14 : 0;
+        heroMedia.style.transform = `translate3d(${ox}px, ${y * 0.35 + oy}px, 0)`;
         heroCopy.style.transform = `translate3d(0, ${y * 0.18}px, 0)`;
         heroCopy.style.opacity = 1 - p * 1.25;
         if (fine) {
@@ -436,7 +686,8 @@
           heroLight.style.setProperty("--mx", `${hlx}px`);
           heroLight.style.setProperty("--my", `${hly}px`);
         }
-        rot += 0.12 + Math.abs(vel) * 0.25;
+        spin *= 0.94;
+        rot += (badgeHover ? 1.4 : 0.12) + Math.abs(vel) * 0.25 + spin * 0.12;
         badge.style.setProperty("--rot", `${rot}deg`);
       }
     }
@@ -444,7 +695,7 @@
     // barber band: marquee speed and skew follow scroll velocity
     const br = band.getBoundingClientRect();
     if (br.bottom > 0 && br.top < vh && !reduce) {
-      bandX -= 0.9 + Math.abs(vel) * 0.6;
+      bandX -= (0.9 + Math.abs(vel) * 0.6) * bandSlow;
       if (bandX <= -bandW) bandX += bandW;
       bandTrack.style.transform = `translate3d(${bandX}px,0,0) skewX(${clamp(-vel * 0.5, -12, 12)}deg)`;
     }
@@ -491,6 +742,10 @@
     // dock: after the hero, out of the way of the booking form
     const bk = booking.getBoundingClientRect();
     dock.classList.toggle("is-on", y > vh * 0.8 && !(bk.top < vh * 0.9 && bk.bottom > vh * 0.1) && !menu);
+
+    // click particles
+    if (parts.length) { drawFx(); fxLive = true; }
+    else if (fxLive) { fctx.clearRect(0, 0, fx.width, fx.height); fxLive = false; }
 
     requestAnimationFrame(frame);
   }
