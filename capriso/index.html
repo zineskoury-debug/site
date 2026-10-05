@@ -70,10 +70,13 @@
       <div class="nav__side nav__side--r">
         <a class="nav__link" href="#composer">Composer</a>
         <a class="nav__link" href="#trouver">Nous trouver</a>
+        <a class="nav__link nav__link--pts" href="points/">Mes points</a>
+        <a class="pts-chip" href="points/" hidden aria-label="Mon solde de points"><svg aria-hidden="true"><use href="#cap-mark"/></svg><span class="pts-chip__n">0</span> pts</a>
         <a class="cart-btn" href="#commande" aria-label="Ma commande"><svg aria-hidden="true"><use href="#i-bag"/></svg><span class="cart-btn__n">0</span></a>
         <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span></button>
       </div>
     </nav>
+    <script src="assets/js/fidelite-nav.js" defer></script>
   </header>
   <div class="drawer" id="drawer" aria-hidden="true">
     <nav class="drawer__links" aria-label="Menu mobile">
@@ -82,6 +85,7 @@
       <a href="#composer" style="--i:2">Composer</a>
       <a href="#faq" style="--i:3">FAQ</a>
       <a href="#trouver" style="--i:4">Nous trouver</a>
+      <a href="points/" style="--i:5">Mes points</a>
     </nav>
     <p class="drawer__foot">N°37 Résidence Fatine, Bachkou · <a href="tel:+212618401509">+212 618 401 509</a></p>
   </div>

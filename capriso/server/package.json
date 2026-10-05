@@ -1,0 +1,13 @@
+{
+  "name": "capriso-fidelite",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Site Capriso Gelato + programme de fidélité (Node, SQLite intégré, aucune dépendance)",
+  "main": "server.js",
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node seed.js",
+    "test": "node test.js"
+  }
+}
