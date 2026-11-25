@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Villa Amadeus 5</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Planche d'architecte : maquette 3D pleine largeur, puis dossier foncier (plan de masse coté, bornes Lambert) et fiches de surfaces. */
+:root{
+  --paper:#f5f6f8;--card:#ffffff;--ink:#10141b;--mute:#5a6372;--line:#dce0e6;
+  --acc:#2b4fb3;--acc-soft:#e8edfa;--led:#c8963e;--street:#d9dce1;--lot:#ffffff;
+  --font-ui:'Jost',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0b0e13;--card:#12161d;--ink:#e9edf3;--mute:#9aa4b3;--line:#252c37;
+  --acc:#8fb0ff;--acc-soft:#18213a;--led:#e2b46a;--street:#1b2029;--lot:#151a22;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0b0e13;--card:#12161d;--ink:#e9edf3;--mute:#9aa4b3;--line:#252c37;
+  --acc:#8fb0ff;--acc-soft:#18213a;--led:#e2b46a;--street:#1b2029;--lot:#151a22;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:16px/1.55 var(--font-ui);margin:0;overflow-x:clip}
+.wrap{max-width:1380px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+section{padding-block:clamp(20px,3vw,40px)}
+.eyebrow{font:500 13px/1.3 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin:0 0 10px}
+h1{font-weight:500;font-size:clamp(34px,5vw,58px);line-height:1;letter-spacing:-.015em;margin:0 0 12px;text-wrap:balance}
+h2{font-weight:500;font-size:clamp(24px,2.6vw,32px);line-height:1.1;margin:0 0 6px;text-wrap:balance}
+h3{font-weight:500;font-size:20px;margin:0}
+.lead{color:var(--mute);max-width:72ch;margin:0}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+
+/* barre de vues */
+.views{display:flex;flex-wrap:wrap;gap:6px;margin:22px 0 12px}
+.seg{font:inherit;font-size:15px;min-height:42px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;white-space:nowrap}
+.seg[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.seg:focus-visible,.chip:focus-visible,.tg:focus-visible,.lvl button:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+
+/* visionneuse : univers unique, nuit bleue */
+.viewer{position:relative;height:clamp(400px,68vh,800px);border-radius:18px;overflow:hidden;background:#0d1a44;isolation:isolate}
+.viewer canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+.viewer canvas:active{cursor:grabbing}
+.lbls{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.lb{position:absolute;left:0;top:0;padding:4px 9px;border-radius:8px;background:rgba(255,255,255,.94);color:#10141b;font:13px/1.25 var(--font-ui);white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.18);text-align:center;will-change:transform}
+.lb b{display:block;font-weight:600}
+.lb.z{background:rgba(255,255,255,.72);box-shadow:none;font-style:italic;color:#323844}
+.lb.d{background:#10141b;color:#fff;font:500 12px/1.2 var(--font-mono);padding:3px 7px;border-radius:6px}
+.lb.bn{background:#b8322a;color:#fff;font:500 12px/1.25 var(--font-mono);padding:3px 7px;border-radius:6px}
+.lb.bn small{display:block;font-size:11px;opacity:.85}
+.lb.st{background:transparent;box-shadow:none;color:#fff;font:500 13px/1.2 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.viewer.light .lb.st{color:#2b3140;text-shadow:none}
+.lb.lv{background:#2b4fb3;color:#fff;font-size:15px;padding:6px 12px}
+.compass{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));left:12px;width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.compass svg{width:34px;height:34px}
+.badge{position:absolute;top:12px;right:12px;padding:7px 12px;border-radius:10px;background:rgba(10,14,24,.62);color:#fff;font:500 12px/1.35 var(--font-mono);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);text-align:right;max-width:60%}
+.hint{position:absolute;left:14px;bottom:12px;font-size:13px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.viewer.light .hint{color:#2a2f38;text-shadow:none}
+.loading,.err{position:absolute;inset:0;display:grid;place-items:center;color:#dfe6ff;font:500 15px var(--font-ui);text-align:center;padding:24px;background:radial-gradient(circle at 50% 40%,#1f3c95,#0b1436 70%);transition:opacity .6s}
+.loading.done{opacity:0;pointer-events:none}
+.loading i{display:block;width:180px;height:2px;margin:14px auto 0;background:linear-gradient(90deg,transparent,#ffd59a,transparent);background-size:200% 100%;animation:ld 1.2s linear infinite}
+@keyframes ld{to{background-position:-200% 0}}
+
+/* barre d'outils sous la maquette */
+.tools{display:flex;flex-wrap:wrap;gap:14px 26px;align-items:flex-start;margin-top:14px}
+.grp{display:flex;flex-direction:column;gap:7px;min-width:0}
+.grp>span{font:500 12px/1 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip,.tg{font:inherit;font-size:14px;min-height:38px;padding:0 13px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;white-space:nowrap}
+.chip[aria-pressed="true"]{border-color:var(--acc);background:var(--acc-soft);color:var(--ink);box-shadow:inset 0 0 0 1px var(--acc)}
+.tg::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;border:1.5px solid var(--mute);vertical-align:0}
+.tg[aria-pressed="true"]::before{background:var(--acc);border-color:var(--acc)}
+.time{display:flex;align-items:center;gap:10px}
+.time input{width:min(240px,52vw);accent-color:var(--acc)}
+.time output{font:500 14px var(--font-mono);min-width:48px}
+[hidden]{display:none!important}
+
+/* chiffres clés */
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:22px}
+.kpis div{background:var(--card);padding:14px 16px;min-width:0}
+.kpis b{display:block;font-size:clamp(22px,2.3vw,30px);font-weight:500;white-space:nowrap;font-variant-numeric:tabular-nums}
+.kpis span{color:var(--mute);font-size:14px}
+
+/* dossier foncier */
+.site{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:24px;align-items:start;margin-top:18px}
+.plan{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px}
+.plan svg{display:block;width:100%;height:auto}
+.plan figcaption{color:var(--mute);font-size:13px;padding:4px 8px 4px}
+.sheet{display:flex;flex-direction:column;gap:18px;min-width:0}
+.tbl{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:14px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{font:500 12px/1.3 var(--font-mono);text-transform:uppercase;letter-spacing:.05em;color:var(--mute);text-align:left;padding:10px 14px;border-bottom:1px solid var(--line)}
+td{padding:8px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.ctn{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.ctn div{background:var(--card);padding:12px 14px}
+.ctn b{display:block;font:500 18px var(--font-mono)}
+.ctn span{font-size:13px;color:var(--mute)}
+.ctn .ad{background:var(--acc-soft)}
+
+/* niveaux */
+.lvls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:18px}
+.lvl{background:var(--card);border-radius:16px;padding:18px;border:1px solid var(--line);min-width:0}
+.lvl.on{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.lvl header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.lvl h3 small{display:block;font:400 13px var(--font-mono);color:var(--mute)}
+.lvl button{font:inherit;font-size:14px;min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;white-space:nowrap}
+.lvl table{font-size:15px}
+.lvl td{padding:7px 0}
+.lvl td:last-child{text-align:right;white-space:nowrap;padding-left:12px;font-variant-numeric:tabular-nums}
+.lvl tr.nt td{white-space:normal;text-align:left;color:var(--mute);font-size:14px}
+.lvl tr.t td{border-bottom:0;font-weight:600;padding-top:10px}
+.sw{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:9px;vertical-align:-1px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.notes{columns:2 340px;column-gap:40px;padding-left:18px;margin:14px 0 0}
+.notes li{margin-bottom:8px;break-inside:avoid}
+.small{color:var(--mute);font-size:14px;margin-top:16px}
+
+/* plan SVG */
+.pl-street{fill:var(--street)}
+.pl-lot{fill:var(--lot);stroke:var(--ink);stroke-width:.28}
+.pl-villa{fill:var(--acc);fill-opacity:.22;stroke:var(--acc);stroke-width:.25}
+.pl-over{fill:none;stroke:var(--acc);stroke-width:.16;stroke-dasharray:.6 .4}
+.pl-pool{fill:#4fb3d4;fill-opacity:.55;stroke:#2f8fb0;stroke-width:.12}
+.pl-deck{fill:var(--led);fill-opacity:.16;stroke:var(--led);stroke-width:.1}
+.pl-patio{fill:var(--mute);fill-opacity:.18;stroke:var(--mute);stroke-width:.1}
+.pl-dim{stroke:var(--ink);stroke-width:.1;fill:none}
+.pl-dim2{stroke:#b8322a;stroke-width:.12;stroke-dasharray:.5 .35;fill:none}
+.pl-borne{fill:#b8322a;stroke:var(--lot);stroke-width:.15}
+.pl-t{fill:var(--ink);font-family:var(--font-ui);font-size:1.5px}
+.pl-m{fill:var(--mute);font-family:var(--font-mono);font-size:1.15px}
+.pl-r{fill:#b8322a;font-family:var(--font-mono);font-size:1.2px;font-weight:500}
+.pl-st{fill:var(--mute);font-family:var(--font-mono);font-size:1.35px;letter-spacing:.12px}
+
+@media (max-width:1000px){.site{grid-template-columns:minmax(0,1fr)}.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:900px){.lvls{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:600px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.hint{display:none}.badge{font-size:11px}.ctn{grid-template-columns:repeat(2,minmax(0,1fr))}.seg{flex:1 1 auto;padding:0 12px}}
+@media (prefers-reduced-motion:reduce){.loading i{animation:none}}
+</style>
+
+</head>
+<body>
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Titre foncier 158946/63 · Lot 5 · Lotissement Amadeus · Bouskoura, Ville Verte</p>
+    <h1>Villa Amadeus 5</h1>
+    <p class="lead">Terrain d'angle de 1 249 m² entre la rue de 12 m et la rue de 16 m, reconstitué à partir des coordonnées Lambert des cinq bornes du cadastre. Villa R+1 sur sous-sol de 25 × 16 m : deux volumes blancs en porte-à-faux soulignés de bandeaux LED, grandes baies noires et plans obliques au rez-de-chaussée, jardin de galets noirs et dalles flottantes éclairées.</p>
+
+    <div class="views" role="group" aria-label="Vue de la maquette">
+      <button class="seg" id="v-ext" data-view="ext" aria-pressed="true">Extérieur</button>
+      <button class="seg" id="v-plan" data-view="plan" aria-pressed="false">Plan de masse</button>
+      <button class="seg" id="v-ecl" data-view="ecl" aria-pressed="false">Vue éclatée</button>
+      <button class="seg" id="v-ss" data-view="ss" aria-pressed="false">Sous-sol</button>
+      <button class="seg" id="v-rdc" data-view="rdc" aria-pressed="false">Rez-de-chaussée</button>
+      <button class="seg" id="v-et" data-view="et" aria-pressed="false">Étage</button>
+    </div>
+
+    <div class="viewer" id="viewer">
+      <canvas id="cv" aria-label="Maquette 3D interactive de la villa Amadeus 5"></canvas>
+      <div class="lbls" id="lbls"></div>
+      <div class="compass" title="Nord géographique (Lambert)"><svg viewBox="0 0 34 34" id="nArrow" aria-hidden="true"><path d="M17 3 L23 23 L17 19 L11 23 Z" fill="#c8312b"/><path d="M17 19 L23 23 L17 31 L11 23 Z" fill="#c9ccd3"/><text x="17" y="15.5" font-size="7" text-anchor="middle" fill="#fff" font-family="Jost" font-weight="600">N</text></svg></div>
+      <div class="badge" id="badge">Heure bleue · LED allumées</div>
+      <div class="hint" id="hint">Glisser pour tourner · clic droit ou deux doigts pour déplacer · molette ou pincement pour zoomer</div>
+      <div class="loading" id="loading"><div>Construction de la maquette…<i></i></div></div>
+      <div class="err" id="err" hidden><div>La 3D ne peut pas s'afficher ici (WebGL indisponible ou bibliothèque bloquée).<br>Ouvrez la page dans Chrome, Safari ou Firefox récents. Le plan de masse et les surfaces restent disponibles plus bas.</div></div>
+    </div>
+
+    <div class="tools">
+      <div class="grp" id="g-cam"><span>Point de vue</span>
+        <div class="row" role="group" aria-label="Point de vue">
+          <button class="chip" id="c-rue12" data-cam="rue12" aria-pressed="true">Rue de 12 m</button>
+          <button class="chip" id="c-angle" data-cam="angle" aria-pressed="false">Angle des rues</button>
+          <button class="chip" id="c-rue16" data-cam="rue16" aria-pressed="false">Rue de 16 m</button>
+          <button class="chip" id="c-jardin" data-cam="jardin" aria-pressed="false">Jardin et piscine</button>
+          <button class="chip" id="c-patio" data-cam="patio" aria-pressed="false">Patio</button>
+          <button class="chip" id="c-aerien" data-cam="aerien" aria-pressed="false">Vue aérienne</button>
+        </div>
+      </div>
+      <div class="grp" id="g-amb"><span>Ambiance</span>
+        <div class="row">
+          <button class="chip" id="a-nuit" data-amb="nuit" aria-pressed="true">Heure bleue</button>
+          <button class="chip" id="a-jour" data-amb="jour" aria-pressed="false">Ensoleillement</button>
+        </div>
+        <div class="row" id="sunrow" hidden>
+          <div class="time"><input type="range" id="hour" min="6" max="20.5" step="0.25" value="16" aria-label="Heure légale"><output id="hourOut" for="hour">16:00</output></div>
+          <button class="chip" id="d-mar" data-day="80" aria-pressed="false">21 mars</button>
+          <button class="chip" id="d-jun" data-day="172" aria-pressed="true">21 juin</button>
+          <button class="chip" id="d-dec" data-day="355" aria-pressed="false">21 déc.</button>
+        </div>
+      </div>
+      <div class="grp"><span>Afficher</span>
+        <div class="row">
+          <button class="tg" id="t-dims" aria-pressed="false">Cotes</button>
+          <button class="tg" id="t-bornes" aria-pressed="false">Bornes</button>
+          <button class="tg" id="t-ctx" aria-pressed="true">Voisinage</button>
+          <button class="tg" id="t-rot" aria-pressed="false">Rotation</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="kpis">
+      <div><b>1 249 m²</b><span>Contenance adoptée (12 a 49 ca)</span></div>
+      <div><b>25 × 16 m</b><span>Emprise de la villa : 400 m²</span></div>
+      <div><b id="k-ces">32 %</b><span>Coefficient d'emprise au sol</span></div>
+      <div><b>1 200 m²</b><span>Surface sur 3 niveaux</span></div>
+      <div><b>≈ 9,0 m</b><span>Hauteur hors sol (R+1)</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Dossier foncier · plan levé en novembre 2018 · échelle d'origine 1/500</p>
+    <h2>Le terrain et l'implantation</h2>
+    <p class="lead">Le polygone vient directement du calcul de contenances de l'ANCFCC (service du cadastre de Nouaceur). La surface recalculée à partir des bornes correspond à celle du document. Les reculs indiqués sont mesurés sur la maquette.</p>
+    <div class="site">
+      <figure class="plan" style="margin:0">
+        <svg id="sitePlan" role="img" aria-label="Plan de masse du lot 5 avec les bornes, les longueurs des côtés et l'implantation de la villa"></svg>
+        <figcaption>Plan de masse dessiné à l'échelle depuis les coordonnées Lambert, nord en haut. En pointillés : les cadres en porte-à-faux de l'étage.</figcaption>
+      </figure>
+      <div class="sheet">
+        <div class="ctn" id="ctn"></div>
+        <div class="tbl"><table id="tBornes"><thead><tr><th>Borne</th><th class="n">X Lambert</th><th class="n">Y Lambert</th><th>Référence (T16861/47)</th></tr></thead><tbody></tbody></table></div>
+        <div class="tbl"><table id="tSides"><thead><tr><th>Côté</th><th>Limite</th><th class="n">Longueur</th></tr></thead><tbody></tbody></table></div>
+        <div class="tbl"><table id="tReculs"><thead><tr><th>Recul mesuré</th><th class="n">Distance mini</th></tr></thead><tbody></tbody></table></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="eyebrow">Programme · surfaces brutes, murs compris</p>
+    <h2>Trois niveaux de 400 m²</h2>
+    <div class="lvls" id="lvls"></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Hypothèses de la maquette</h2>
+    <ul class="notes">
+      <li>Terrain supposé plat au niveau de la voirie. Le rez-de-chaussée est posé sur un socle de 15 cm.</li>
+      <li>Hauteurs sous plafond : sous-sol 3,40 m, rez-de-chaussée 4,00 m, étage 3,65 m. Le volume principal monte à 9,00 m et la machinerie de l'ascenseur à 10,00 m.</li>
+      <li>Les reculs (4 m sur la rue de 12 m, 5 m au plus près sur la rue de 16 m, 6,3 m sur le lot 6) sont à vérifier dans le cahier des charges du lotissement Amadeus.</li>
+      <li>Les cadres de l'étage débordent de 2,50 m au plus sur la façade sud-ouest. Ce sont des brise-soleil et des balcons, hors surface.</li>
+      <li>Façade principale côté rue de 12 m, orientée sud-ouest. Le grand volume marque l'angle des deux rues, comme sur la photo de référence.</li>
+      <li>Escalier et ascenseur superposés sur les trois niveaux (gaine de 2,50 × 2,50 m).</li>
+      <li>Patio en contrebas de 3,50 × 12 m : il éclaire la chambre d'invités, la chambre du personnel et la cuisine du sous-sol.</li>
+      <li>Piscine de 4 × 10 m sur plage en travertin, côté sud-est. Accès voitures par des dalles depuis la rue de 16 m.</li>
+      <li>Les maisons voisines sont des volumes de contexte et ne représentent pas les constructions réelles.</li>
+    </ul>
+    <p class="small">Maquette d'esquisse pour visualiser le projet. Elle ne remplace ni les plans d'un architecte ni un relevé topographique à jour.</p>
+  </div>
+</section>
+
+<script>
+/* ===== Données : bornes cadastrales, programme, plan de masse (sans WebGL) ===== */
+window.AMA=(function(){
+const fr=(n,d=2)=>n.toLocaleString('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const BORNES=[
+ {id:'B.121',X:293425.96,Y:323530.34,ref:'Alignement 5, pièce P2'},
+ {id:'B.132',X:293402.48,Y:323566.58,ref:'Coord. moyennes, pièce P3'},
+ {id:'B.131',X:293420.18,Y:323584.93,ref:'Alignement 6, pièce P2'},
+ {id:'B.123',X:293449.79,Y:323551.71,ref:'Alignement 7, pièce P3'},
+ {id:'B.122',X:293445.57,Y:323547.93,ref:'Alignement 7, pièce P3'}];
+const o=BORNES[0],dX=BORNES[1].X-o.X,dY=BORNES[1].Y-o.Y,Ln=Math.hypot(dX,dY),U=[dX/Ln,dY/Ln];
+/* repère maquette : u le long de la rue de 12 m (de B.121 vers B.132), v vers l'intérieur du lot */
+const toL=(X,Y)=>{const a=X-o.X,b=Y-o.Y;return[a*U[0]+b*U[1],a*U[1]-b*U[0]]};
+const toW=(u,v)=>[o.X+u*U[0]+v*U[1],o.Y+u*U[1]-v*U[0]];
+BORNES.forEach(b=>{const l=toL(b.X,b.Y);b.u=l[0];b.v=l[1]});
+const LOT=BORNES.map(b=>[b.u,b.v]);
+let S=0;for(let i=0;i<BORNES.length;i++){const a=BORNES[i],b=BORNES[(i+1)%BORNES.length];S+=a.X*b.Y-b.X*a.Y}S=Math.abs(S)/2;
+const LIM=['Rue de lotissement de 12 m','Rue de lotissement de 16 m','Lot 6','Lot 3','Lot 4'];
+const SIDES=BORNES.map((b,i)=>{const c=BORNES[(i+1)%BORNES.length];return{a:b,b:c,len:Math.hypot(c.X-b.X,c.Y-b.Y),lim:LIM[i]}});
+const NORTH=[U[1],-U[0]],EAST=[U[0],U[1]];
+const VO=[14,4];/* origine de la villa dans le repère du lot */
+const foot=(p,a,b)=>{const d=[b[0]-a[0],b[1]-a[1]],L2=d[0]*d[0]+d[1]*d[1],t=((p[0]-a[0])*d[0]+(p[1]-a[1])*d[1])/L2,f=[a[0]+t*d[0],a[1]+t*d[1]];return{f,dist:Math.hypot(p[0]-f[0],p[1]-f[1])}};
+const L=i=>LOT[i];
+/* reculs mesurés depuis les coins de la villa (et du patio) */
+const minTo=(pts,a,b)=>pts.map(p=>({p,...foot(p,a,b)})).sort((x,y)=>x.dist-y.dist)[0];
+const corners=[[14,4],[39,4],[39,20],[14,20]];
+const RECULS=[
+ {name:'Façade sur la rue de 12 m',...minTo(corners,L(0),L(1))},
+ {name:'Pignon sur la rue de 16 m',...minTo(corners,L(1),L(2))},
+ {name:'Façade arrière, limite du lot 6',...minTo(corners,L(2),L(3))},
+ {name:'Patio, limite des lots 3 et 4',...minTo([[10.25,3.75],[10.25,16.25]],L(3),L(0))},
+ {name:'Villa, limite des lots 3 et 4',...minTo(corners,L(3),L(0))}];
+const COL={suite:'#d9c3a2',dress:'#cdb08a',bath:'#dfe3e3',kit:'#e6dccb',live:'#d4b894',plate:'#ece6da',stair:'#c9c7c2',lift:'#3a4150',tech:'#bfc2c5',cin:'#4b3a52',gym:'#5b5f66',spa:'#a9dbe0'};
+const LV={
+ ss:{name:'Sous-sol',lvl:'− 3,40 m',rest:'Hall et circulations',restAt:[9.5,9.6],note:'Spa complet (jacuzzi, sauna, hammam, vestiaire) : 64 m²',rooms:[
+  ['Chambre d’invités','suite',0,0,5,5.6],['Chambre du personnel','suite',0,5.6,4.5,9.6],['Cuisine','kit',0,10,7.5,16],
+  ['Cinéma','cin',5,0,12.5,8],['Salle de sport','gym',12.5,0,18.5,7.5],['Spa, jacuzzi','spa',18.5,0,25,5],['Sauna','spa',18.5,5,21.5,8.5],['Hammam','spa',21.5,5,25,8.5],['Vestiaire spa','bath',18.5,8.5,22,11],
+  ['Buanderie','tech',13.5,12,17,16],['Rangement, cave','tech',17,12,20,16],['Local technique','tech',20,11,25,16],['Escalier','stair',7.5,11,11,16],['Ascenseur','lift',11,13.5,13.5,16]],
+  sub:[['bath',3,3,5,5.6],['bath',3,7.8,4.5,9.6]],zones:[['Patio en contrebas · 42 m²',-1.75,1.6]]},
+ rdc:{name:'Rez-de-chaussée',lvl:'± 0,00',rest:'Espace ouvert : entrée, salon, séjour, salle à manger',restAt:[12,6.5],rooms:[
+  ['Cuisine','kit',0,9,7.5,16],['Grande salle de bain','bath',18,4.5,25,9.5],['Suite invités','suite',18,9.5,25,16],['Escalier','stair',7.5,11,11,16],['Ascenseur','lift',11,13.5,13.5,16]],
+  sub:[['bath',22,13,25,16]],zones:[['Salon',12,2.6],['Salle à manger',3.2,6.2],['Entrée',5.2,1.5]]},
+ et:{name:'Étage',lvl:'+ 4,40 m',rest:'Palier et circulations',restAt:[12.5,8.5],note:'Suite parentale complète (chambre, salle de bain, 2 dressings) : 134 m²',rooms:[
+  ['Chambre parentale','suite',0,0,9.5,7],['Salle de bain parentale','bath',0,7,7.5,11],['Dressing 1','dress',0,11,3.75,16],['Dressing 2','dress',3.75,11,7.5,16],
+  ['Suite 2','suite',9.5,0,17,7],['Suite 3','suite',17,0,25,7],['Suite 4','suite',17,9,25,16],['Salon d’étage','live',13.5,11,17,16],['Escalier','stair',7.5,11,11,16],['Ascenseur','lift',11,13.5,13.5,16]],
+  sub:[['bath',13.5,4,17,7],['bath',21.5,4,25,7],['bath',21.5,9,25,12]],zones:[]}
+};
+const ar=r=>(r[4]-r[2])*(r[5]-r[3]);
+for(const k in LV){const l=LV[k];l.restA=400-l.rooms.reduce((s,r)=>s+ar(r),0)}
+
+/* ---- DOM : contenance, bornes, côtés, reculs ---- */
+const $=id=>document.getElementById(id);
+$('k-ces').textContent=fr(400/1249*100,0)+' %';
+$('ctn').innerHTML=`<div><b>${fr(S,2)}</b><span>S calculée (m²)</span></div><div><b>+ 0,91</b><span>Correction Lambert (m²)</span></div><div><b>1 249,21</b><span>Surface corrigée (m²)</span></div><div class="ad"><b>12 a 49 ca</b><span>Contenance adoptée</span></div>`;
+$('tBornes').tBodies[0].innerHTML=BORNES.map(b=>`<tr><td><b>${b.id}</b></td><td class="n mono">${fr(b.X)}</td><td class="n mono">${fr(b.Y)}</td><td>${b.ref}</td></tr>`).join('');
+$('tSides').tBodies[0].innerHTML=SIDES.map(s=>`<tr><td class="mono">${s.a.id} → ${s.b.id}</td><td>${s.lim}</td><td class="n mono">${fr(s.len)} m</td></tr>`).join('')+`<tr><td colspan="2"><b>Périmètre</b></td><td class="n mono"><b>${fr(SIDES.reduce((a,s)=>a+s.len,0))} m</b></td></tr>`;
+$('tReculs').tBodies[0].innerHTML=RECULS.map(r=>`<tr><td>${r.name}</td><td class="n mono">${fr(r.dist)} m</td></tr>`).join('');
+
+$('lvls').innerHTML=['ss','rdc','et'].map(k=>{const l=LV[k];
+ const rows=l.rooms.map(r=>`<tr><td><span class="sw" style="background:${COL[r[1]]}"></span>${r[0]}</td><td>${fr(ar(r),1).replace(',0','')} m²</td></tr>`).join('');
+ return `<article class="lvl" id="card-${k}"><header><h3>${l.name}<small>Niveau ${l.lvl}</small></h3><button data-view="${k}">Voir en 3D</button></header>
+ <table>${rows}<tr><td><span class="sw" style="background:${COL.plate}"></span>${l.rest}</td><td>${fr(l.restA,1).replace(',0','')} m²</td></tr>${l.note?`<tr class="nt"><td colspan="2">${l.note}</td></tr>`:''}<tr class="t"><td>Total du niveau</td><td>400 m²</td></tr></table></article>`}).join('');
+
+/* ---- plan de masse SVG (Lambert, nord en haut) ---- */
+(function(){
+ const M=13,xs=BORNES.map(b=>b.X),ys=BORNES.map(b=>b.Y),X0=Math.min(...xs)-M,Y1=Math.max(...ys)+M,W=Math.max(...xs)+M-X0,H=Y1-(Math.min(...ys)-M);
+ const P=(u,v)=>{const w=toW(u,v);return[w[0]-X0,Y1-w[1]]};
+ const pts=a=>a.map(p=>P(p[0],p[1]).map(n=>n.toFixed(2)).join(',')).join(' ');
+ const d16=[(L(2)[0]-L(1)[0])/SIDES[1].len,(L(2)[1]-L(1)[1])/SIDES[1].len],n16=[d16[1],-d16[0]];
+ const f16=(s,t)=>[L(1)[0]+d16[0]*s+n16[0]*t,L(1)[1]+d16[1]*s+n16[1]*t];
+ const rect=(x0,z0,x1,z1)=>[[x0,z0],[x1,z0],[x1,z1],[x0,z1]];
+ const V=(x,z)=>[VO[0]+x,VO[1]+z];
+ const vr=(x0,z0,x1,z1)=>rect(...V(x0,z0),...V(x1,z1));
+ const ang=(a,b)=>{const A=P(...a),B=P(...b);let g=Math.atan2(B[1]-A[1],B[0]-A[0])*180/Math.PI;if(g>90)g-=180;if(g<-90)g+=180;return g};
+ const txt=(p,s,cls,rot=0,dy=0)=>{const q=P(...p);return `<text class="${cls}" x="${q[0].toFixed(2)}" y="${q[1].toFixed(2)}" dy="${dy}" text-anchor="middle" transform="rotate(${rot.toFixed(1)} ${q[0].toFixed(2)} ${q[1].toFixed(2)})">${s}</text>`};
+ let s='';
+ s+=`<polygon class="pl-street" points="${pts([[-40,0],[80,0],[80,-12],[-40,-12]])}"/>`;
+ s+=`<polygon class="pl-street" points="${pts([f16(-40,0),f16(80,0),f16(80,16),f16(-40,16)])}"/>`;
+ s+=`<polygon class="pl-lot" points="${pts(LOT)}"/>`;
+ s+=`<polygon class="pl-patio" points="${pts(rect(10.5,4,14,16))}"/>`;
+ s+=`<polygon class="pl-deck" points="${pts([[4.6,8.6],[10.25,8.6],[10.25,16.25],[14,16.25],[14,21.6],[4.6,21.6]])}"/>`;
+ s+=`<polygon class="pl-pool" points="${pts(rect(5.5,10,9.5,20))}"/>`;
+ s+=`<polygon class="pl-villa" points="${pts(vr(0,0,25,16))}"/>`;
+ s+=`<polygon class="pl-over" points="${pts([V(-1.6,-1.6),V(12.2,-1.6),V(12.2,-2.5),V(26.5,-2.5),V(26.5,16),V(-1.6,16)])}"/>`;
+ /* longueurs des côtés */
+ const cx=LOT.reduce((a,p)=>a+p[0],0)/5,cz=LOT.reduce((a,p)=>a+p[1],0)/5;
+ SIDES.forEach((sd,i)=>{const a=LOT[i],b=LOT[(i+1)%5],m=[(a[0]+b[0])/2,(a[1]+b[1])/2],d=[b[0]-a[0],b[1]-a[1]],l=Math.hypot(...d);let n=[-d[1]/l,d[0]/l];if((m[0]-cx)*n[0]+(m[1]-cz)*n[1]<0)n=[-n[0],-n[1]];
+  const off=i===3?-2.2:1.6;s+=txt([m[0]+n[0]*off,m[1]+n[1]*off],fr(sd.len)+' m','pl-m',ang(a,b),0.4)});
+ /* reculs */
+ RECULS.slice(0,4).forEach(r=>{const a=P(...r.p),b=P(...r.f);s+=`<line class="pl-dim2" x1="${a[0].toFixed(2)}" y1="${a[1].toFixed(2)}" x2="${b[0].toFixed(2)}" y2="${b[1].toFixed(2)}"/>`;
+  const m=[(r.p[0]+r.f[0])/2,(r.p[1]+r.f[1])/2];s+=txt(m,fr(r.dist,1)+' m','pl-r',ang(r.p,r.f)+90,-0.4)});
+ /* bornes */
+ BORNES.forEach(b=>{const q=P(b.u,b.v);s+=`<circle class="pl-borne" cx="${q[0].toFixed(2)}" cy="${q[1].toFixed(2)}" r=".55"/>`;
+  const dx=b.u-cx,dz=b.v-cz,l=Math.hypot(dx,dz);s+=txt([b.u+dx/l*2.6,b.v+dz/l*2.6],b.id,'pl-t',0,0.5)});
+ s+=txt(V(12.5,8.4),'VILLA 25 × 16 m','pl-t',ang(V(0,0),V(25,0)));
+ s+=txt(V(12.5,10.4),'400 m² · R+1 + sous-sol','pl-m',ang(V(0,0),V(25,0)));
+ s+=txt([7.5,15],'Piscine','pl-m',ang([7.5,10],[7.5,20]));
+ s+=txt([12.25,10],'Patio','pl-m',ang([12.25,4],[12.25,16]));
+ s+=txt([20,-6.5],'RUE DE LOTISSEMENT DE 12 M','pl-st',ang([0,0],[40,0]),0.4);
+ s+=txt(f16(12,8.5),'RUE DE LOTISSEMENT DE 16 M','pl-st',ang(f16(0,8),f16(30,8)),0.4);
+ s+=txt([27,38],'LOT 6','pl-st',0);s+=txt([-6,13],'LOT 4','pl-st',0);s+=txt([-1,33],'LOT 3','pl-st',0);
+ /* nord et échelle */
+ const nx=W-6,ny=7;s+=`<g transform="translate(${nx} ${ny})"><path d="M0 -4.2 L2 2.2 L0 1 L-2 2.2 Z" fill="#c8312b"/><text class="pl-t" y="5.4" text-anchor="middle">N</text></g>`;
+ const sx=4,sy=H-4;s+=`<g><rect x="${sx}" y="${sy-0.6}" width="10" height="0.6" fill="currentColor" class="pl-t"/><rect x="${sx+10}" y="${sy-0.6}" width="10" height="0.6" fill="none" stroke-width=".12" stroke="currentColor" style="color:var(--ink)"/><text class="pl-m" x="${sx}" y="${sy+1.8}" text-anchor="middle">0</text><text class="pl-m" x="${sx+10}" y="${sy+1.8}" text-anchor="middle">10</text><text class="pl-m" x="${sx+20}" y="${sy+1.8}" text-anchor="middle">20 m</text></g>`;
+ const svg=$('sitePlan');svg.setAttribute('viewBox',`0 0 ${W.toFixed(2)} ${H.toFixed(2)}`);svg.innerHTML=s;
+})();
+
+return{fr,BORNES,LOT,SIDES,NORTH,EAST,VO,RECULS,LV,COL,ar,foot,S};
+})();
+</script>
+
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script>
+/* repli si le module 3D ne se charge pas */
+window.__amaT=setTimeout(()=>{if(!window.__amaOK){const e=document.getElementById('err');e.hidden=false;document.getElementById('loading').classList.add('done')}},20000);
+</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
+import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
+import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
+import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
+import {RectAreaLightUniformsLib} from 'three/addons/lights/RectAreaLightUniformsLib.js';
+import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
+import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
+
+window.__amaOK=true;
+const A=window.AMA,{LOT,VO,LV,BORNES,NORTH,EAST,fr}=A;
+const $=id=>document.getElementById(id);
+const viewer=$('viewer'),cv=$('cv'),lblLayer=$('lbls');
+const V3=THREE.Vector3;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const small=Math.min(screen.width,screen.height)<700;
+
+let renderer;
+try{renderer=new THREE.WebGLRenderer({canvas:cv,antialias:false,powerPreference:'high-performance'})}catch(e){$('err').hidden=false;$('loading').classList.add('done');throw e}
+renderer.setPixelRatio(Math.min(devicePixelRatio||1,small?1.5:2));
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+RectAreaLightUniformsLib.init();
+
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(40,1,0.3,2000);
+const controls=new OrbitControls(camera,cv);
+controls.enableDamping=true;controls.dampingFactor=.07;controls.maxPolarAngle=Math.PI/2-.015;controls.minDistance=3;controls.maxDistance=260;controls.autoRotateSpeed=.45;
+
+/* ---------- utilitaires ---------- */
+const rng=s=>()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+function canvasTex(size,draw,srgb=true,tile=1){const c=document.createElement('canvas');c.width=c.height=size;draw(c.getContext('2d'),size);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=renderer.capabilities.getMaxAnisotropy();if(srgb)t.colorSpace=THREE.SRGBColorSpace;t.repeat.set(1/tile,1/tile);return t}
+function dataTex(w,h,f){const d=new Uint8Array(w*h*4);for(let j=0;j<h;j++)for(let i=0;i<w;i++){const v=Math.max(0,Math.min(1,f((i+.5)/w,(j+.5)/h)))*255,k=(j*w+i)*4;d[k]=d[k+1]=d[k+2]=v;d[k+3]=255}const t=new THREE.DataTexture(d,w,h);t.magFilter=t.minFilter=THREE.LinearFilter;t.needsUpdate=true;return t}
+function noise(g,S,base,amp,n,seed,size=1.5){const r=rng(seed);g.fillStyle=base;g.fillRect(0,0,S,S);for(let i=0;i<n;i++){const v=(r()-.5)*amp;g.fillStyle=v>0?`rgba(255,255,255,${v})`:`rgba(0,0,0,${-v})`;g.fillRect(r()*S,r()*S,size+r()*size,size+r()*size)}}
+
+/* ---------- textures procédurales ---------- */
+function pebbles(tile){const S=512,r=rng(11);const c1=document.createElement('canvas'),c2=document.createElement('canvas');c1.width=c1.height=c2.width=c2.height=S;const g=c1.getContext('2d'),b=c2.getContext('2d');
+ g.fillStyle='#0e0f11';g.fillRect(0,0,S,S);b.fillStyle='#000';b.fillRect(0,0,S,S);
+ for(let i=0;i<1500;i++){const x=r()*S,y=r()*S,rx=5+r()*12,ry=rx*(.55+r()*.4),a=r()*3.14,l=14+r()*34|0,bl=r()<.2?5:0;
+  for(const ox of[-S,0,S])for(const oy of[-S,0,S]){const X=x+ox,Y=y+oy;if(X<-24||X>S+24||Y<-24||Y>S+24)continue;
+   g.save();g.translate(X,Y);g.rotate(a);let gr=g.createRadialGradient(-rx*.35,-ry*.35,1,0,0,rx*1.05);gr.addColorStop(0,`rgb(${l+34},${l+34},${l+36+bl})`);gr.addColorStop(1,`rgb(${l},${l},${l+2+bl})`);g.fillStyle=gr;g.beginPath();g.ellipse(0,0,rx,ry,0,0,6.2832);g.fill();g.restore();
+   b.save();b.translate(X,Y);b.rotate(a);gr=b.createRadialGradient(0,0,0,0,0,rx);gr.addColorStop(0,'#fff');gr.addColorStop(.7,'#999');gr.addColorStop(1,'#222');b.fillStyle=gr;b.beginPath();b.ellipse(0,0,rx,ry,0,0,6.2832);b.fill();b.restore()}}
+ const mk=(c,s)=>{const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=8;if(s)t.colorSpace=THREE.SRGBColorSpace;t.repeat.set(1/tile,1/tile);return t};return[mk(c1,true),mk(c2,false)]}
+const tiles=(base,joint,nx,ny,vary,seed,tile)=>canvasTex(512,(g,S)=>{noise(g,S,base,.06,5000,seed,1.2);const r=rng(seed+1),w=S/nx,h=S/ny;for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){const v=(r()-.5)*vary;g.fillStyle=v>0?`rgba(255,255,255,${v})`:`rgba(0,0,0,${-v})`;g.fillRect(i*w,j*h,w,h)}g.strokeStyle=joint;g.lineWidth=2;for(let i=0;i<=nx;i++){g.beginPath();g.moveTo(i*w,0);g.lineTo(i*w,S);g.stroke()}for(let j=0;j<=ny;j++){g.beginPath();g.moveTo(0,j*h);g.lineTo(S,j*h);g.stroke()}},true,tile);
+const planks=(base,seed,tile)=>canvasTex(512,(g,S)=>{const r=rng(seed);g.fillStyle=base;g.fillRect(0,0,S,S);const n=8,h=S/n;for(let j=0;j<n;j++){let x=-r()*S;while(x<S){const L=S*(.4+r()*.5),v=(r()-.5)*.16;g.fillStyle=v>0?`rgba(255,255,255,${v})`:`rgba(0,0,0,${-v})`;g.fillRect(x,j*h,L,h);for(let k=0;k<7;k++){g.strokeStyle=`rgba(60,40,20,${.05+r()*.07})`;g.lineWidth=1;g.beginPath();const yy=j*h+r()*h;g.moveTo(x,yy);g.bezierCurveTo(x+L*.3,yy+(r()-.5)*6,x+L*.6,yy+(r()-.5)*6,x+L,yy);g.stroke()}g.fillStyle='rgba(40,25,10,.35)';g.fillRect(x,j*h,2,h);x+=L}g.fillStyle='rgba(40,25,10,.4)';g.fillRect(0,j*h,S,1.5)}},true,tile);
+const [pebT,pebB]=pebbles(1.4);
+const asphT=canvasTex(512,(g,S)=>noise(g,S,'#2b2d31',.09,26000,3,1.4),true,4);
+const paveT=tiles('#c2beb6','rgba(70,66,60,.55)',8,8,.07,5,3.2);
+const travT=tiles('#e7e0d1','rgba(150,135,110,.5)',4,2,.05,7,2.4);
+const stoneT=tiles('#e9e5dd','rgba(120,115,105,.35)',4,4,.04,9,2.4);
+const lawnT=canvasTex(512,(g,S)=>noise(g,S,'#456f33',.18,30000,13,1.4),true,3);
+const gravT=canvasTex(512,(g,S)=>{noise(g,S,'#8e8470',.14,30000,17,1.6)},true,6);
+const roofT=canvasTex(512,(g,S)=>noise(g,S,'#8c8a85',.2,30000,19,1.6),true,2);
+const renderB=canvasTex(256,(g,S)=>noise(g,S,'#808080',.25,9000,21,1.2),false,2.5);
+const oakT=planks('#c59a6a',23,1.6),oakT2=planks('#b88d60',29,1.6);
+const marbleT=tiles('#e8eaea','rgba(140,145,150,.35)',2,2,.03,31,1.8);
+const spaT=tiles('#9fd3da','rgba(255,255,255,.6)',12,12,.05,33,1.2);
+const concT=canvasTex(512,(g,S)=>noise(g,S,'#bdbcb8',.12,20000,37,1.6),true,3);
+const waterN=(()=>{const N=128,d=new Uint8Array(N*N*4),H=(x,y)=>Math.sin((x*3+y*2)*6.2832/N)*.5+Math.sin((x*-2+y*5)*6.2832/N)*.35+Math.sin((x*7+y*1)*6.2832/N)*.2+Math.sin((x*4-y*9)*6.2832/N)*.12;
+ for(let y=0;y<N;y++)for(let x=0;x<N;x++){const dx=H(x+1,y)-H(x-1,y),dy=H(x,y+1)-H(x,y-1);const v=new V3(-dx*2,-dy*2,1).normalize(),k=(y*N+x)*4;d[k]=(v.x*.5+.5)*255;d[k+1]=(v.y*.5+.5)*255;d[k+2]=(v.z*.5+.5)*255;d[k+3]=255}
+ const t=new THREE.DataTexture(d,N,N);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.magFilter=t.minFilter=THREE.LinearFilter;t.generateMipmaps=false;t.needsUpdate=true;t.repeat.set(1.2,3);return t})();
+const glowRect=dataTex(64,64,(x,y)=>{const dx=Math.max(Math.abs(x-.5)-.27,0),dy=Math.max(Math.abs(y-.5)-.27,0),d=Math.hypot(dx,dy);return Math.exp(-d*d*260)});
+const glowEdge=dataTex(4,64,(x,y)=>Math.exp(-y*3.2)*(1-Math.exp(-(1-y)*12)));
+const glowRad=dataTex(64,64,(x,y)=>{const d=Math.hypot(x-.5,y-.5)*2;return Math.max(0,Math.exp(-d*d*3.2)-.04)});
+
+/* ---------- matériaux ---------- */
+const STD=(o,ud={})=>{const m=new THREE.MeshStandardMaterial(o);Object.assign(m.userData,ud);return m};
+const M={
+ white:STD({color:0xf2f1ec,roughness:.82,bumpMap:renderB,bumpScale:.12},{wuv:1}),
+ whiteSite:STD({color:0xeeece6,roughness:.88,bumpMap:renderB,bumpScale:.15},{wuv:1}),
+ glass:new THREE.MeshPhysicalMaterial({color:0x020305,roughness:.04,metalness:0,clearcoat:.6,clearcoatRoughness:.04,envMapIntensity:.85}),
+ rail:new THREE.MeshPhysicalMaterial({color:0x9fb6c4,roughness:.04,metalness:0,transparent:true,opacity:.24,envMapIntensity:1.6,depthWrite:false}),
+ mull:STD({color:0x1a1d22,roughness:.4,metalness:.7}),
+ door:STD({color:0x15130f,roughness:.5,metalness:.3}),
+ led:STD({color:0xffffff,emissive:0xffd29a,emissiveIntensity:5,roughness:1},{cast:false}),
+ street:STD({color:0xffffff,emissive:0xffd9a8,emissiveIntensity:12,roughness:1},{cast:false}),
+ peb:STD({map:pebT,bumpMap:pebB,bumpScale:1.2,roughness:.78,envMapIntensity:.45,color:0xffffff},{wuv:1,cast:false}),
+ asph:STD({map:asphT,roughness:.92},{wuv:1,cast:false}),
+ pave:STD({map:paveT,roughness:.85},{wuv:1}),
+ trav:STD({map:travT,roughness:.6},{wuv:1}),
+ slab:STD({color:0xf3f1ec,roughness:.55},{wuv:1}),
+ lawn:STD({map:lawnT,roughness:.95},{wuv:1,cast:false}),
+ grav:STD({map:gravT,roughness:.95},{wuv:1,cast:false}),
+ roof:STD({map:roofT,roughness:.95},{wuv:1,cast:false}),
+ stone:STD({map:stoneT,roughness:.6},{wuv:1}),
+ basin:STD({color:0x8fd3e2,roughness:.35,side:THREE.BackSide},{cast:false}),
+ leaf:STD({color:0x2a3b24,roughness:.9}),
+ leaf2:STD({color:0x3a5a2e,roughness:.85}),
+ agave:STD({color:0x6f8f78,roughness:.6}),
+ palm:STD({color:0x4c6b2c,roughness:.75,side:THREE.DoubleSide}),
+ bark:STD({color:0x4a3a2c,roughness:.95}),
+ palmBark:STD({color:0x6d5b46,roughness:.95}),
+ beige:STD({color:0xe6d8c0,roughness:.9},{wuv:1}),
+ tileRoof:STD({color:0x9a4f36,roughness:.8}),
+ ctxGlass:STD({color:0x1a2230,roughness:.2,metalness:.2}),
+ pole:STD({color:0x2a2d33,roughness:.5,metalness:.6}),
+ figure:STD({color:0xd8d5ce,roughness:.7}),
+ borne:STD({color:0xb8322a,roughness:.6}),
+ gate:STD({color:0x1b1d21,roughness:.45,metalness:.5}),
+ /* plans d'étage */
+ poche:STD({color:0x22262d,roughness:.9}),
+ wallP:STD({color:0xfbfaf7,roughness:.9}),
+ glassP:new THREE.MeshPhysicalMaterial({color:0xa9cbe0,roughness:.05,transparent:true,opacity:.35,depthWrite:false}),
+ fabric:STD({color:0xd7d1c6,roughness:.95}),
+ woodF:STD({color:0x6a5040,roughness:.6}),
+ lacq:STD({color:0xf5f5f3,roughness:.3}),
+ darkF:STD({color:0x2c2f35,roughness:.5}),
+};
+const FLOOR={
+ suite:STD({map:oakT,roughness:.55},{wuv:1}),dress:STD({map:oakT2,roughness:.55},{wuv:1}),live:STD({map:oakT,roughness:.55},{wuv:1}),
+ bath:STD({map:marbleT,roughness:.25},{wuv:1}),kit:STD({map:stoneT,roughness:.4},{wuv:1}),plate:STD({map:travT,roughness:.5},{wuv:1}),
+ stair:STD({map:concT,roughness:.7},{wuv:1}),lift:STD({color:0x3a4150,roughness:.5}),tech:STD({map:concT,roughness:.8,color:0xd0d3d6},{wuv:1}),
+ cin:STD({color:0x4b3a52,roughness:1}),gym:STD({color:0x50545b,roughness:.95}),spa:STD({map:spaT,roughness:.3},{wuv:1})};
+const water=new THREE.MeshPhysicalMaterial({color:0x1f9cc0,roughness:.04,metalness:0,transparent:true,opacity:.82,normalMap:waterN,normalScale:new THREE.Vector2(.35,.35),envMapIntensity:1.3,emissive:0x0b8fbf,emissiveIntensity:0});
+const ADD=(c,o=1)=>new THREE.MeshBasicMaterial({color:new THREE.Color(c).multiplyScalar(o),transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide,toneMapped:false});
+const G={slab:ADD(0xffc985,.6),soffit:ADD(0xffcf94,.3),street:ADD(0xffcf94,.2),pool:ADD(0x46c8ff,.18)};
+for(const k in G){G[k].map=k==='slab'?glowRect:k==='soffit'?glowEdge:glowRad;G[k].userData.cast=false;G[k].userData.glow=1}
+const LEDS=[M.led,M.street];
+
+/* ---------- constructeur de géométrie fusionnée ---------- */
+class B3{constructor(parent,pos){this.g=new THREE.Group();if(pos)this.g.position.set(...pos);parent.add(this.g);this.m=new Map()}
+ add(geo,mat){if(!this.m.has(mat))this.m.set(mat,[]);this.m.get(mat).push(geo);return geo}
+ box(mat,x0,y0,z0,x1,y1,z1){const g=new THREE.BoxGeometry(Math.abs(x1-x0),Math.abs(y1-y0),Math.abs(z1-z0));g.translate((x0+x1)/2,(y0+y1)/2,(z0+z1)/2);return this.add(g,mat)}
+ rbox(mat,x0,y0,z0,x1,y1,z1,r=.04){const g=new RoundedBoxGeometry(x1-x0,y1-y0,z1-z0,2,Math.min(r,(y1-y0)/2.1,(x1-x0)/2.1,(z1-z0)/2.1));g.translate((x0+x1)/2,(y0+y1)/2,(z0+z1)/2);return this.add(g,mat)}
+ prism(mat,pts,y0,y1,holes=[]){const g=new THREE.ExtrudeGeometry(shp(pts.map(p=>[p[0],-p[1]]),holes.map(h=>h.map(p=>[p[0],-p[1]]))),{depth:y1-y0,bevelEnabled:false,curveSegments:28});g.rotateX(-Math.PI/2);g.translate(0,y0,0);return this.add(g,mat)}
+ flat(mat,pts,y,holes=[]){const g=new THREE.ShapeGeometry(shp(pts.map(p=>[p[0],-p[1]]),holes.map(h=>h.map(p=>[p[0],-p[1]]))));g.rotateX(-Math.PI/2);g.translate(0,y,0);return this.add(g,mat)}
+ extXY(mat,pts,z0,z1,holes=[]){const g=new THREE.ExtrudeGeometry(shp(pts,holes),{depth:z1-z0,bevelEnabled:false});g.translate(0,0,z0);return this.add(g,mat)}
+ extYZ(mat,pts,x0,x1,holes=[]){const f=a=>a.map(p=>[-p[0],p[1]]);const g=new THREE.ExtrudeGeometry(shp(f(pts),holes.map(f)),{depth:x1-x0,bevelEnabled:false});g.rotateY(Math.PI/2);g.translate(x0,0,0);return this.add(g,mat)}
+ seg(mat,a,b,w=.06,h=.04){const A=new V3(...a),Bv=new V3(...b),d=Bv.clone().sub(A),L=d.length();d.normalize();const ref=Math.abs(d.y)<.9?new V3(0,1,0):new V3(1,0,0);const y=ref.sub(d.clone().multiplyScalar(d.dot(ref))).normalize(),z=d.clone().cross(y);
+  const g=new THREE.BoxGeometry(L,h,w);g.applyMatrix4(new THREE.Matrix4().makeBasis(d,y,z).setPosition(A.add(Bv).multiplyScalar(.5)));return this.add(g,mat)}
+ path(mat,pts,w,h){for(let i=0;i<pts.length-1;i++)this.seg(mat,pts[i],pts[i+1],w,h)}
+ quad(mat,c,uv=[[0,0],[1,0],[1,1],[0,1]]){const g=new THREE.BufferGeometry(),p=[],u=[],n=[];for(const i of[0,1,2,0,2,3]){p.push(...c[i]);u.push(...uv[i]);n.push(0,1,0)}g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(u,2));g.setAttribute('normal',new THREE.Float32BufferAttribute(n,3));return this.add(g,mat)}
+ finish(){for(const[mat,list]of this.m){const gs=list.map(g=>{let q=g.index?g.toNonIndexed():g;for(const k of Object.keys(q.attributes))if(!['position','normal','uv'].includes(k))q.deleteAttribute(k);if(!q.attributes.uv)q.setAttribute('uv',new THREE.BufferAttribute(new Float32Array(q.attributes.position.count*2),2));q.clearGroups();return q});
+  const g=mergeGeometries(gs,false);if(mat.userData.wuv)worldUV(g,this.g.position);const me=new THREE.Mesh(g,mat);me.castShadow=mat.userData.cast!==false&&!mat.transparent;me.receiveShadow=!mat.userData.glow;if(mat.transparent)me.renderOrder=2;this.g.add(me)}this.m.clear();return this.g}}
+function shp(pts,holes=[]){const s=new THREE.Shape(pts.map(p=>new THREE.Vector2(p[0],p[1])));holes.forEach(h=>s.holes.push(new THREE.Path(h.map(p=>new THREE.Vector2(p[0],p[1])))));return s}
+function worldUV(g,o){const p=g.attributes.position,n=g.attributes.normal,uv=new Float32Array(p.count*2);
+ for(let i=0;i<p.count;i++){const x=p.getX(i)+o.x,y=p.getY(i)+o.y,z=p.getZ(i)+o.z,ax=Math.abs(n.getX(i)),ay=Math.abs(n.getY(i)),az=Math.abs(n.getZ(i));
+  if(ay>=ax&&ay>=az){uv[i*2]=x;uv[i*2+1]=-z}else if(ax>=az){uv[i*2]=z;uv[i*2+1]=y}else{uv[i*2]=x;uv[i*2+1]=y}}g.setAttribute('uv',new THREE.BufferAttribute(uv,2))}
+function clipHP(poly,a,b,c){/* garde a*x+b*z <= c */const out=[],f=p=>a*p[0]+b*p[1]-c;for(let i=0;i<poly.length;i++){const P=poly[i],Q=poly[(i+1)%poly.length],fp=f(P),fq=f(Q);if(fp<=0)out.push(P);if((fp<=0)!==(fq<=0)){const t=fp/(fp-fq);out.push([P[0]+t*(Q[0]-P[0]),P[1]+t*(Q[1]-P[1])])}}return out}
+const rect=(x0,z0,x1,z1)=>[[x0,z0],[x1,z0],[x1,z1],[x0,z1]];
+
+/* ---------- groupes ---------- */
+const root=new THREE.Group();scene.add(root);
+const grp={};['site','ctx','villa','patio','glow','ss','rdc','et','dims','bornes'].forEach(k=>{grp[k]=new THREE.Group();root.add(grp[k])});
+
+/* ---------- repères des rues ---------- */
+const d16=(()=>{const a=LOT[1],b=LOT[2],l=Math.hypot(b[0]-a[0],b[1]-a[1]);return[(b[0]-a[0])/l,(b[1]-a[1])/l]})(),n16=[d16[1],-d16[0]];
+const f16=(s,t)=>[LOT[1][0]+d16[0]*s+n16[0]*t,LOT[1][1]+d16[1]*s+n16[1]*t];
+const nC=n16[0]*LOT[1][0]+n16[1]*LOT[1][1];/* n16·p = nC sur l'alignement de la rue de 16 m */
+
+/* ---------- sol, rues, îlots ---------- */
+{const S=new B3(grp.site);
+ S.flat(M.asph,[[-400,-400],[400,-400],[400,400],[-400,400]],-.15);
+ const BIG=[[-260,-260],[300,-260],[300,300],[-260,300]];
+ const blocks=[
+  clipHP(clipHP(BIG,0,-1,2.5),n16[0],n16[1],nC+2.5),          /* notre îlot */
+  clipHP(clipHP(BIG,0,1,-9.5),n16[0],n16[1],nC+2.5),          /* en face, rue de 12 m */
+  clipHP(clipHP(BIG,0,-1,2.5),-n16[0],-n16[1],-(nC+13.5)),     /* en face, rue de 16 m */
+  clipHP(clipHP(BIG,0,1,-9.5),-n16[0],-n16[1],-(nC+13.5))];
+ blocks.forEach(b=>S.prism(M.pave,b,-.15,-.02));
+ /* parcelles voisines : sol neutre */
+ const lots=[clipHP(clipHP(BIG,0,-1,0),n16[0],n16[1],nC),clipHP(clipHP(BIG,0,1,-12),n16[0],n16[1],nC),clipHP(clipHP(BIG,0,-1,0),-n16[0],-n16[1],-(nC+16)),clipHP(clipHP(BIG,0,1,-12),-n16[0],-n16[1],-(nC+16))];
+ lots.forEach(l=>S.flat(M.grav,l,0));
+ /* bordures de trottoir */
+ S.box(M.slab,-260,-.15,-2.62,300,.02,-2.5);S.box(M.slab,-260,-.15,-9.5,300,.02,-9.38);
+ {const a=f16(-300,2.5),b=f16(300,2.5);S.seg(M.slab,[a[0],-.06,a[1]],[b[0],-.06,b[1]],.12,.18);const c=f16(-300,13.5),d=f16(300,13.5);S.seg(M.slab,[c[0],-.06,c[1]],[d[0],-.06,d[1]],.12,.18)}
+ /* marquage axial discontinu */
+ for(let u=-120;u<160;u+=6)S.box(M.slab,u,-.148,-6.08,u+3,-.145,-5.92);
+ for(let s=-120;s<160;s+=6){const a=f16(s,8),b=f16(s+3,8);S.seg(M.slab,[a[0],-.146,a[1]],[b[0],-.146,b[1]],.16,.004)}
+ S.finish();}
+
+/* ---------- lot 5 : galets, pelouse, plage, piscine, dalles ---------- */
+const PATIO=rect(10.25,3.75,14,16.25),POOL=rect(5.5,10,9.5,20);
+{const S=new B3(grp.site);
+ S.flat(M.peb,LOT,.025,[PATIO,POOL]);
+ const lawn=clipHP(clipHP(clipHP(LOT,1,0,10.0),0,-1,-3.2),0,1,28.8);
+ S.flat(M.lawn,lawn,.045,[POOL]);
+ S.prism(M.trav,[[4.6,8.6],[10.25,8.6],[10.25,16.25],[14,16.25],[14,21.6],[4.6,21.6]],0,.12,[POOL]);
+ S.box(M.basin,5.5,-1.6,10,9.5,.0,20);
+ /* allée d'entrée : dalles flottantes depuis le trottoir */
+ const slabs=[];
+ const fl=(x0,z0,x1,z1,y=.16)=>{S.box(M.slab,x0,y-.1,z0,x1,y,z1);S.box(M.led,x0+.08,y-.13,z0+.08,x1-.08,y-.1,z1-.08);slabs.push([x0,z0,x1,z1])};
+ fl(16.6,.2,21.6,1.45);fl(17.2,1.65,21.2,2.6,.2);
+ for(let i=0;i<6;i++)fl(8.3,.6+i*1.25,10.0,1.5+i*1.25,.12);
+ /* accès voitures depuis la rue de 16 m */
+ for(let v=2.6;v<21.5;v+=1.5){const ue=LOT[1][0]+(LOT[2][0]-LOT[1][0])*(v/LOT[2][1])-.25,ue2=LOT[1][0]+(LOT[2][0]-LOT[1][0])*((v+1.15)/LOT[2][1])-.25;S.prism(M.slab,[[41,v],[ue,v],[ue2,v+1.15],[41,v+1.15]],.04,.14);slabs.push([41,v,Math.min(ue,ue2),v+1.15])}
+ S.finish();
+ const GL=new B3(grp.glow);
+ slabs.forEach(s=>{const m=.55;GL.quad(G.slab,[[s[0]-m,.05,s[1]-m],[s[2]+m,.05,s[1]-m],[s[2]+m,.05,s[3]+m],[s[0]-m,.05,s[3]+m]])});
+ GL.quad(G.pool,[[3,.14,7.5],[12,.14,7.5],[12,.14,22.5],[3,.14,22.5]]);
+ GL.finish();
+ /* murs de clôture sur les lots 6, 3 et 4 */
+ const W=new B3(grp.site);
+ const wall=(p,q,h=2.2,t=.22)=>{const d=[q[0]-p[0],q[1]-p[1]],l=Math.hypot(...d),o=[-d[1]/l*t/2,d[0]/l*t/2];W.prism(M.whiteSite,[[p[0]+o[0],p[1]+o[1]],[q[0]+o[0],q[1]+o[1]],[q[0]-o[0],q[1]-o[1]],[p[0]-o[0],p[1]-o[1]]],0,h);W.prism(M.whiteSite,[[p[0]+o[0]*1.5,p[1]+o[1]*1.5],[q[0]+o[0]*1.5,q[1]+o[1]*1.5],[q[0]-o[0]*1.5,q[1]-o[1]*1.5],[p[0]-o[0]*1.5,p[1]-o[1]*1.5]],h,h+.06)};
+ wall(LOT[2],LOT[3]);wall(LOT[3],LOT[4]);wall(LOT[4],LOT[0]);
+ /* bordure basse en limite des rues */
+ W.seg(M.slab,[LOT[0][0],.06,LOT[0][1]+.12],[LOT[1][0]-.1,.06,LOT[1][1]+.12],.24,.12);
+ W.seg(M.slab,[LOT[1][0]-.12,.06,LOT[1][1]+.3],[LOT[2][0]-.12,.06,LOT[2][1]],.24,.12);
+ W.finish();}
+
+/* ---------- végétation ---------- */
+function blob(r,seed,flat=.6,det=3){const g=new THREE.IcosahedronGeometry(1,det),p=g.attributes.position,R=rng(seed),a=R()*9,b=R()*9;for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i),k=1+.13*Math.sin(x*5+a)*Math.sin(y*6+b)*Math.sin(z*5.5+a)+.06*Math.sin(x*13+y*11+z*9);p.setXYZ(i,x*r*k,y*r*k*flat,z*r*k)}g.computeVertexNormals();return g}
+function niwaki(B,x,y,z,s,seed){const r=rng(seed);const tp=[[0,0,0],[.18,.7,.05],[-.12,1.4,.12],[.1,2.1,-.06],[0,2.6,0]].map(p=>new V3(x+p[0]*s,y+p[1]*s,z+p[2]*s));const cur=new THREE.CatmullRomCurve3(tp);
+ B.add(new THREE.TubeGeometry(cur,16,.12*s,7),M.bark);
+ const top=cur.getPoint(1),tg=blob(.75*s,seed,.55);tg.translate(top.x,top.y+.15*s,top.z);B.add(tg,M.leaf);
+ for(let i=0;i<5;i++){const t=.38+i*.12,st=cur.getPoint(t),a=i*2.4+r()*.6,L=(.75+r()*.45)*s,en=new V3(st.x+Math.cos(a)*L,st.y+.35*L,st.z+Math.sin(a)*L);
+  B.add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([st,new V3((st.x+en.x)/2,st.y+.05,(st.z+en.z)/2),en]),6,.05*s,5),M.bark);
+  const pg=blob((.42+r()*.2)*s,seed*7+i,.5);pg.translate(en.x,en.y+.1*s,en.z);B.add(pg,M.leaf)}}
+function roundTree(B,x,z,s,seed){const cur=new THREE.CatmullRomCurve3([new V3(x,0,z),new V3(x+.1,1.4*s,z),new V3(x,2.2*s,z+.1)]);B.add(new THREE.TubeGeometry(cur,8,.14*s,7),M.bark);const r=rng(seed);
+ for(let i=0;i<6;i++){const g=blob((.9+r()*.5)*s,seed+i,.8,2);g.translate(x+(r()-.5)*1.6*s,(2.6+r()*1.2)*s,z+(r()-.5)*1.6*s);B.add(g,M.leaf2)}}
+function palm(B,x,z,h,seed){const r=rng(seed),lean=new V3((r()-.5)*.5,0,(r()-.5)*.5);const cur=new THREE.CatmullRomCurve3([new V3(x,0,z),new V3(x+lean.x*.3,h*.5,z+lean.z*.3),new V3(x+lean.x,h,z+lean.z)]);
+ B.add(new THREE.TubeGeometry(cur,10,.17,8),M.palmBark);const top=cur.getPoint(1);
+ for(let i=0;i<13;i++){const a=i/13*6.2832+r()*.3,up=.5-r()*.9,L=1.6+r()*.6,pos=[],idx=[],N=9;
+  for(let k=0;k<=N;k++){const t=k/N,c=new V3(top.x+Math.cos(a)*L*t,top.y+(up*t-.9*t*t)*L*.6,top.z+Math.sin(a)*L*t),w=.32*Math.sin(Math.PI*Math.min(1,t*1.15))+.02,px=-Math.sin(a)*w,pz=Math.cos(a)*w;pos.push(c.x+px,c.y-.06*w,c.z+pz,c.x-px,c.y-.06*w,c.z-pz)}
+  for(let k=0;k<N;k++){const q=k*2;idx.push(q,q+1,q+2,q+1,q+3,q+2)}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();B.add(g,M.palm)}
+ const cr=blob(.3,seed,1,1);cr.translate(top.x,top.y,top.z);B.add(cr,M.palmBark)}
+function agave(B,x,z,s,seed){const r=rng(seed);for(let i=0;i<16;i++){const a=r()*6.2832,t=.25+r()*.9,L=(.55+r()*.4)*s;const g=new THREE.ConeGeometry(.045*s,L,4);g.translate(0,L/2,0);g.rotateZ(-t);g.rotateY(a);g.translate(x,.02,z);B.add(g,M.agave)}}
+function shrub(B,x,z,r,seed){const g=blob(r,seed,.75,2);g.translate(x,r*.6,z);B.add(g,M.leaf2)}
+{const T=new B3(grp.site);
+ niwaki(T,30.6,0,1.0,1.0,3);niwaki(T,13.3,0,1.3,.95,5);niwaki(T,4.2,0,25.5,1.35,7);
+ roundTree(T,20.5,24.6,1.1,9);roundTree(T,33.5,24.2,1,11);roundTree(T,2.6,6.2,.9,13);
+ palm(T,42,1.3,4.6,17);palm(T,8.6,2.2,3.6,19);palm(T,11.8,23.6,5.4,23);palm(T,40.8,23,5,29);
+ [[24.4,1.0],[27.6,.8],[36.5,1.1],[15.6,.9],[38.8,2.4],[22.8,2.6]].forEach((p,i)=>agave(T,p[0],p[1],1,31+i));
+ [[16.2,24.8],[13.6,23.3],[38.2,23.5],[25.6,26.3],[28,25.6],[3.6,9.2],[3.3,14.6],[3.0,19.5]].forEach((p,i)=>shrub(T,p[0],p[1],.5+((i*37)%5)*.06,41+i));
+ /* personnages à l'échelle */
+ const fig=(x,z,y=0,h=1.75)=>{const b=new THREE.CapsuleGeometry(.19,h-.62,4,10);b.translate(x,y+(h-.62)/2+.19+.02,z);T.add(b,M.figure);const hd=new THREE.SphereGeometry(.115,14,10);hd.translate(x,y+h-.11,z);T.add(hd,M.figure)};
+ fig(19.4,.55,.16);fig(7.2,22.5,.12,1.68);
+ T.finish();}
+
+/* ---------- patio en contrebas (repère villa) ---------- */
+{const P=new B3(grp.patio,[VO[0],0,VO[1]]);
+ P.box(M.stone,-3.5,-3.55,0,0,-3.4,12);
+ P.box(M.white,-3.75,-3.55,-.25,-3.5,.12,12.25);P.box(M.white,-3.75,-3.55,-.25,0,.12,0);P.box(M.white,-3.75,-3.55,12,-2.3,.12,12.25);P.box(M.white,-2.3,-3.55,12,0,.12,12.25);
+ P.box(M.glass,0,-3.4,0,.06,-.32,12);for(let z=1.5;z<12;z+=2.1)P.box(M.mull,-.04,-3.4,z,.02,-.32,z+.05);P.box(M.white,-.02,-.32,0,.3,.15,12);
+ for(let i=0;i<20;i++){const z1=12-.28*i;P.box(M.white,-3.5,-3.55,z1-.28,-2.3,-.17*(i+1),z1)}
+ P.box(M.rail,-3.72,.12,-.25,-3.62,1.1,12.25);P.box(M.rail,-3.72,.12,-.25,0,1.1,-.15);P.box(M.rail,-2.3,.12,12.12,0,1.1,12.22);
+ P.box(M.white,-2.2,-3.4,5.3,-.8,-2.9,6.7);
+ P.seg(M.led,[-3.47,.1,0],[-3.47,.1,12],.05,.04);P.seg(M.led,[-.06,-3.38,0],[-.06,-3.38,12],.05,.04);
+ for(let i=0;i<20;i++){const z1=12-.28*i;P.seg(M.led,[-3.5,-.17*(i+1)+.02,z1-.27],[-2.3,-.17*(i+1)+.02,z1-.27],.03,.02)}
+ const t=new B3(grp.patio);niwaki(t,VO[0]-1.5,-2.9,VO[1]+6,.85,61);t.finish();
+ P.finish();}
+
+/* ---------- villa ---------- */
+const villaLights=[];
+{const B=new B3(grp.villa,[VO[0],0,VO[1]]);
+ const W=M.white;
+ /* socle */
+ B.box(W,0,0,-.4,25.2,.15,16.2);
+ /* RDC : verre noir en retrait */
+ B.box(M.glass,.3,.15,.6,24.7,4.0,.66);for(let x=1.6;x<24.7;x+=1.8)if(x<4.3||x>6.1)B.box(M.mull,x,.15,.56,x+.05,4,.6);
+ B.box(M.door,4.4,.15,.5,6.0,2.65,.62);B.box(M.mull,4.4,2.65,.5,6.0,2.72,.62);B.box(M.led,5.85,1.0,.47,5.9,1.6,.5);
+ B.box(M.glass,0,.15,.6,.06,4.0,15.7);for(let z=2;z<15.7;z+=2.2)B.box(M.mull,-.04,.15,z,0,4,z+.05);
+ B.box(W,0,.15,15.7,.3,4.0,16);
+ /* plans obliques en façade (inspirés de la photo) */
+ B.extXY(W,[[25,.15],[16,.15],[16,.9],[21.8,4.0],[25,4.0]],-.25,.6,[[[24.2,.7],[24.2,3.3],[23.25,.7]]]);
+ B.extXY(W,[[15.4,.15],[12.8,.15],[4.4,3.35],[4.4,4.0],[6.6,4.0]],-.7,-.1);
+ B.extXY(W,[[4.0,4.0],[0,4.0],[0,.15],[1.1,.15]],-.25,.6);
+ B.path(M.led,[[16,.92,-.27],[21.8,4.0,-.27]]);
+ B.path(M.led,[[12.8,.15,-.72],[4.4,3.35,-.72]]);B.path(M.led,[[15.4,.17,-.72],[6.6,4.0,-.72]]);
+ B.path(M.led,[[1.1,.17,-.27],[4.0,4.0,-.27]]);
+ B.seg(M.led,[16,.03,-.55],[25,.03,-.55],.05,.04);
+ /* marches d'entrée */
+ B.box(M.slab,3.2,.0,-1.3,7.0,.09,-.4);B.box(M.led,3.3,.0,-1.33,6.9,.04,-1.27);
+ /* arrière et pignon nord-ouest du RDC */
+ B.extXY(W,[[0,.15],[25,.15],[25,4],[0,4]],15.7,16,[rect(1,.9,6.5,3.2),rect(19.5,.9,23.5,3.2),rect(8,2.4,10.6,3.6)]);
+ B.box(M.glass,1,.9,15.75,6.5,3.2,15.8);B.box(M.glass,19.5,.9,15.75,23.5,3.2,15.8);B.box(M.glass,8,2.4,15.75,10.6,3.6,15.8);
+ B.extYZ(W,[[.6,.15],[15.7,.15],[15.7,4],[.6,4]],24.7,25,[rect(10.5,.9,14.5,3.2),rect(5,2.4,9,3.4)]);
+ B.box(M.glass,24.75,.9,10.5,24.8,3.2,14.5);B.box(M.glass,24.75,2.4,5,24.8,3.4,9);
+
+ /* volume A : grand cadre à l'angle des deux rues */
+ B.extYZ(W,[[-2.5,4.15],[-2.5,4.4],[16,4.4],[16,4.0],[-2.1,4.0]],12.2,26.5);
+ B.extYZ(W,[[-2.5,8.35],[-2.5,9.0],[16,9.0],[16,8.05],[0,8.05]],12.2,26.5);
+ B.extYZ(W,[[-2.5,4.4],[16,4.4],[16,8.05],[-2.5,8.05]],25.9,26.5,[rect(4.2,4.9,4.75,7.7),rect(5.3,4.9,5.85,7.7),rect(11,4.9,11.55,7.7)]);B.box(M.glass,26.2,4.9,4.2,26.25,7.7,5.85);B.box(M.glass,26.2,4.9,11,26.25,7.7,11.55);
+ B.box(M.glass,12.2,4.4,-.06,25.9,8.05,0);for(let x=14.2;x<25.9;x+=2.3)B.box(M.mull,x,4.4,-.1,x+.05,8.05,-.06);B.box(M.mull,12.2,5.0,-.1,25.9,5.04,-.06);
+ B.extXY(W,[[12.2,4.4],[25.9,4.4],[25.9,8.05],[12.2,8.05]],15.6,16,[rect(14,5,16.5,7.4),rect(18.5,5,23.5,7.4)]);B.box(M.glass,14,5,15.65,16.5,7.4,15.7);B.box(M.glass,18.5,5,15.65,23.5,7.4,15.7);
+ B.seg(M.led,[12.2,4.15,-2.52],[26.5,4.15,-2.52]);B.path(M.led,[[26.52,4.15,-2.5],[26.52,4.0,-2.1],[26.52,4.0,16]]);
+ B.seg(M.led,[12.2,9.0,-2.52],[26.5,9.0,-2.52]);B.seg(M.led,[12.2,8.35,-2.52],[26.5,8.35,-2.52]);B.seg(M.led,[26.52,9.0,-2.5],[26.52,9.0,16]);
+ B.seg(M.led,[12.2,8.06,-.14],[25.9,8.06,-.14]);B.seg(M.led,[25.88,4.42,-.14],[25.88,8.04,-.14],.04,.04);
+ B.box(M.roof,12.5,9.0,-2.2,26.2,9.012,15.7);
+ B.box(W,12.05,4.4,-.1,12.35,8.05,.35);
+
+ /* volume B : cadre bas sur le côté jardin */
+ B.extYZ(W,[[-1.6,4.1],[-1.6,4.4],[16,4.4],[16,4.0],[-1.3,4.0]],-1.6,12.2);
+ B.extYZ(W,[[-1.6,8.2],[-1.6,8.6],[16,8.6],[16,8.05],[0,8.05]],-2.2,12.2);
+ B.extYZ(W,[[-1.6,4.4],[16,4.4],[16,8.05],[-1.6,8.05]],-1.6,-1.0,[rect(1,5,6,7.2),rect(9.5,5,14.5,7.2)]);
+ B.box(M.glass,-1.4,5,1,-1.35,7.2,6);B.box(M.glass,-1.4,5,9.5,-1.35,7.2,14.5);
+ B.box(M.glass,-1.0,4.4,.24,12.2,8.05,.3);for(let x=1.0;x<12.2;x+=2.4)B.box(M.mull,x,4.4,.2,x+.05,8.05,.24);
+ B.box(M.rail,-1.0,4.4,-1.55,12.2,5.5,-1.5);B.box(M.mull,-1.0,5.5,-1.56,12.2,5.54,-1.49);
+ B.extXY(W,[[-1,4.4],[12.2,4.4],[12.2,8.05],[-1,8.05]],15.6,16,[rect(.5,6.2,7,7.6)]);B.box(M.glass,.5,6.2,15.65,7,7.6,15.7);
+ B.seg(M.led,[-1.6,4.1,-1.62],[12.2,4.1,-1.62]);B.path(M.led,[[-1.62,4.1,-1.6],[-1.62,4.0,-1.3],[-1.62,4.0,16]]);
+ B.seg(M.led,[-2.2,8.6,-1.62],[12.2,8.6,-1.62]);B.seg(M.led,[-2.2,8.2,-1.62],[12.2,8.2,-1.62]);B.seg(M.led,[-2.22,8.6,-1.6],[-2.22,8.6,16]);B.seg(M.led,[-2.22,8.2,-1.6],[-2.22,8.05,0]);
+ B.seg(M.led,[-1.0,8.06,.16],[12.2,8.06,.16]);
+ B.box(M.roof,-1.9,8.6,-1.3,12.1,8.612,15.7);
+ /* toiture : machinerie d'ascenseur, groupes de climatisation */
+ B.box(W,10.6,8.6,13.2,13.6,10.0,16);B.box(M.pole,2,8.6,12,3.2,9.4,13.2);B.box(M.pole,4,8.6,12,5.2,9.4,13.2);
+ /* lavis des sous-faces éclairées */
+ const sof=(x0,x1,z0,z1,y)=>B.quad(G.soffit,[[x0,y,z0],[x1,y,z0],[x1,y,z1],[x0,y,z1]]);
+ sof(12.2,26.5,-2.1,3,3.985);sof(-1.6,12.2,-1.3,3,3.985);sof(12.2,25.9,-.02,-2.5,8.04);sof(-1.0,12.2,.2,-1.6,8.04);
+ B.finish();
+ /* lumières surfaciques sous les porte-à-faux */
+ const ral=(x,y,z,w,h,I)=>{const l=new THREE.RectAreaLight(0xffd29a,I,w,h);l.position.set(VO[0]+x,y,VO[1]+z);l.rotation.x=-Math.PI/2;grp.villa.add(l);villaLights.push([l,I])};
+ ral(19.35,3.9,-1.0,14,2.2,2.4);ral(5.3,3.9,-.7,13.6,1.4,2.4);}
+
+/* ---------- contexte : maisons voisines, murs, éclairage public ---------- */
+const streetLights=[];
+{const C=new B3(grp.ctx);
+ const place=(g,x,z,rot)=>{g.rotateY(rot);g.translate(x,0,z);return g};
+ function house(x,z,w,d,h,rot,style,seed){const r=rng(seed);{const g=new THREE.PlaneGeometry(w+9,d+9).rotateX(-Math.PI/2);g.translate(0,.012,0);C.add(place(g,x,z,rot),M.lawn);for(let i=0;i<2;i++){const tg=blob(1.5+r()*.6,seed*3+i,.8,1),a=(i?1:-1)*(w/2+2.2),b=d/2+2.2*(r()<.5?1:-1);tg.translate(a,3.2,b);C.add(place(tg,x,z,rot),M.leaf2);const tr=new THREE.CylinderGeometry(.12,.16,2.6,6);tr.translate(a,1.3,b);C.add(place(tr,x,z,rot),M.bark)}}const mk=(m,x0,y0,z0,x1,y1,z1)=>{const g=new THREE.BoxGeometry(x1-x0,y1-y0,z1-z0);g.translate((x0+x1)/2,(y0+y1)/2,(z0+z1)/2);C.add(place(g,x,z,rot),m)};
+  if(style==='mod'){mk(M.whiteSite,-w/2,0,-d/2,w/2,h*.5,d/2);mk(M.whiteSite,-w/2+r()*2,h*.5,-d/2-1,w/2-2-r()*2,h,d/2-1);mk(M.ctxGlass,-w/2+1,.6,-d/2-.02,w/2-1,h*.5-.6,-d/2);mk(M.ctxGlass,-w/2+2+r()*2,h*.5+.6,-d/2-1.02,w/2-3-r()*2,h-.5,-d/2-1)}
+  else{mk(M.beige,-w/2,0,-d/2,w/2,h-1.6,d/2);const g=new THREE.ConeGeometry(Math.SQRT1_2,1,4,1);g.rotateY(Math.PI/4);g.scale(w*1.08,2.4,d*1.08);g.translate(0,h-1.6+1.2,0);C.add(place(g,x,z,rot),M.tileRoof);
+   for(let i=0;i<4;i++){mk(M.ctxGlass,-w/2+1.5+i*(w-3)/4,1,-d/2-.02,-w/2+1.5+i*(w-3)/4+1.2,2.6,-d/2);mk(M.ctxGlass,-w/2+1.5+i*(w-3)/4,3.6,-d/2-.02,-w/2+1.5+i*(w-3)/4+1.2,4.9,-d/2)}}}
+ const rot16=-Math.atan2(n16[1],n16[0]);
+ house(26,45,18,12,8.4,0,'clas',1);house(-14,13,14,15,7.4,Math.PI/2,'mod',2);house(-12,40,14,12,8,Math.PI,'clas',3);
+ house(14,-26,16,12,7.6,Math.PI,'mod',4);house(40,-27,15,12,8.2,Math.PI,'clas',5);house(-12,-26,15,12,7.2,Math.PI,'mod',6);
+ {const p=f16(6,30);house(p[0],p[1],13,15,7.8,rot16+Math.PI/2,'mod',7);const q=f16(34,30);house(q[0],q[1],13,16,8.2,rot16+Math.PI/2,'clas',8);const s=f16(-22,30);house(s[0],s[1],13,14,7.4,rot16+Math.PI/2,'mod',9)}
+ /* murs de clôture des îlots voisins */
+ const cw=(a,b,h=2.1)=>{const d=[b[0]-a[0],b[1]-a[1]],l=Math.hypot(...d);const g=new THREE.BoxGeometry(l,h,.22);g.rotateY(-Math.atan2(d[1],d[0]));g.translate((a[0]+b[0])/2,h/2,(a[1]+b[1])/2);C.add(g,M.whiteSite)};
+ cw([-60,-12.15],[f16(-22,0)[0]-0,-12.15]);
+ {const a=f16(-60,16.15),b=f16(4,16.15);cw(a,b);const c=f16(10,16.15),d=f16(90,16.15);cw(c,d)}
+ cw([LOT[4][0]-30,LOT[4][1]+.5],[LOT[4][0]-.6,LOT[4][1]+.2]);
+ /* lampadaires */
+ const lamp=(x,z,dir)=>{C.add((g=>{g.translate(x,3,z);return g})(new THREE.CylinderGeometry(.06,.09,6,10)),M.pole);
+  const hx=x+dir[0]*1.1,hz=z+dir[1]*1.1;C.add(new THREE.BoxGeometry(.1,.1,.1).translate(0,0,0).applyMatrix4(new THREE.Matrix4().makeTranslation(x,5.95,z)),M.pole);
+  const arm=new THREE.BoxGeometry(1.2,.06,.06);arm.rotateY(-Math.atan2(dir[1],dir[0]));arm.translate(x+dir[0]*.55,5.95,z+dir[1]*.55);C.add(arm,M.pole);
+  const hd=new THREE.BoxGeometry(.7,.08,.22);hd.rotateY(-Math.atan2(dir[1],dir[0]));hd.translate(hx,5.9,hz);C.add(hd,M.street);streetLights.push([hx,hz])};
+ lamp(-6,-2.1,[0,-1]);lamp(9,-2.1,[0,-1]);lamp(-24,-10,[0,1]);lamp(14,-10,[0,1]);lamp(64,-10,[0,1]);
+ [[34,2.1],[58,2.1]].forEach(([s,t])=>{const p=f16(s,t);lamp(p[0],p[1],n16)});
+ /* rangées de villas de contexte */
+ const R2=rng(77);
+ const row=(pts,rot)=>pts.forEach(([x,z],i)=>{const w=12+R2()*6,d=11+R2()*4,h=7+R2()*1.8;house(x,z,w,d,h,rot,R2()<.5?'mod':'clas',100+i+Math.round(x))});
+ row([[-38,13],[-62,13],[-86,14],[-40,40],[-64,40],[-88,40],[0,62],[24,64],[-24,64],[48,62]],Math.PI/2);
+ row([[64,-26],[-36,-26],[-60,-26],[88,-26],[-20,-52],[6,-52],[30,-52],[56,-52]],Math.PI);
+ {const sp=[[-46,30],[-70,30],[58,30],[82,30],[-10,56],[20,56],[50,56]];sp.forEach(([a,b],i)=>{const p=f16(a,b);house(p[0],p[1],12+R2()*5,12+R2()*4,7+R2()*1.6,rot16+Math.PI/2,R2()<.5?'mod':'clas',300+i)})}
+ {const sp=[[-30,-30],[-55,-30],[-30,-56]];sp.forEach(([a,b],i)=>{const q=f16(a,b+16);house(q[0],q[1],13,12,7.4,rot16+Math.PI/2,i%2?'mod':'clas',400+i)})}
+ C.finish();
+ const GL=new B3(grp.ctx);streetLights.forEach(([x,z])=>{const r=6.5;GL.quad(G.street,[[x-r,.02,z-r],[x+r,.02,z-r],[x+r,.02,z+r],[x-r,.02,z+r]])});GL.finish();}
+
+/* ---------- piscine (eau animée) ---------- */
+const waterMesh=new THREE.Mesh(new THREE.PlaneGeometry(4,10).rotateX(-Math.PI/2),water);waterMesh.position.set(7.5,-.02,15);waterMesh.receiveShadow=true;grp.site.add(waterMesh);
+
+/* ---------- bornes ---------- */
+{const Bn=new B3(grp.bornes);BORNES.forEach(b=>{const g=new THREE.CylinderGeometry(.1,.12,.5,10);g.translate(b.u,.25,b.v);Bn.add(g,M.borne);const c=new THREE.CylinderGeometry(.13,.13,.04,10);c.translate(b.u,.5,b.v);Bn.add(c,M.slab)});Bn.finish();grp.bornes.visible=false}
+
+/* ---------- niveaux en coupe ---------- */
+const FURN={ss:[[.3,1,2.5,2.9,.55],[.3,7.6,1.3,9.5,.5],[6,3,12,3.8,.9],[6,4.8,12,5.6,1],[5.4,.2,12.2,.35,2.4],[13,1,14,3,1.2],[14.8,1,15.8,3,1.2],[16.8,.4,18.3,1,1.4],[13.2,4.8,16.5,6.8,.05],
+  [18.8,.6,19.6,2.6,.4],[24,.6,24.8,2.6,.4],[18.7,5.2,21.3,5.8,.5],[21.7,7.8,24.8,8.3,.5],[2,12,5.5,13,.95],[.3,10.3,.95,15.7,.95],[21,12,22,14.8,1.8],[23,12,24.6,13.2,1.6],[13.8,15.2,15.6,15.85,.9],[17.2,15.4,19.8,15.85,2]],
+ rdc:[[9,1.6,14,2.6,.7],[13,2.6,14,5,.7],[10.4,3.2,12.4,4.4,.4],[1.8,4.6,5.2,6.6,.76],[2,12,5.5,13.2,.95],[.3,9.5,.95,15.7,.95],[.3,15.1,7.2,15.75,.95],[19.6,10.4,22.2,12.6,.55],[21,5,24.5,6.6,.6],[18.4,8.6,21,9.2,.85],[15.5,9,17.5,10.2,.75]],
+ et:[[.4,2.2,2.6,4.6,.55],[7,1,8.8,3,.7],[.4,7.6,2.2,8.5,.6],[4,10.3,7,10.8,.85],[1.2,13,2.6,14.2,.9],[5,13,6.3,14.2,.9],[9.9,1.6,12.1,3.8,.55],[17.4,1.4,19.6,3.6,.55],[17.4,12.5,19.6,14.7,.55],[14,14.5,16.6,15.4,.8],[3.6,11.2,3.9,15.8,2.1]]};
+const PERIM={ss:[[0,0,25,0,'w'],[0,16,25,16,'w'],[0,0,0,12,'g'],[0,12,0,16,'w'],[25,0,25,16,'w']],
+ rdc:[[0,0,4.4,0,'g'],[6,0,25,0,'g'],[0,16,1,16,'w'],[1,16,6.5,16,'g'],[6.5,16,19.5,16,'w'],[19.5,16,23.5,16,'g'],[23.5,16,25,16,'w'],[0,0,0,16,'g'],[25,0,25,10.5,'w'],[25,10.5,25,14.5,'g'],[25,14.5,25,16,'w']],
+ et:[[0,0,25,0,'g'],[0,16,14,16,'w'],[14,16,16.5,16,'g'],[16.5,16,18.5,16,'w'],[18.5,16,23.5,16,'g'],[23.5,16,25,16,'w'],[0,0,0,1,'w'],[0,1,0,6,'g'],[0,6,0,16,'w'],[25,0,25,1,'w'],[25,1,25,6,'g'],[25,6,25,10,'w'],[25,10,25,15,'g'],[25,15,25,16,'w']]};
+const lvGroups={};
+for(const k of['ss','rdc','et']){const L=LV[k],B=new B3(grp[k],[VO[0],.16,VO[1]]),H=1.35;lvGroups[k]=B.g;grp[k].visible=false;
+ B.box(M.poche,-.25,-.3,-.25,25.25,0,16.25);
+ B.box(FLOOR.plate,0,0,0,25,.012,16);
+ L.rooms.forEach(r=>B.box(FLOOR[r[1]],r[2],0,r[3],r[4],.022,r[5]));
+ L.sub.forEach(s=>B.box(FLOOR[s[0]],s[1],0,s[2],s[3],.03,s[4]));
+ /* murs intérieurs : union des bords de pièces, avec portes vers les circulations */
+ const lines=new Map(),gaps=new Map(),key=(o,c)=>o+':'+c.toFixed(2);
+ const addL=(o,c,a,b)=>{const k2=key(o,c);if(!lines.has(k2))lines.set(k2,[]);lines.get(k2).push([Math.min(a,b),Math.max(a,b)])};
+ const addG=(o,c,a,b)=>{const k2=key(o,c);if(!gaps.has(k2))gaps.set(k2,[]);gaps.get(k2).push([a,b])};
+ const onPerim=(o,c)=>(o==='h'&&(c===0||c===16))||(o==='v'&&(c===0||c===25));
+ const [rx,rz]=L.restAt;
+ L.rooms.forEach(r=>{const[,t,x0,z0,x1,z1]=r;const E=[['h',z0,x0,x1],['h',z1,x0,x1],['v',x0,z0,z1],['v',x1,z0,z1]].filter(e=>!onPerim(e[0],e[1]));
+  let best=null,bd=1e9;E.forEach(e=>{const mid=(e[2]+e[3])/2,px=e[0]==='h'?Math.min(Math.max(rx,e[2]),e[3]):e[1],pz=e[0]==='h'?e[1]:Math.min(Math.max(rz,e[2]),e[3]),d=Math.hypot(px-rx,pz-rz)+Math.abs(mid-(e[0]==='h'?rx:rz))*.05;if(d<bd){bd=d;best=e}});
+  E.forEach(e=>{if(t==='stair'&&e===best)return;addL(...e)});
+  if(best&&t!=='stair'&&t!=='lift'){const len=best[3]-best[2],c0=best[0]==='h'?rx:rz,c=Math.min(Math.max(c0,best[2]+.7),best[3]-.7),w=len>2?.95:.8;addG(best[0],best[1],c-w/2,c+w/2)}});
+ L.sub.forEach(s=>{const[,x0,z0,x1,z1]=s;const E=[['h',z0,x0,x1],['v',x0,z0,z1]].filter(e=>!onPerim(e[0],e[1]));E.forEach(e=>addL(...e));const e=E.sort((a,b)=>(b[3]-b[2])-(a[3]-a[2]))[0];if(e){const m=(e[2]+e[3])/2;addG(e[0],e[1],m-.4,m+.4)}});
+ const t2=.06;
+ for(const[k2,list]of lines){const[o,cs]=k2.split(':'),c=+cs;list.sort((a,b)=>a[0]-b[0]);const merged=[];list.forEach(iv=>{const l=merged[merged.length-1];if(l&&iv[0]<=l[1]+1e-6)l[1]=Math.max(l[1],iv[1]);else merged.push([...iv])});
+  let segs=merged;(gaps.get(k2)||[]).forEach(g=>{segs=segs.flatMap(s=>g[1]<=s[0]||g[0]>=s[1]?[s]:[[s[0],g[0]],[g[1],s[1]]].filter(q=>q[1]-q[0]>.05))});
+  segs.forEach(s=>{if(o==='h'){B.box(M.wallP,s[0]-t2,0,c-t2,s[1]+t2,H,c+t2);B.box(M.poche,s[0]-t2,H,c-t2,s[1]+t2,H+.012,c+t2)}else{B.box(M.wallP,c-t2,0,s[0]-t2,c+t2,H,s[1]+t2);B.box(M.poche,c-t2,H,s[0]-t2,c+t2,H+.012,s[1]+t2)}})}
+ /* périmètre */
+ PERIM[k].forEach(([x0,z0,x1,z1,ty])=>{const T=.15,a=[Math.min(x0,x1)-T,Math.min(z0,z1)-T],b=[Math.max(x0,x1)+T,Math.max(z0,z1)+T];
+  if(ty==='w'){B.box(M.wallP,a[0],0,a[1],b[0],H,b[1]);B.box(M.poche,a[0],H,a[1],b[0],H+.015,b[1])}else{B.box(M.poche,a[0],0,a[1],b[0],.08,b[1]);B.box(M.glassP,x0===x1?x0-.02:x0,.08,z0===z1?z0-.02:z0,x0===x1?x0+.02:x1,H,z0===z1?z0+.02:z1);B.box(M.mull,x0===x1?x0-.03:x0,H-.04,z0===z1?z0-.03:z0,x0===x1?x0+.03:x1,H,z0===z1?z0+.03:z1)}});
+ /* escalier et ascenseur */
+ for(let i=0;i<9;i++){const z=11.2+i*.42;B.box(M.wallP,7.6,0,z,9.2,.13*(i+1),z+.42)}
+ B.box(M.wallP,7.6,0,15,10.9,1.17,15.9);
+ for(let i=0;i<9;i++){const z=14.58-i*.42;B.box(M.wallP,9.3,0,z,10.9,1.17+.06*(i+1),z+.42)}
+ B.box(M.darkF,11.2,0,13.7,13.3,2.2,15.8);
+ /* mobilier */
+ FURN[k].forEach(f=>{const h=f[4],m=h<=.72?M.fabric:h<=.8?M.woodF:h<=1.0?M.lacq:M.darkF;B.rbox(m,f[0],.02,f[1],f[2],.02+h,f[3],h<.1?.01:.05)});
+ if(k==='ss'){B.box(M.stone,-3.5,-.05,0,0,.02,12);B.box(M.wallP,-3.75,0,-.25,-3.5,H,12.25);B.box(M.wallP,-3.75,0,12,-2.3,H,12.25);B.box(M.wallP,-3.75,0,-.25,0,H,0);
+  for(let i=0;i<8;i++){const z1=12-.6*i;B.box(M.wallP,-3.5,0,z1-.6,-2.3,1.3-.15*i,z1)}
+  const jac=new THREE.CylinderGeometry(1.35,1.35,.5,40);jac.translate(21.75,.27,2.5);B.add(jac,water)}
+ if(k==='rdc'){B.box(M.door,4.4,0,-.05,6.0,.03,.05)}
+ B.finish();
+ L.labels=[...L.rooms.map(r=>({t:r[0],a:A.ar(r),p:[(r[2]+r[4])/2,(r[3]+r[5])/2],pri:A.ar(r)})),{t:L.rest.split(' :')[0],a:L.restA,p:L.restAt,pri:200},...L.zones.map(z=>({t:z[0],p:[z[1],z[2]],pri:5,zone:1}))];}
+
+/* ---------- cotes ---------- */
+const dimLabels=[];
+{const pos=[];const Y=.35;
+ const dim=(a,b,off,txt,pri=50)=>{const d=[b[0]-a[0],b[1]-a[1]],l=Math.hypot(...d),t=[d[0]/l,d[1]/l],n=[-t[1],t[0]];const A2=[a[0]+n[0]*off,a[1]+n[1]*off],B2=[b[0]+n[0]*off,b[1]+n[1]*off];
+  const P=(p)=>pos.push(p[0],Y,p[1]);P(A2);P(B2);const s=Math.sign(off)||1;
+  if(off){P([a[0]+n[0]*s*.3,a[1]+n[1]*s*.3]);P([A2[0]+n[0]*s*.4,A2[1]+n[1]*s*.4]);P([b[0]+n[0]*s*.3,b[1]+n[1]*s*.3]);P([B2[0]+n[0]*s*.4,B2[1]+n[1]*s*.4])}
+  const k=.3;[A2,B2].forEach(q=>{P([q[0]-(t[0]+n[0])*k,q[1]-(t[1]+n[1])*k]);P([q[0]+(t[0]+n[0])*k,q[1]+(t[1]+n[1])*k])});
+  dimLabels.push({t:txt,p:[(A2[0]+B2[0])/2,(A2[1]+B2[1])/2],y:Y,pri,cls:'d'})};
+ const cx=LOT.reduce((a,p)=>a+p[0],0)/5,cz=LOT.reduce((a,p)=>a+p[1],0)/5;
+ A.SIDES.forEach((s,i)=>{const a=LOT[i],b=LOT[(i+1)%5],m=[(a[0]+b[0])/2,(a[1]+b[1])/2],d=[b[0]-a[0],b[1]-a[1]];const n=[-d[1],d[0]];const out=((m[0]-cx)*n[0]+(m[1]-cz)*n[1])>0?1:-1;dim(a,b,out*(i===3?1.2:2.2),fr(s.len)+' m',90)});
+ dim([VO[0],VO[1]+16],[VO[0]+25,VO[1]+16],1.9,'25,00 m',80);dim([VO[0]+25,VO[1]],[VO[0]+25,VO[1]+16],-2.6,'16,00 m',80);
+ A.RECULS.slice(0,4).forEach(r=>{pos.push(r.p[0],Y,r.p[1],r.f[0],Y,r.f[1]);dimLabels.push({t:'recul '+fr(r.dist,1)+' m',p:[(r.p[0]+r.f[0])/2,(r.p[1]+r.f[1])/2],y:Y,pri:70,cls:'d'})});
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+ const lm=new THREE.LineBasicMaterial({color:0xffffff,depthTest:false,transparent:true,opacity:.95,toneMapped:false});const ls=new THREE.LineSegments(g,lm);ls.renderOrder=10;grp.dims.add(ls);grp.dims.visible=false;grp.dims.userData.mat=lm}
+
+/* ---------- ciel, lumières ---------- */
+const skyU={top:{value:new THREE.Color()},mid:{value:new THREE.Color()},hor:{value:new THREE.Color()},gnd:{value:new THREE.Color()},sunDir:{value:new V3(0,1,0)},sunCol:{value:new THREE.Color()},k:{value:1}};
+const skyMat=()=>new THREE.ShaderMaterial({uniforms:skyU,side:THREE.BackSide,depthWrite:false,fog:false,
+ vertexShader:'varying vec3 vD;void main(){vD=position;vec4 p=projectionMatrix*modelViewMatrix*vec4(position,1.);gl_Position=p.xyww;}',
+ fragmentShader:'uniform vec3 top,mid,hor,gnd,sunCol,sunDir;uniform float k;varying vec3 vD;void main(){vec3 d=normalize(vD);float h=d.y;vec3 c=mix(hor,mid,smoothstep(0.,.2,h));c=mix(c,top,smoothstep(.2,.9,h));c=mix(gnd,c,smoothstep(-.06,.0,h));float s=max(dot(d,sunDir),0.);c+=sunCol*(pow(s,900.)*40.+pow(s,8.)*.3)*step(0.,h+.02);gl_FragColor=vec4(c*k,1.);}'});
+const sky=new THREE.Mesh(new THREE.SphereGeometry(900,48,24),skyMat());sky.frustumCulled=false;sky.renderOrder=-1;scene.add(sky);
+const envScene=new THREE.Scene();envScene.add(new THREE.Mesh(new THREE.SphereGeometry(50,48,24),skyMat()));
+const pmrem=new THREE.PMREMGenerator(renderer);let envRT=null;
+scene.fog=new THREE.Fog(0x000000,160,620);
+
+const hemi=new THREE.HemisphereLight(0xffffff,0x222222,1);scene.add(hemi);
+const sun=new THREE.DirectionalLight(0xffffff,1);sun.castShadow=true;sun.shadow.mapSize.set(small?2048:4096,small?2048:4096);
+Object.assign(sun.shadow.camera,{left:-46,right:46,top:46,bottom:-46,near:1,far:260});sun.shadow.bias=-.0003;sun.shadow.normalBias=.04;sun.shadow.radius=3;
+const CEN=new V3(24,0,14);sun.target.position.copy(CEN);scene.add(sun,sun.target);
+const pool=new THREE.PointLight(0x4fd2ff,0,10,2);pool.position.set(7.5,.25,15);scene.add(pool);
+const ups=[[30.6,1.0,31.4,2.0],[13.3,1.3,14.2,2.2],[4.2,25.5,5.2,24.4],[20.5,24.6,21.4,23.6],[33.5,24.2,34.4,23.2]].map(([tx,tz,x,z])=>{const s=new THREE.SpotLight(0xffd6a0,0,11,.75,.85,1.6);s.position.set(x,.15,z);s.target.position.set(tx,2.8,tz);scene.add(s,s.target);return s});
+
+/* ---------- position du soleil (Bouskoura, 33,45° N, 7,64° O, UTC+1) ---------- */
+function sunPos(doy,hour){const D=Math.PI/180,lat=33.45*D,lon=-7.64;const g=2*Math.PI/365*(doy-1+(hour-1-12)/24);
+ const dec=.006918-.399912*Math.cos(g)+.070257*Math.sin(g)-.006758*Math.cos(2*g)+.000907*Math.sin(2*g)-.002697*Math.cos(3*g)+.00148*Math.sin(3*g);
+ const eqt=229.18*(.000075+.001868*Math.cos(g)-.032077*Math.sin(g)-.014615*Math.cos(2*g)-.040849*Math.sin(2*g));
+ const tst=hour*60+eqt+4*lon-60,ha=(tst/4-180)*D;
+ const el=Math.asin(Math.sin(lat)*Math.sin(dec)+Math.cos(lat)*Math.cos(dec)*Math.cos(ha));
+ const az=Math.atan2(Math.sin(ha),Math.cos(ha)*Math.sin(lat)-Math.tan(dec)*Math.cos(lat))+Math.PI;
+ return{el,az}}
+const dirFrom=(el,az)=>{const h=Math.cos(el);return new V3(h*(Math.cos(az)*NORTH[0]+Math.sin(az)*EAST[0]),Math.sin(el),h*(Math.cos(az)*NORTH[1]+Math.sin(az)*EAST[1])).normalize()};
+const AZN=a=>['nord','nord-est','est','sud-est','sud','sud-ouest','ouest','nord-ouest'][Math.round(((a*180/Math.PI)%360+360)%360/45)%8];
+
+/* ---------- post-traitement ---------- */
+const rt=new THREE.WebGLRenderTarget(4,4,{type:THREE.HalfFloatType,samples:renderer.capabilities.isWebGL2?4:0});
+const composer=new EffectComposer(renderer,rt);composer.addPass(new RenderPass(scene,camera));
+const bloom=new UnrealBloomPass(new THREE.Vector2(256,256),.9,.55,.92);composer.addPass(bloom);composer.addPass(new OutputPass());
+
+/* ---------- état ---------- */
+const st={view:'ext',amb:'nuit',day:172,hour:16,cam:'rue12',dims:false,bornes:false,ctx:true,rot:false};
+const lerpC=(a,b,t)=>new THREE.Color(a).lerp(new THREE.Color(b),t);
+function setLight(){
+ const ext=st.view==='ext';let night=ext&&st.amb==='nuit',el,az;
+ if(night){el=.62;az=200*Math.PI/180}else{const s=ext?sunPos(st.day,st.hour):sunPos(80,13.5);el=s.el;az=s.az}
+ const dir=dirFrom(Math.max(el,.03),az);
+ const dusk=!night&&el<.1;/* crépuscule */
+ if(night||dusk){
+  const k=night?1:THREE.MathUtils.clamp(1-(el+.05)/.15,0,1);
+  skyU.top.value.set(0x041c5c);skyU.mid.value.set(0x0f4bb8);skyU.hor.value.set(0x3f86de);skyU.gnd.value.set(0x0b0d12);skyU.sunCol.value.set(0x000000);skyU.k.value=1.25;
+  if(dusk){skyU.hor.value=lerpC(0xffa25e,0x3f86de,k*.6);skyU.sunCol.value.set(0xff8a3d).multiplyScalar(.5)}
+  sun.color.set(night?0x9fc0ff:0xffa060);sun.intensity=night?.35:1.2*(1-k*.6);
+  hemi.color.set(0x3f74d4);hemi.groundColor.set(0x121318);hemi.intensity=night?.75:1.0;
+  renderer.toneMappingExposure=night?.95:1.0;
+ }else{
+  const t=THREE.MathUtils.smoothstep(el,.05,.6);
+  skyU.top.value=lerpC(0x2d5fb0,0x1f5fc9,t);skyU.mid.value=lerpC(0x7aa2d8,0x5b97e3,t);skyU.hor.value=lerpC(0xf3c79a,0xcfe2f5,t);skyU.gnd.value.set(0x6d6a63);skyU.sunCol.value=lerpC(0xffa25e,0xfff2dc,t);skyU.k.value=1.15;
+  sun.color=lerpC(0xffb27a,0xfff4e6,t);sun.intensity=3.4*THREE.MathUtils.smoothstep(el,0,.12);
+  hemi.color.set(0xbcd4ff);hemi.groundColor.set(0x8a7f6a);hemi.intensity=.75;
+  renderer.toneMappingExposure=.92;
+ }
+ skyU.sunDir.value.copy(dir);sun.position.copy(CEN).addScaledVector(dir,120);
+ const on=night||(dusk&&el<.04);
+ M.led.emissiveIntensity=on?5:0;M.street.emissiveIntensity=on?6:0;M.led.color.set(on?0xffffff:0xf2efe8);
+ grp.glow.visible=on&&ext;G.street.opacity=on?1:0;G.street.visible=on;
+ villaLights.forEach(([l,I])=>l.intensity=on?I:0);pool.intensity=on?3:0;ups.forEach(s=>s.intensity=on?12:0);
+ water.emissiveIntensity=on?.55:0;
+ bloom.enabled=on;bloom.strength=.6;bloom.radius=.32;bloom.threshold=1.0;
+ scene.fog.color.copy(skyU.hor.value).multiplyScalar(skyU.k.value*(on?.5:1));
+ if(envRT)envRT.dispose();envRT=pmrem.fromScene(envScene,.02,.1,200);scene.environment=envRT.texture;
+ grp.dims.userData.mat.color.set(on?0xffffff:0x10141b);
+ viewer.classList.toggle('light',!on);
+ const badge=$('badge');
+ if(!ext)badge.textContent=st.view==='plan'?'Plan de masse · nord en haut':st.view==='ecl'?'Vue éclatée des trois niveaux':LV[st.view].name+' · coupe à 1,35 m';
+ else if(night)badge.textContent='Heure bleue · bandeaux LED allumés';
+ else{const hh=Math.floor(st.hour),mm=Math.round((st.hour-hh)*60);badge.textContent=el>0?`Soleil ${fr(el*180/Math.PI,0)}° · plein ${AZN(az)}`:'Soleil couché';}
+ const hh=Math.floor(st.hour),mm=Math.round((st.hour-hh)*60);$('hourOut').textContent=`${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
+}
+
+/* ---------- caméras ---------- */
+const CAM={
+ rue12:{p:[49,1.65,-11.2],t:[23,5.3,5.5],f:50},
+ angle:{p:[70,24,-26],t:[26,3.5,11]},
+ rue16:{p:[...f16(14,13.2).flatMap((v,i)=>i?[v]:[v,1.7])],t:[34,4.6,13],f:52},
+ jardin:{p:[-2,7.5,33],t:[17,2.5,11],f:46},
+ patio:{p:[13.2,-1.65,15.4],t:[11.6,-2.2,4.5],f:60},
+ aerien:{p:[4,86,-26],t:[26,0,14]},
+ plan:{p:[24-NORTH[0]*.05,118,14-NORTH[1]*.05],t:[24,0,14]},
+ ecl:{p:[60,30,-22],t:[26,6,12]},
+ lvl:{p:[44,33,-14],t:[26,0,11]}};
+let tween=null;
+function fly(key,instant){const c=CAM[key],p=new V3(...c.p),t=new V3(...c.t),D=Math.PI/180;let f=c.f||40;
+ /* en portrait : on garde le champ horizontal en élargissant la focale, puis on recule si besoin */
+ if(camera.aspect<1.4){const want=2*Math.atan(Math.tan(f/2*D)*1.4/camera.aspect)/D;f=Math.min(78,want);if(want>78&&!c.f){p.copy(t).add(p.clone().sub(t).multiplyScalar(Math.tan(want/2*D)/Math.tan(39*D)))}}
+ if(instant||reduce){camera.position.copy(p);controls.target.copy(t);camera.fov=f;camera.updateProjectionMatrix();tween=null;controls.update();return}
+ tween={p0:camera.position.clone(),t0:controls.target.clone(),p1:p,t1:t,f0:camera.fov,f1:f,s:performance.now(),d:1400}}
+
+/* ---------- étiquettes ---------- */
+let labels=[];
+function buildLabels(){lblLayer.innerHTML='';const list=[];const v=st.view;
+ if(['ss','rdc','et'].includes(v)){const L=LV[v],g=lvGroups[v];L.labels.forEach(l=>list.push({...l,w:new V3(l.p[0],1.7,l.p[1]).applyMatrix4(g.matrixWorld),cls:l.zone?'z':'',sub:l.zone?'':fr(l.a,1).replace(',0','')+' m²'}))}
+ if(v==='ecl'){['ss','rdc','et'].forEach(k=>{const g=lvGroups[k];list.push({t:LV[k].name,sub:'',w:new V3(-1.5,1.6,-1.5).applyMatrix4(g.matrixWorld),cls:'lv',pri:999})})}
+ if(st.dims||v==='plan')dimLabels.forEach(d=>list.push({...d,w:new V3(d.p[0],d.y,d.p[1])}));
+ if(st.bornes||v==='plan')BORNES.forEach(b=>list.push({t:b.id,sub:v==='plan'?`X ${fr(b.X)} · Y ${fr(b.Y)}`:'',w:new V3(b.u,.9,b.v),cls:'bn',pri:95}));
+ if(v==='plan'||st.dims){list.push({t:'Rue de lotissement de 12 m',w:new V3(20,.2,-6.5),cls:'st',pri:40});const p=f16(14,8);list.push({t:'Rue de lotissement de 16 m',w:new V3(p[0],.2,p[1]),cls:'st',pri:40});
+  list.push({t:'Lot 6',w:new V3(27,.2,37),cls:'st',pri:30},{t:'Lot 4',w:new V3(-6,.2,13),cls:'st',pri:30},{t:'Lot 3',w:new V3(-1,.2,33),cls:'st',pri:30})}
+ labels=list.map(o=>{const d=document.createElement('div');d.className='lb '+(o.cls||'');const b=document.createElement(o.cls==='d'||o.cls==='st'?'span':'b');b.textContent=o.t;d.appendChild(b);
+  if(o.sub){const s=document.createElement(o.cls==='bn'?'small':'span');s.textContent=o.sub;d.appendChild(s)}lblLayer.appendChild(d);return{...o,el:d}});
+ labels.forEach(l=>{l.wd=l.el.offsetWidth;l.ht=l.el.offsetHeight});labels.sort((a,b)=>(b.pri||0)-(a.pri||0))}
+const tmp=new V3();
+function placeLabels(w,h){const placed=[];for(const l of labels){tmp.copy(l.w).project(camera);const x=(tmp.x+1)/2*w,y=(1-tmp.y)/2*h;
+ const ok=tmp.z<1&&x>l.wd/2&&x<w-l.wd/2&&y>l.ht/2&&y<h-l.ht/2&&!placed.some(p=>Math.abs(p[0]-x)<(p[2]+l.wd)/2+3&&Math.abs(p[1]-y)<(p[3]+l.ht)/2+3);
+ l.el.style.display=ok?'':'none';if(ok){placed.push([x,y,l.wd,l.ht]);l.el.style.transform=`translate(${(x-l.wd/2).toFixed(1)}px,${(y-l.ht/2).toFixed(1)}px)`}}}
+
+/* ---------- modes ---------- */
+function applyView(){const v=st.view,lv=['ss','rdc','et'].includes(v);
+ grp.villa.visible=v==='ext'||v==='plan';grp.patio.visible=v!=='ss'&&v!=='ecl';grp.ctx.visible=st.ctx;
+ ['ss','rdc','et'].forEach((k,i)=>{grp[k].visible=v===k||v==='ecl';lvGroups[k].position.y=v==='ecl'?.16+i*5.2:.16});
+ grp.dims.visible=st.dims||v==='plan';grp.bornes.visible=st.bornes||v==='plan';
+ controls.maxPolarAngle=v==='plan'?.9:Math.PI/2-.015;
+ document.querySelectorAll('[data-view]').forEach(b=>b.matches('.seg')&&b.setAttribute('aria-pressed',b.dataset.view===v));
+ document.querySelectorAll('.lvl').forEach(c=>c.classList.toggle('on',c.id==='card-'+v));
+ $('g-cam').hidden=v!=='ext';$('g-amb').hidden=v!=='ext';$('sunrow').hidden=st.amb!=='jour';
+ root.updateMatrixWorld(true);setLight();buildLabels()}
+function setView(v){st.view=v;applyView();fly(v==='ext'?st.cam:v==='plan'?'plan':v==='ecl'?'ecl':'lvl')}
+
+/* ---------- interface ---------- */
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.view){setView(b.dataset.view);if(b.closest('.lvl'))viewer.scrollIntoView({behavior:reduce?'auto':'smooth',block:'center'})}
+ else if(b.dataset.cam){st.cam=b.dataset.cam;document.querySelectorAll('[data-cam]').forEach(x=>x.setAttribute('aria-pressed',x===b));fly(st.cam)}
+ else if(b.dataset.amb){st.amb=b.dataset.amb;document.querySelectorAll('[data-amb]').forEach(x=>x.setAttribute('aria-pressed',x===b));$('sunrow').hidden=st.amb!=='jour';setLight()}
+ else if(b.dataset.day){st.day=+b.dataset.day;document.querySelectorAll('[data-day]').forEach(x=>x.setAttribute('aria-pressed',x===b));setLight()}
+ else if(b.classList.contains('tg')){const k={'t-dims':'dims','t-bornes':'bornes','t-ctx':'ctx','t-rot':'rot'}[b.id];st[k]=!st[k];b.setAttribute('aria-pressed',st[k]);controls.autoRotate=st.rot&&!reduce;applyView()}});
+$('hour').addEventListener('input',e=>{st.hour=+e.target.value;setLight()});
+controls.addEventListener('start',()=>{tween=null});
+
+/* ---------- boucle ---------- */
+let W=1,Hh=1;
+function resize(){W=viewer.clientWidth;Hh=viewer.clientHeight;renderer.setSize(W,Hh,false);composer.setPixelRatio(renderer.getPixelRatio());composer.setSize(W,Hh);camera.aspect=W/Hh;camera.updateProjectionMatrix();buildLabels()}
+new ResizeObserver(resize).observe(viewer);resize();
+applyView();fly(st.cam,true);
+const arrow=$('nArrow'),clock=new THREE.Clock();let first=true;
+function frame(){const dt=clock.getDelta(),now=performance.now();
+ if(tween){const k=Math.min(1,(now-tween.s)/tween.d),e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;camera.position.lerpVectors(tween.p0,tween.p1,e);controls.target.lerpVectors(tween.t0,tween.t1,e);camera.fov=tween.f0+(tween.f1-tween.f0)*e;camera.updateProjectionMatrix();if(k>=1)tween=null}
+ controls.update();sky.position.copy(camera.position);
+ waterN.offset.x+=dt*.025;waterN.offset.y+=dt*.04;
+ composer.render();
+ const a=tmp.copy(controls.target).project(camera).clone(),b=new V3(controls.target.x+NORTH[0]*6,controls.target.y,controls.target.z+NORTH[1]*6).project(camera);
+ arrow.style.transform=`rotate(${Math.atan2((b.x-a.x)*W,(b.y-a.y)*Hh)}rad)`;
+ placeLabels(W,Hh);
+ if(first){first=false;$('loading').classList.add('done')}
+ requestAnimationFrame(frame)}
+frame();
+</script>
+</body>
+</html>
